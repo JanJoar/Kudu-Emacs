@@ -1,1 +1,1 @@
-config.org
+/home/jovo/crabmacs/config.org
