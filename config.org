@@ -1,0 +1,177 @@
+#+title: Crabmacs
+#+author: Joar von Arndt
+
+
+* Configuration
+#+BEGIN_SRC elisp
+  (custom-set-variables
+   ;; custom-set-variables was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   '(column-number-mode t)
+   '(custom-enabled-themes '(kaolin-dark))
+   '(custom-safe-themes
+     '("ce4234c32262924c1d2f43e6b61312634938777071f1129c7cde3ebd4a3028da" "e3daa8f18440301f3e54f2093fe15f4fe951986a8628e98dcd781efbec7a46f2" "d80952c58cf1b06d936b1392c38230b74ae1a2a6729594770762dc0779ac66b7" "b1a691bb67bd8bd85b76998caf2386c9a7b2ac98a116534071364ed6489b695d" default))
+   '(font-use-system-font t)
+   '(omnisharp-imenu-support t)
+   '(package-selected-packages
+     '(xkcd pretty-mode doom-themes ox-hugo markdown-mode svg-tag-mode fortune-cookie chatgpt epc ctable concurrent deferred quelpa-use-package quelpa diredful openwith eglot cl-libify company omnisharp yasnippet use-package vertico cape corfu magit org-roam smart-compile auto-complete chess dashboard gruvbox-theme ## csharp-mode))
+   '(size-indication-mode t)
+   '(tab-bar-mode t)
+   '(tool-bar-mode nil)
+   '(warning-suppress-types '((use-package))))
+  (custom-set-faces
+   ;; custom-set-faces was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   )
+#+END_SRC
+
+Removes an error message that shows on startup.
+#+BEGIN_SRC elisp
+  (setq byte-compile-warnings '(cl-functions))
+#+END_SRC
+
+Sets up various packages and melpa as a repo.
+#+BEGIN_SRC elisp
+  (use-package openwith)
+  (use-package latex-pretty-symbols)
+  (use-package pretty-mode)
+  (global-pretty-mode t)
+  (use-package csharp-mode)
+  (use-package magit)
+  (use-package git-commit)
+  (use-package org-agenda)
+  (use-package org-roam)
+  (use-package autothemer      
+    :ensure t)
+
+  (require 'package)
+  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+  (package-initialize)
+#+END_SRC
+
+Disables certain visual elements on startup aswell as use doom-themes.
+#+BEGIN_SRC elisp
+  (when (< emacs-major-version 27) (package-initialize))
+  (use-package doom-themes)
+  (scroll-bar-mode -1)
+  (tool-bar-mode -1)
+  (setq inhibit-startup-screen t)
+#+END_SRC
+
+Adds line numbers for various major modes.
+#+BEGIN_SRC elisp
+  (add-hook 'csharp-mode-hook 'linum-mode t)
+  (add-hook 'emacs-lisp-mode-hook 'linum-mode t)
+#+END_SRC
+
+Configures the all-important emacs dashboard that shows up on startup 
+#+BEGIN_SRC elisp
+  (use-package dashboard
+    :ensure t)
+  (dashboard-setup-startup-hook)
+  (setq dashboard-banner-logo-title "Gnu Emacs")
+  (setq dashboard-center-content 'middle)
+  (setq dashboard-startup-banner "~/Pictures/xemacs_red.svg")
+  (setq compilation-ask-about-save nil)
+  (setq dashboard-show-shortcuts nil)
+  (setq dashboard-items nil)
+  (setq dashboard-set-navigator nil)
+  (setq dashboard-set-init-info nil)
+  (setq dashboard-set-footer nil)
+#+END_SRC
+
+Code completion using company
+#+BEGIN_SRC elisp
+  ;; General code completion, does not provide support for C# though
+  (use-package company
+    :init
+    :ensure t
+    (global-company-mode))
+  (use-package company-org-block
+  :ensure t
+  :custom
+  (company-org-block-edit-style 'prompt)
+  :hook ((org-mode . (lambda ()
+                       (setq-local company-backends '(company-org-block))
+                       (company-mode +1)))))
+#+END_SRC
+
+Configures Org-mode to make it more attractive and useable.
+#+BEGIN_SRC elisp
+    (use-package emacs
+      :init
+      :ensure t
+      (setq completion-cycle-threshold 3)
+      (setq tab-always-indent 'complete))
+
+    (with-eval-after-load 'org
+      (setq org-format-latex-options
+            (plist-put org-format-latex-options
+                       :scale 1.3
+                       ))
+      (setq org-format-latex-options
+            (plist-put org-format-latex-options
+                       :html-scale 3
+                       ))
+      (setq org-startup-indented t)
+      (setq prettify-symbols-mode t)
+      (add-hook 'org-mode-hook 'visual-line-mode)
+      (setq org-toggle-pretty-entities t)
+#+END_SRC
+
+#+BEGIN_SRC elisp
+      (defun fd-switch-dictionary()
+        (interactive)
+        (let* ((dic ispell-current-dictionary)
+               (change-major-mode-hook (if (string= dic "svenska") "english" "svenska")))
+          (ispell-change-dictionary change-major-mode-hook)
+          (message "Dictionary switched from %s to %s" dic change)
+          ))
+      )
+    (global-set-key (kbd "<f8>")   'fd-switch-dictionary)
+    (font-lock-add-keywords 'org-mode
+                            '(("^ *\\([-]\\) "
+                               (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+    (use-package org-bullets
+      :config
+      (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+
+    ;; Ox-hugo for website creation with Org mode
+    (with-eval-after-load 'ox
+      (require 'ox-hugo))
+    (use-package ox-hugo
+      :ensure :after 
+      t ox)
+#+END_SRC
+Improves the dired experience to be better. Take that n³ and midnight commander!
+#+BEGIN_SRC elisp
+    (openwith-mode t)
+    (setq openwith-associations (list
+                                 (list (openwith-make-extension-regexp
+                                        '("png" "jpg" "jpeg")) "eog" '(file))
+                                 (list (openwith-make-extension-regexp
+                                        '("mkv" "mp4")) "mpv" '(file))
+                                 '("\\.pdf'" "evince" (file))
+                                 ))
+    (setq dired-listing-switches "-aBhl  --group-directories-first")
+  #+END_SRC
+
+Sets up electric pairs to make writing certain things faster and easier.
+  #+BEGIN_SRC elisp
+    (setq electric-pair-pairs '(
+                                (?\{ . ?\})
+                                (?\( . ?\))
+                                (?\[ . ?\])
+                                (?\" . ?\")
+                                (?\$ . ?\$)
+                                ))
+    (electric-pair-mode t)
+#+END_SRC
+Enable mouse use when running Emacs in the terminal.
+#+BEGIN_SRC elisp
+  (xterm-mouse-mode)
+#+END_SRC
