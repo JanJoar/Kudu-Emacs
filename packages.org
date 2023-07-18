@@ -1,0 +1,150 @@
+#+title: Crabmacs Packages
+#+author: Joar von Arndt
+#+startup: overview
+
+This file loads all the packages upon a first install that the user does not already posses. It is recommended that future installed packages be installed by using the same template as the preconfigured packages.
+
+#+BEGIN_EXAMPLE elisp
+(unless (package-installed-p 'PACKAGE_NAME)
+  (package-install 'PACKAGE_NAME))
+#+END_EXAMPLE
+
+Using this method makes subsequent installations more portable and also gives you a good overview over the packages that you have installed, and if you really still need them.
+
+* Loading Melpa
+
+First of all we have to make sure that all of our repos (Really just MELPA) are actually added, so that we can properly download all of our beloved packages.
+
+#+BEGIN_SRC elisp
+  (require 'package)
+  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+  (package-initialize)
+
+  (package-refresh-contents)
+#+END_SRC
+
+* Visual Packages
+Here those packages that add or change superficial visual elements are downloaded.
+
+#+BEGIN_SRC elisp
+  (unless (package-installed-p 'dashboard)
+    (package-install 'dashboard))
+
+  (unless (package-installed-p 'sublime-themes)
+    (package-install 'sublime-themes))
+
+  (unless (package-installed-p 'pretty-mode)
+    (package-install 'pretty-mode))
+
+  (unless (package-installed-p 'latex-pretty-symbols)
+    (package-install 'latex-pretty-symbols))
+
+  (unless (package-installed-p 'svg-tag-mode)
+    (package-install 'svg-tag-mode))
+
+  (unless (package-installed-p 'all-the-icons)
+    (package-install 'all-the-icons))
+
+  (unless (package-installed-p 'diredful)
+    (package-install 'diredful))
+
+#+END_SRC
+
+* Programming
+Various packages that improve the programming experience in various ways, like syntax highlighting or specific features.
+
+#+BEGIN_SRC elisp
+  (unless (package-installed-p 'magit)
+    (package-install 'magit))
+
+  (unless (package-installed-p 'eglot)
+    (package-install 'eglot))
+
+  (unless (package-installed-p 'haskell-mode)
+    (package-install 'haskell-mode))
+
+  (unless (package-installed-p 'rust-mode)
+    (package-install 'rust-mode))
+
+  (unless (package-installed-p 'sly)
+    (package-install 'sly))
+
+  (unless (package-installed-p 'typescript-mode)
+    (package-install 'typescript-mode))
+
+  (unless (package-installed-p 'markdown-mode)
+    (package-install 'markdown-mode))
+
+  (unless (package-installed-p 'clojure-mode)
+    (package-install 'clojure-mode))
+
+  (unless (package-installed-p 'go-mode)
+    (package-install 'go-mode))
+
+  (unless (package-installed-p 'json-mode)
+    (package-install 'json-mode))
+#+END_SRC
+
+** Autocomplete
+Autocomplete, both in the minibuffer and when programming, is a wonderful tool; Especially in functional languages. The vertico-corfu combination provdies a valuable system for autocomplete in most cirucmstances.
+#+BEGIN_SRC elisp
+  (unless (package-installed-p 'vertico)
+    (package-install 'vertico))
+
+  (unless (package-installed-p 'corfu)
+    (package-install 'corfu))
+#+END_SRC
+* Org-Mode
+This section focuses on packages that help to make the experience of using org-mode (What you're doing right now!) more pleasant and productive.
+
+#+BEGIN_SRC elisp
+  (unless (package-installed-p 'org-contrib)
+    (package-install 'org-contrib))
+
+  (unless (package-installed-p 'org-bullets)
+    (package-install 'org-bullets))
+
+  (unless (package-installed-p 'orgtbl-ascii-plot)
+    (package-install 'orgtbl-ascii-plot))
+
+  (unless (package-installed-p 'cdlatex)
+    (package-install 'cdlatex))
+
+  (unless (package-installed-p 'gnuplot)
+    (package-install 'gnuplot))
+  
+
+#+END_SRC
+
+** Org Roam
+A lot of people seem to enjoy using the Zettelkasten method for keeping notes. While I do not personally subscribe to this idea, I do enjoy Org and would like to support this system.
+
+#+BEGIN_SRC elisp
+  (unless (package-installed-p 'org-roam)
+    (package-install 'org-roam))
+
+  (unless (package-installed-p 'org-roam-ui)
+    (package-install 'org-roam-ui))
+
+#+END_SRC
+
+* Other Utilites
+Various utilites that are not fit for an entire category of their own, each improving the experience of using Emacs in their own little ways.
+
+#+BEGIN_SRC elisp
+  (unless (package-installed-p 'openwith)
+    (package-install 'openwith))
+
+  (unless (package-installed-p 'yasnippet)
+    (package-install 'yasnippet))
+
+#+END_SRC
+
+* User Installed Packages
+Here you can add new packages that you will inevitably find yourself needing but that are not already provided.
+
+#+BEGIN_SRC elisp
+  ;;; Add new package declarations here:
+
+  
+#+END_SRC
