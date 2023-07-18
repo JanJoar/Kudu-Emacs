@@ -1,6 +1,17 @@
 #+title: Crabmacs
 #+author: Joar von Arndt
+#+SETUPFILE: https://fniessen.github.io/org-html-themes/org/theme-readtheorg.setup
+* What is Crabmacs?
+Crabmacs is originally my own configuration for GNU Emacs that I've manually tinkiered with to improve my workflow, now turned into a fully fledged system in order to make it more usable to others and give me an excuse for polishing it up.
 
+A lot of inspiration is taken from preëxisting GNU Emacs configurations, most notably:
+- [[https://github.com/snackon/Witchmacs][Witchmacs]]
+- [[https://github.com/doomemacs/doomemacs][Doom Emacs]]
+- [[https://seagle0128.github.io/.emacs.d/][Centaur Emacs]]
+- [[https://github.com/rougier/nano-emacs][N Λ N O - Emacs]]
+
+As well as minor details from other people and their documentation scattered across the Blogosphere.
+The origin for the name should be fairly obvious. 
 * Configuration
 
 Removes an error message that shows on startup.
@@ -20,22 +31,17 @@ Sets up various packages and melpa as a repo.
   (use-package org-agenda)
   (use-package org-roam)
   (use-package autothemer      
-      :ensure t)
+    :ensure t)
 
-    (require 'package)
-    (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-    (package-initialize)
 #+END_SRC
 
-Disables certain visual elements on startup aswell as use doom-themes.
+Disables certain visual elements on startup as well as use doom-themes.
 #+BEGIN_SRC elisp
   (when (< emacs-major-version 27) (package-initialize))
   (use-package doom-themes)
   (scroll-bar-mode -1)
   (tool-bar-mode -1)
-  (tab-bar-mode -1)
   (setq inhibit-startup-screen t)
-  (load-theme gruvbox-dark-hard)
 #+END_SRC
 
 Adds line numbers for various major modes.
@@ -51,7 +57,7 @@ Configures the all-important emacs dashboard that shows up on startup
   (dashboard-setup-startup-hook)
   (setq dashboard-banner-logo-title "Gnu Emacs")
   (setq dashboard-center-content 'middle)
-  (setq dashboard-startup-banner "/home/jovo/Pictures/xemacs_red.svg")
+  (setq dashboard-startup-banner "~/Pictures/xemacs_red.svg")
   (setq compilation-ask-about-save nil)
   (setq dashboard-show-shortcuts nil)
   (setq dashboard-items nil)
@@ -62,7 +68,6 @@ Configures the all-important emacs dashboard that shows up on startup
 
 Code completion using company
 #+BEGIN_SRC elisp
-  ;; General code completion, does not provide support for C# though
   (use-package company
     :init
     :ensure t
@@ -87,7 +92,7 @@ Configures Org-mode to make it more attractive and useable.
     (with-eval-after-load 'org
       (setq org-format-latex-options
             (plist-put org-format-latex-options
-                       :scale 0.8
+                       :scale 1.3
                        ))
       (setq org-format-latex-options
             (plist-put org-format-latex-options
@@ -99,7 +104,6 @@ Configures Org-mode to make it more attractive and useable.
       (setq org-toggle-pretty-entities t)
 #+END_SRC
 
-~Org mode~
 #+BEGIN_SRC elisp
       (defun fd-switch-dictionary()
         (interactive)
@@ -116,21 +120,14 @@ Configures Org-mode to make it more attractive and useable.
     (use-package org-bullets
       :config
       (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-
-    ;; Ox-hugo for website creation with Org mode
-    (with-eval-after-load 'ox
-      (require 'ox-hugo))
-    (use-package ox-hugo
-      :ensure :after 
-      t ox)
 #+END_SRC
 
 Improves the dired experience to be better. Take that n³ and midnight commander!
 #+BEGIN_SRC elisp
     (openwith-mode t)
     (setq openwith-associations (list
-                             ;;    (list (openwith-make-extension-regexp
-                             ;;           '("png" "jpg" "jpeg")) "eog" '(file))
+                                 (list (openwith-make-extension-regexp
+                                        '("png" "jpg" "jpeg")) "eog" '(file))
                                  (list (openwith-make-extension-regexp
                                         '("mkv" "mp4")) "mpv" '(file))
                                  '("\\.pdf'" "evince" (file))
@@ -153,5 +150,5 @@ Sets up electric pairs to make writing certain things faster and easier.
 Enable mouse use when running Emacs in the terminal.
 #+BEGIN_SRC elisp
   (xterm-mouse-mode)
-  (set-face-attribute 'default nil :height 60)
 #+END_SRC
+
