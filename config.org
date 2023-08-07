@@ -1,6 +1,23 @@
+#    Crabmacs --- A fully functioning Gnu Emacs system
+#    Copyright (C) 2023  Joar von Arndt
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU Affero General Public License as published
+#    by the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU Affero General Public License for more details.
+#
+#    You should have received a copy of the GNU Affero General Public License
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 #+title: Crabmacs
 #+author: Joar von Arndt
 #+SETUPFILE: https://fniessen.github.io/org-html-themes/org/theme-readtheorg.setup
+#+STARTUP: overview
 * What is Crabmacs?
 Crabmacs is originally my own configuration for GNU Emacs that I've manually tinkiered with to improve my workflow, now turned into a fully fledged system in order to make it more usable to others and give me an excuse for polishing it up.
 
@@ -10,76 +27,104 @@ A lot of inspiration is taken from preëxisting GNU Emacs configurations, most n
 - [[https://seagle0128.github.io/.emacs.d/][Centaur Emacs]]
 - [[https://github.com/rougier/nano-emacs][N Λ N O - Emacs]]
 
-As well as minor details from other people and their documentation scattered across the Blogosphere.
+As well as minor details from other people and their documentation scattered across the Blogosphere or in the READMEs of respective Emacs packages.
 The origin for the name should be fairly obvious. 
 * Configuration
 
 Removes an error message that shows on startup.
 #+BEGIN_SRC elisp
   (setq byte-compile-warnings '(cl-functions))
-  (require 'use-package)
+#+END_SRC
+
+** Use-package
+#+BEGIN_SRC
   (setq use-package-always-defer t)
-
 #+END_SRC
-
-Uses EXWM as a window manager.
+** EXWM
+Uses EXWM as a window manager but only loads it if no other window manager is found. This way startup time isn't wasted whenever the user wants to run Emacs in the terminal, on a computer using a desktop environment, or another window manager.
 #+BEGIN_SRC elisp
-  (use-package exwm
-    (setq exwm-workspace-number 10))
-  (use-package exwm-config
-    :init
-    (exwm-config-example))
-  (exwm-enable)
-#+END_SRC
+  ;; if there was an error detecting the window manager, initialize EXWM
+  ;(when (and (get-buffer "*window-manager-error*")
+  ;           (eq window-system 'x))
+    ;; exwm startup goes here
+    (display-battery-mode 1)
+    (setq display-time-day-and-date t)
+    (display-time-mode 1)
 
-Sets up various packages.
+    ;; Creates 10 different workspaces, from 0 to 9.
+    (setq exwm-workspace-number 10)
+
+    ;; These  keys will always be sent to EXWM rather than to the X window.
+    (setq exwm-input-prefix-keys
+          '(?\C-x
+            ?\C-g
+            ?\M-x
+            ?\M-z))
+
+    ;; Sends the key after C-q directly to the X window.
+    ;; (define-key exwm-mode-map [?\C-q] 'exwm-input-send-next-key)
+
+    (setq exwm-input-global-keys
+          `(
+            ([?\s-r] . exwm-reset)
+            ([s-left] . windmove-left)
+            ([s-right] . windmove-right)
+            ([s-up] . windmove-up)
+            ([s-down] . windmove-down)
+            ([?\s-w] . exwm-workspace-switch)
+            ([?\C-q] . exwm-input-send-next-key)
+            ([?\s-&] . (lambda (command)
+                         (interactive (list (read-shell-command "$ ")))
+                         (start-process-shell-command command nil command)))
+            ([?\s-w] . exwm-workspace-switch)
+            ))
+    ;; Actually starts EXWM
+    (exwm-enable)
+;    )
+
+  ;; Checks if a window manager is already running
+;  (when (get-buffer "*window-manager*")
+;    (kill-buffer "*window-manager*"))
+;  (when (get-buffer "*window-manager-error*")
+;    (kill-buffer "*window-manager-error*"))
+;  (when (executable-find "wmctrl")
+;    (shell-command "wmctrl -m ; echo $?" "*window-manager*" "*window-manager-error*"))
+
+#+END_SRC
+** Minor visual elements
+Modifies certain visual elements on startup.
 #+BEGIN_SRC elisp
-   (use-package latex-pretty-symbols)
-   (use-package pretty-mode
-     :init
-     (global-pretty-mode t))
-   (use-package magit)
-   (use-package git-commit)
-   (use-package org-agenda)
-   (use-package org-roam)
-   (use-package xah-fly-keys
-     :init
-     (xah-fly-keys-set-layout "qwerty")
-     (xah-fly-keys 1))
-   (use-package autothemer)
-
+      (setq inhibit-startup-screen t)
+      (setq visible-bell t)
+      (setq global-prettify-symbols-mode t)
 #+END_SRC
-
-Disables certain visual elements on startup.
-#+BEGIN_SRC elisp
-  (scroll-bar-mode -1)
-  (tool-bar-mode -1)
-  (setq inhibit-startup-screen t)
-#+END_SRC
-
+** Line numbers
 Adds line numbers for various major modes.
 #+BEGIN_SRC elisp
-  (add-hook 'csharp-mode-hook 'linum-mode t)
-  (add-hook 'emacs-lisp-mode-hook 'linum-mode t)
+    (define-global-minor-mode prog-line-numbers-mode display-line-numbers-mode
+      (lambda ()
+        (when (derived-mode-p 'prog-mode)
+          (display-line-numbers-mode 1))))
 #+END_SRC
-
+** Dashboard
 Configures the all-important emacs dashboard that shows up on startup 
 #+BEGIN_SRC elisp
   (use-package dashboard
     :init
     (dashboard-setup-startup-hook)
+    (setq dashboard-icon-type 'all-the-icons)
     (setq dashboard-banner-logo-title "Gnu Emacs")
     (setq dashboard-center-content 'middle)
     (setq dashboard-startup-banner "~/Pictures/xemacs_red.svg")
     (setq compilation-ask-about-save nil)
     (setq dashboard-show-shortcuts nil)
-    (setq dashboard-items nil)
+    (setq dashboard-items ((recents . 5)))
     (setq dashboard-set-navigator nil)
     (setq dashboard-set-init-info t)
     (setq dashboard-set-footer nil)
     )
 #+END_SRC
-
+** Completion
 Code completion using corfu.
 #+BEGIN_SRC elisp
       (use-package corfu
@@ -124,7 +169,7 @@ Code completion using corfu.
       :hook
       (python-mode . eglot-ensure)
       (LaTeX-mode . eglot-ensure)
-      (csharp-mode . eglot-ensure))
+      (csharp-mode . omnisharp-mode))
 
     (use-package vertico
       :init
@@ -132,7 +177,7 @@ Code completion using corfu.
       (setq vertico-count 10)
       )
 #+END_SRC
-
+** Org-mode
 Configures Org-mode to make it more attractive and useable.
 #+BEGIN_SRC elisp
   (use-package emacs
@@ -142,28 +187,25 @@ Configures Org-mode to make it more attractive and useable.
 
   (with-eval-after-load 'org
     (setq org-format-latex-options
-	  (plist-put org-format-latex-options
-		     :scale 1.3
-		     ))
+          (plist-put org-format-latex-options
+                     :scale 1.3
+                     ))
     (setq org-format-latex-options
-	  (plist-put org-format-latex-options
-		     :html-scale 3
-		     ))
+          (plist-put org-format-latex-options
+                     :html-scale 3
+                     ))
     (setq org-startup-indented t)
-    (setq prettify-symbols-mode t)
     (add-hook 'org-mode-hook 'visual-line-mode)
     (setq org-toggle-pretty-entities t))
-#+END_SRC
 
-#+BEGIN_SRC elisp
-    (font-lock-add-keywords 'org-mode
-                            '(("^ *\\([-]\\) "
-                               (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
-    (use-package org-bullets
-      :config
-      (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+  (font-lock-add-keywords 'org-mode
+                          '(("^ *\\([-]\\) "
+                             (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+  ;;(use-package org-bullets
+    ;;:config
+    ;;(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 #+END_SRC
-
+** Dired
 Improves the dired experience to be better. Take that n³ and midnight commander!
 #+BEGIN_SRC elisp
   (use-package openwith
@@ -175,30 +217,53 @@ Improves the dired experience to be better. Take that n³ and midnight commander
                                  (list (openwith-make-extension-regexp
                                         '("mkv" "mp4")) "mpv" '(file))
                                  '("\\.pdf'" "evince" (file))
-                                 ))
-    (setq dired-listing-switches "-aBhl  --group-directories-first"))
+                                 )))
+  (setf dired-kill-when-opening-new-dired-buffer t)
+  (setq dired-listing-switches "-aBhl  --group-directories-first")
+  (defalias 'eaf-open-in-file-manager #'dired)
   #+END_SRC
-
+** Parens pairing
 Sets up electric pairs to make writing certain things faster and easier.
-  #+BEGIN_SRC elisp
-    (setq electric-pair-pairs '(
-                                (?\{ . ?\})
-                                (?\( . ?\))
-                                (?\[ . ?\])
-                                (?\" . ?\")
-                                (?\$ . ?\$)
-                                ))
-    (electric-pair-mode t)
+#+BEGIN_SRC elisp
+  (setq electric-pair-pairs '(
+                              (?\{ . ?\})
+                              (?\( . ?\))
+                              (?\[ . ?\])
+                              (?\" . ?\")
+                              (?\$ . ?\$)
+                              ))
+  (electric-pair-mode t)
 #+END_SRC
-
-Enable mouse use when running Emacs in the terminal.
+** Mouse in terminal
+Enable mouse use when running Emacs in a terminal emulator.
 #+BEGIN_SRC elisp
   (xterm-mouse-mode)
 #+END_SRC
-
+** Golden ratio
 #+BEGIN_SRC elisp
   (use-package golden-ratio
       :init
       (golden-ratio-mode 1)
       )
+#+END_SRC
+
+** Emacs Application Framework
+#+BEGIN_SRC elisp
+  (use-package eaf
+    :load-path "~/.emacs.d/site-lisp/emacs-application-framework"
+    :config
+    (eaf-browser-continue-where-left-off t)
+    (eaf-browser-enable-adblocker t)
+    (browse-url-browser-function 'eaf-open-browser)
+    (defalias 'browse-web #'eaf-open-browser)
+    (setq eaf-browser-default-search-engine "duckduckgo")
+    (setq eaf-browse-blank-page-url "https://duckduckgo.com")
+    (eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
+    (eaf-bind-key scroll_down "C-p" eaf-pdf-viewer-keybinding)
+    (eaf-bind-key take_photo "p" eaf-camera-keybinding)
+    (eaf-bind-key nil "M-q" eaf-browser-keybinding))
+
+  (require 'eaf-browser)
+  (require 'eaf-map)
+  (require 'eaf-music-player)
 #+END_SRC
