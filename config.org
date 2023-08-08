@@ -16,7 +16,6 @@
 
 #+title: Crabmacs
 #+author: Joar von Arndt
-#+SETUPFILE: https://fniessen.github.io/org-html-themes/org/theme-readtheorg.setup
 #+STARTUP: overview
 * What is Crabmacs?
 Crabmacs is originally my own configuration for GNU Emacs that I've manually tinkiered with to improve my workflow, now turned into a fully fledged system in order to make it more usable to others and give me an excuse for polishing it up.
@@ -266,4 +265,10 @@ Enable mouse use when running Emacs in a terminal emulator.
   (require 'eaf-browser)
   (require 'eaf-map)
   (require 'eaf-music-player)
+#+END_SRC
+
+** Server
+Launch the Emacs server after init.
+#+BEGIN_SRC elisp
+  (add-hook 'after-init-hook 'server-start)
 #+END_SRC
