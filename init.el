@@ -1,4 +1,4 @@
-;    Crabmacs --- A fully functioning Gnu Emacs system
+;    Kudu Emacs --- A fully functioning Gnu Emacs system
 ;    Copyright (C) 2023  Joar von Arndt
 ;
 ;    This program is free software: you can redistribute it and/or modify
