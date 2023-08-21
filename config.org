@@ -1,4 +1,4 @@
-#    Crabmacs --- A fully functioning Gnu Emacs system
+#    Kudu Emacs --- A fully functioning Gnu Emacs system
 #    Copyright (C) 2023  Joar von Arndt
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -14,12 +14,12 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#+title: Crabmacs
+#+title: Kudu Emacs
 #+author: Joar von Arndt
 #+SETUPFILE: https://fniessen.github.io/org-html-themes/org/theme-readtheorg.setup
 #+STARTUP: overview
-* What is Crabmacs?
-Crabmacs is originally my own configuration for GNU Emacs that I've manually tinkiered with to improve my workflow, now turned into a fully fledged system in order to make it more usable to others and give me an excuse for polishing it up.
+* What is Kudu?
+Kudu Emacs is originally my own configuration for GNU Emacs that I've manually tinkiered with to improve my workflow, now turned into a fully fledged system in order to make it more usable to others and give me an excuse for polishing it up.
 
 A lot of inspiration is taken from preëxisting GNU Emacs configurations, most notably:
 - [[https://github.com/snackon/Witchmacs][Witchmacs]]
