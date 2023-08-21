@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: Integral_dollar
+# key: $int
+# --
+$\int_{${1:}}^{${2:}}\,\mathrm{d}x

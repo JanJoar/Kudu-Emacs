@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: Division
+# key: fr
+# --
+\frac{${1:NUMERATOR}}{${2:DENOMINATOR}}

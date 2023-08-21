@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: limit_dollar_double
+# key: $lim$
+# --
+$\lim_{{${1:}\to\ ${2:}}}$

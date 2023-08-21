@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: sum_dollar
+# key: $su
+# --
+$\sum_{${1:}}^{${2:}} 
