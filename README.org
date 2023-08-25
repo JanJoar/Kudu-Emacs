@@ -1,4 +1,4 @@
-#+title: Crabmacs TODO list
+#+title: Kudu TODO list
 #+author: Joar von Arndt
 
 * General Ideas
