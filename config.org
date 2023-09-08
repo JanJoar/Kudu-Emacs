@@ -18,7 +18,7 @@
 #+author: Joar von Arndt
 #+STARTUP: overview
 * What is Kudu?
-Kudu Emacs is originally Joar von Arndt's own configuration for GNU Emacs that has manually been tinkered with to improve its workflow, and now be turned into a fully fledged system compromising Emacs and Guix implemetations of the tools required to form a useable operating system. The goal is to have a fully featured and easily hackable system configurable entierly with lisp, or at least with user-facing tools configurable in its dialects.
+Kudu Emacs is originally Joar von Arndt's own configuration for GNU Emacs that has manually been tinkered with to improve its workflow, and now be turned into a fully fledged system compromising Emacs and Guix implemetations of the tools required to form a useable operating system. The goal is to have a fully featured and easily hackable system configurable entierly with lisp, or at least with user-facing tools configurable in its dialects. We wanted to use this as a platform to learn about practical applications of lisp and the design of operating systems and to see if a lisp-system is usable enough for day-to-day computing purposes.
 
 A lot of inspiration is taken from preëxisting GNU Emacs configurations, most notably:
 - [[https://github.com/snackon/Witchmacs][Witchmacs]]
