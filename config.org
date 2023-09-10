@@ -48,7 +48,7 @@ Probably one of the most useful packages, even if not very prominent when using 
         use-package-always-ensure t)
 #+END_SRC
 ** EXWM
-The Emacs X Window Manager allows you to use your entire desktop within emacs. Other windows are managed like traditional emacs buffers, and different workspaces are implemented using separete emacs frames. This is arguably the largest change to using traditional window managers and desktop environments, and it transforms emacs from simply a program that can do everything to /the/ way to interact with one's computer.
+The Emacs X Window Manager allows you to use your entire desktop within emacs. Other windows are managed like traditional emacs buffers, and different workspaces are implemented using separate emacs frames. This is arguably the largest change to using traditional window managers and desktop environments, and it transforms emacs from simply a program that can do everything to /the/ way to interact with one's computer.
 
 Still, Emacs can still be used without constituting the entire system. Therefore EXWM should only be loaded if no other window manager is running. That way startup time isn't wasted whenever the user wants to run Emacs in the terminal, on a computer using a desktop environment, or another window manager.
 
@@ -105,16 +105,24 @@ Still, Emacs can still be used without constituting the entire system. Therefore
   ;    (shell-command "wmctrl -m ; echo $?" "*window-manager*" "*window-manager-error*"))
 #+END_SRC
 ** Minor visual elements
-Modifies certain visual elements on startup.
+Visual items that are too minor to fit in their own section.
+Visible bell changes the otherwise quite jarring bell sound into a visual flash on it top and bottom of the emacs frame. ~prettify-symbols-mode~ allows certain major modes to change the appearance of strings, the classic example being the greek letter lambda in lisp-modes for lambda calculus.
+
+The beacon package shows off the location the the point whenever you move to a window or scroll a buffer so that you don't lose it.
+
+Mode-icons replaces the major mode description in the mode-line with a relevant logo or image.
+
 #+BEGIN_SRC elisp
-  (setq inhibit-startup-screen t
-        visible-bell t
-        global-prettify-symbols-mode t)
+  (setq visible-bell t
+        global-prettify-symbols-mode 1)
+
+  (use-package beacon
+    :config
+    (beacon-mode 1))
 
   (use-package mode-icons
     :config
-    (mode-icons-mode)
-    )
+    (mode-icons-mode))
 #+END_SRC
 *** Indentation
 Keeps code fully indented in a nice way.
