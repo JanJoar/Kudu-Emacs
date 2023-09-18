@@ -259,7 +259,7 @@ Improves the dired experience to be better. Take that n³ and midnight commander
                                  (list (openwith-make-extension-regexp
                                         '("png" "jpg" "jpeg")) "eog" '(file))
                                  (list (openwith-make-extension-regexp
-                                        '("mkv" "mp4")) "mpv" '(file))
+                                        '("mkv" "mp4" "avi")) "mpv" '(file))
                                  '("\\.pdf'" "evince" (file))
                                  )))
   (setf dired-kill-when-opening-new-dired-buffer t)
