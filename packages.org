@@ -35,8 +35,6 @@ First of all we have to make sure that all of our repos (Really just MELPA) are 
   (require 'package)
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
   (package-initialize)
-
-  (package-refresh-contents)
 #+END_SRC
 
 * Visual Packages
