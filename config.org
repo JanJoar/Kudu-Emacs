@@ -274,12 +274,8 @@ Dired is emacs' built in text-based file manager. Its however pretty rough aroun
                                  (list (openwith-make-extension-regexp
                                         '("png" "jpg" "jpeg")) "eog" '(file))
                                  (list (openwith-make-extension-regexp
-<<<<<<< HEAD
                                         '("mkv" "mp4" "avi")) "mpv" '(file))
                                  '("\\.pdf'" "evince" (file))
-=======
-                                        '("mkv" "mp4")) "mpv" '(file))
->>>>>>> 9665f08b3d803bcd3513643bd2cd20e310a2db93
                                  )))
   (setf dired-kill-when-opening-new-dired-buffer t)
   (setq dired-listing-switches "-aBhl  --group-directories-first")
