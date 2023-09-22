@@ -65,8 +65,13 @@ Still, Emacs can still be used without constituting the entire system. Therefore
       (setq display-time-day-and-date t)
       (display-time-mode 1)
 
-      ;; Creates 10 different workspaces, from 0 to 9.
-      (setq exwm-workspace-number 10)
+  ;; Changes the name of EXWM-buffers to the corresponding window-name rather than *EXWM*<N>.
+  (add-hook 'exwm-update-class-hook
+            (lambda ()
+              (exwm-workspace-rename-buffer exwm-class-name)))
+
+      ;; Creates 3 different workspaces, from 0 to 2.
+      (setq exwm-workspace-number 3)
 
       ;; These  keys will always be sent to EXWM rather than to the X window.
       (setq exwm-input-prefix-keys
