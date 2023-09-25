@@ -161,7 +161,7 @@ Configures the all-important emacs dashboard that shows up on startup
     (setq dashboard-icon-type 'all-the-icons)
     (setq dashboard-banner-logo-title "Gnu Emacs")
     (setq dashboard-center-content 'middle)
-    (setq dashboard-startup-banner "./KuduLogo.svg")
+    (setq dashboard-startup-banner "~/.emacs.d/KuduLogo.svg")
     (setq compilation-ask-about-save nil)
     (setq dashboard-show-shortcuts nil)
     (setq dashboard-items (recents . 5))
