@@ -52,62 +52,58 @@ The Emacs X Window Manager allows you to use your entire desktop within emacs. O
 
 Still, Emacs can still be used without constituting the entire system. Therefore EXWM should only be loaded if no other window manager is running. That way startup time isn't wasted whenever the user wants to run Emacs in the terminal, on a computer using a desktop environment, or another window manager.
 
-(This doesn't work yet, so you have to comment out the ~(exwm-enable)~ line to avoid errors if launching the GUI in a non-EXWM environment)
-
 #+BEGIN_SRC elisp
 
   (setq switch-to-buffer-obey-display-actions t)
-    ;; if there was an error detecting the window manager, initialize EXWM
-    ;(when (and (get-buffer "*window-manager-error*")
-    ;           (eq window-system 'x))
-      ;; exwm startup goes here
-      (display-battery-mode 1)
-      (setq display-time-day-and-date t)
-      (display-time-mode 1)
+  (when (get-buffer "*window-manager*")
+    (kill-buffer "*window-manager*"))
+  (when (get-buffer "*window-manager-error*")
+    (kill-buffer "*window-manager-error*"))
 
-  ;; Changes the name of EXWM-buffers to the corresponding window-name rather than *EXWM*<N>.
-  (add-hook 'exwm-update-class-hook
-            (lambda ()
-              (exwm-workspace-rename-buffer exwm-class-name)))
+  (shell-command "wmctrl -m ; echo $status" "*window-manager*" "*window-manager-error*")
 
-      ;; Creates 3 different workspaces, from 0 to 2.
-      (setq exwm-workspace-number 3)
+  (when (and (get-buffer "*window-manager-error*") ;; The shell command has to both encounter an error and be running in an X environment.
+             (eq window-system 'x))
 
-      ;; These  keys will always be sent to EXWM rather than to the X window.
-      (setq exwm-input-prefix-keys
-            '(?\C-x
-              ?\C-g
-              ?\M-x
-              ?\M-z))
+  (display-battery-mode 1)
+  (setq display-time-day-and-date t)
+  (display-time-mode 1)
 
-      ;; Sends the key after C-q directly to the X window.
-      ;; (define-key exwm-mode-map [?\C-q] 'exwm-input-send-next-key)
+    ;; Changes the name of EXWM-buffers to the corresponding window-name rather than *EXWM*<N>.
+    (add-hook 'exwm-update-class-hook
+              (lambda ()
+                (exwm-workspace-rename-buffer exwm-class-name)))
 
-      (setq exwm-input-global-keys
-            `(
-              ([?\s-r] . exwm-reset)
-              ([s-left] . windmove-left)
-              ([s-right] . windmove-right)
-              ([s-up] . windmove-up)
-              ([s-down] . windmove-down)
-              ([?\s-w] . exwm-workspace-switch)
-              ([?\C-q] . exwm-input-send-next-key)
-              ([?\s-a] . (lambda (command)
-                           (interactive (list (read-shell-command "$ ")))
-                           (start-process-shell-command command nil command)))
-              ([?\s-w] . exwm-workspace-switch)
-              ))
-      ;; Actually starts EXWM
-      (exwm-enable)
-  ;    )
+        ;; Creates 3 different workspaces, from 0 to 2.
+        (setq exwm-workspace-number 3)
 
-    ;; Checks if a window manager is already running
-  ;  (when (get-buffer "*window-manager*")
-  ;    (kill-buffer "*window-manager*"))
-  ;  (when (get-buffer "*window-manager-error*")
-  ;    (kill-buffer "*window-manager-error*"))
-  ;  (when (executable-find "wmctrl")
-  ;    (shell-command "wmctrl -m ; echo $?" "*window-manager*" "*window-manager-error*"))
+        ;; These  keys will always be sent to EXWM rather than to the X window.
+        (setq exwm-input-prefix-keys
+              '(?\C-x
+                ?\C-g
+                ?\M-x
+                ?\M-z))
+
+        ;; Sends the key after C-q directly to the X window.
+        ;; (define-key exwm-mode-map [?\C-q] 'exwm-input-send-next-key)
+
+        (setq exwm-input-global-keys
+              `(
+                ([?\s-r] . exwm-reset)
+                ([s-left] . windmove-left)
+                ([s-right] . windmove-right)
+                ([s-up] . windmove-up)
+                ([s-down] . windmove-down)
+                ([?\s-w] . exwm-workspace-switch)
+                ([?\C-q] . exwm-input-send-next-key)
+                ([?\s-a] . (lambda (command)
+                             (interactive (list (read-shell-command "$ ")))
+                             (start-process-shell-command command nil command)))
+                ([?\s-w] . exwm-workspace-switch)
+                ))
+        ;; Actually starts EXWM
+        (exwm-enable)
+        )
 #+END_SRC
 ** Minor visual elements
 Visual items that are too minor to fit in their own section.
