@@ -47,6 +47,16 @@ Probably one of the most useful packages, even if not very prominent when using 
   (setq use-package-always-defer t
         use-package-always-ensure t)
 #+END_SRC
+** Auto-compile
+Compiles Emacs-lisp files to improve startup. This generally improves the speed of different emacs packages, at the cost of startup time the very first time a package is loaded.
+#+BEGIN_SRC elisp
+(use-package auto-compile 
+  :ensure t
+  :config
+  (auto-compile-on-load-mode 1)
+  (auto-compile-on-save-mode 1))
+#+END_SRC
+
 ** EXWM
 The Emacs X Window Manager allows you to use your entire desktop within emacs. Other windows are managed like traditional emacs buffers, and different workspaces are implemented using separate emacs frames. This is arguably the largest change to using traditional window managers and desktop environments, and it transforms emacs from simply a program that can do everything to /the/ way to interact with one's computer.
 
@@ -55,11 +65,6 @@ Still, Emacs can still be used without constituting the entire system. Therefore
 #+BEGIN_SRC elisp
 
   (setq switch-to-buffer-obey-display-actions t)
-  (when (get-buffer "*window-manager*")
-    (kill-buffer "*window-manager*"))
-  (when (get-buffer "*window-manager-error*")
-    (kill-buffer "*window-manager-error*"))
-
   (shell-command "wmctrl -m ; echo $status" "*window-manager*" "*window-manager-error*")
 
   (when (and (get-buffer "*window-manager-error*") ;; The shell command has to both encounter an error and be running in an X environment.
@@ -104,6 +109,11 @@ Still, Emacs can still be used without constituting the entire system. Therefore
         ;; Actually starts EXWM
         (exwm-enable)
         )
+
+  (when (get-buffer "*window-manager*")
+    (kill-buffer "*window-manager*"))
+  (when (get-buffer "*window-manager-error*")
+    (kill-buffer "*window-manager-error*"))
 #+END_SRC
 ** Minor visual elements
 Visual items that are too minor to fit in their own section.
@@ -157,10 +167,10 @@ Configures the all-important emacs dashboard that shows up on startup
     (setq dashboard-icon-type 'all-the-icons)
     (setq dashboard-banner-logo-title "Gnu Emacs")
     (setq dashboard-center-content 'middle)
-    (setq dashboard-startup-banner "~/.emacs.d/KuduLogo.svg")
+    (setq dashboard-startup-banner "~/.emacs.d/KuduLogo_red.svg")
     (setq compilation-ask-about-save nil)
     (setq dashboard-show-shortcuts nil)
-    (setq dashboard-items (recents . 5))
+    (setq dashboard-items '((recents . 5)))
     (setq dashboard-set-navigator nil)
     (setq dashboard-set-init-info t)
     (setq dashboard-set-footer nil)
@@ -237,7 +247,6 @@ Configures Org-mode to make it more attractive and useable.
     (setq completion-cycle-threshold 2)
     (setq tab-always-indent 'complete))
 
-  (use-package org-tempo)
   (use-package org
     :hook (org-mode . visual-line-mode)
     :init
@@ -283,25 +292,32 @@ Configures Org-mode to make it more attractive and useable.
 Dired is emacs' built in text-based file manager. Its however pretty rough around its edges, such as it opening each directory in a separete buffer making navigation a hassle. However certain tweaks can make it a formidable tool accessible directly within emacs. Take that n³ and midnight commander!
 
 #+BEGIN_SRC elisp
-    (use-package openwith
-      :init
-      (openwith-mode t)
-      (setq openwith-associations (list
-                                   (list (openwith-make-extension-regexp
-                                          '("png" "jpg" "jpeg")) "eog" '(file))
-                                   (list (openwith-make-extension-regexp
-                                          '("mkv" "mp4" "avi")) "mpv" '(file))
-                                   )))
-    (setf dired-kill-when-opening-new-dired-buffer t)
-    (setq dired-listing-switches "-aBhl  --group-directories-first")
-    (defalias 'eaf-open-in-file-manager #'dired)
+      (use-package openwith
+        :init
+        (openwith-mode t)
+        (setq openwith-associations (list
+                                     (list (openwith-make-extension-regexp
+                                            '("mkv" "mp4" "avi")) "mpv" '(file))
+                                     )))
+      (setf dired-kill-when-opening-new-dired-buffer t)
+      (setq dired-listing-switches "-aBhl  --group-directories-first")
+      (defalias 'eaf-open-in-file-manager #'dired)
 
-  (use-package pdf-tools
-    :init
-    (pdf-loader-install)
-    )
+    (use-package pdf-tools
+      :init
+      (pdf-loader-install)
+      )
 
   #+END_SRC
+** Media
+#+BEGIN_SRC elisp
+  (use-package emms
+    :init
+    (emms-all)
+    (setq emms-player-list '(emms-player-vlc)
+          emms-info-functions '(emms-info-native)))
+#+END_SRC
+
 ** Parens pairing
 Most of the time when writing parentheses, brackets, and quotes we want to pair them. This significantly improves comfort since you no longer need to stretch for modifier keys to finish of the pair. And even if you do, ~electric-pair-mode~ will detect it and move the point past as if you had just entered the character.
 
@@ -315,9 +331,14 @@ Most of the time when writing parentheses, brackets, and quotes we want to pair 
                               ))
   (electric-pair-mode t)
 #+END_SRC
-** Mouse in terminal
+** Terminal
 Enable mouse use when running Emacs in a terminal emulator.
 #+BEGIN_SRC elisp
+  (use-package eat
+    :config
+    (eat-eshell-visual-command-mode)
+    (eat-eshell-mode))
+
   (xterm-mouse-mode)
 #+END_SRC
 ** Golden ratio
@@ -359,3 +380,4 @@ Launch the Emacs server after init.
 ;                                       )
 ;                                (server-start)))
 #+END_SRC
+!
