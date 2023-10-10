@@ -47,6 +47,16 @@ Probably one of the most useful packages, even if not very prominent when using 
   (setq use-package-always-defer t
         use-package-always-ensure t)
 #+END_SRC
+** Auto-compile
+Compiles elisp files to improve the speed and responsiveness of Emacs at the cost of first-time startup time. The settings in ~init.el~ makes sure that updated elisp files take priority over older, compiled files.
+#+BEGIN_SRC elisp
+(use-package auto-compile 
+  :ensure t
+  :config
+  (auto-compile-on-load-mode 1)
+  (auto-compile-on-save-mode 1))
+#+END_SRC
+
 ** EXWM
 The Emacs X Window Manager allows you to use your entire desktop within emacs. Other windows are managed like traditional emacs buffers, and different workspaces are implemented using separate emacs frames. This is arguably the largest change to using traditional window managers and desktop environments, and it transforms emacs from simply a program that can do everything to /the/ way to interact with one's computer.
 
@@ -237,7 +247,6 @@ Configures Org-mode to make it more attractive and useable.
     (setq completion-cycle-threshold 2)
     (setq tab-always-indent 'complete))
 
-  (use-package org-tempo)
   (use-package org
     :hook (org-mode . visual-line-mode)
     :init
@@ -254,7 +263,7 @@ Configures Org-mode to make it more attractive and useable.
           org-hide-leading-stars t
           org-hide-emphasis-markers t)
     )
-  
+
     (use-package org-superstar
       :hook (org-mode . org-superstar-mode))
     (use-package org-fragtog

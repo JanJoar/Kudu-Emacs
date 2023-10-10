@@ -19,15 +19,11 @@
 
 
 (setq load-prefer-newer t) ;; Loads the newer file if one exists. This means emacs will prioritise files with newer changes. 
-(use-package auto-compile  ;; Compiles Emacs-lisp files to improve startup. The setting above makes sure that new changed files take priority over compiled files. 
-  :ensure t
-  :config
-  (auto-compile-on-load-mode 1)
-  (auto-compile-on-save-mode 1))
-
 
 (org-babel-load-file (expand-file-name "~/.emacs.d/packages.org")) ;; Loads any needed packages.
-(org-babel-load-file (expand-file-name "~/.emacs.d/secret.org")) ;; User-unique information (like E-mail address and full name) that you might not want to share openly. Empty by default.
+
+(shell-command "touch ~/.emacs.d/secret.org")
+(org-babel-load-file (expand-file-name "~/.emacs.d/secret.org")) ;; User-unique information (like E-mail address and full name) that you might not want to share openly. Empty by default. Since the file is not included in the Kudu repo it has to be created using touch in order to be loaded.
 (org-babel-load-file (expand-file-name "~/.emacs.d/config.org")) ;; The main configuration file, running commands, setting keybinds, and configuring packages.
 
 (setq custom-file "~/.emacs.d/custom.el")
