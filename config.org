@@ -35,17 +35,14 @@ Naturally various inspirations are taken from from other people and their docume
 The origin for the name is the kudu, an antelope similar to that of the Gnu, the namesake of the GNU Project. Kudu is not part of the GNU Project, and it's developers are not members of GNU or the FSF. However we share a positive opinion of free software and therefore want to contribute to its mainstream adoption. 
 * Configuration
 
-Removes an error message that shows on startup.
-#+BEGIN_SRC elisp
-  (setq byte-compile-warnings '(cl-functions))
-#+END_SRC
-
 ** Use-package
 Probably one of the most useful packages, even if not very prominent when using emacs, is use-package. It allows you to declaratively write your configuration and have the included emacs package manager download them for you, and also have configurations for packages only run when packages are loaded, similarly to ~(with-eval-after-load ...)~. The variables set here simply enable this behaviour.
 
 #+BEGIN_SRC elisp
   (setq use-package-always-defer t
         use-package-always-ensure t)
+
+  (use-package diminish)
 #+END_SRC
 ** Auto-compile
 Compiles elisp files to improve the speed and responsiveness of Emacs at the cost of first-time startup time. The settings in ~init.el~ makes sure that updated elisp files take priority over older, compiled files.
@@ -63,57 +60,57 @@ The Emacs X Window Manager allows you to use your entire desktop within emacs. O
 Still, Emacs can still be used without constituting the entire system. Therefore EXWM should only be loaded if no other window manager is running. That way startup time isn't wasted whenever the user wants to run Emacs in the terminal, on a computer using a desktop environment, or another window manager.
 
 #+BEGIN_SRC elisp
-
   (setq switch-to-buffer-obey-display-actions t)
-  (when (get-buffer "*window-manager*")
-    (kill-buffer "*window-manager*"))
-  (when (get-buffer "*window-manager-error*")
-    (kill-buffer "*window-manager-error*"))
-
   (shell-command "wmctrl -m ; echo $status" "*window-manager*" "*window-manager-error*")
 
-  (when (and (get-buffer "*window-manager-error*") ;; The shell command has to both encounter an error and be running in an X environment.
-             (eq window-system 'x))
+  (when (and
+         (get-buffer "*window-manager-error*") ;; The shell command has to both encounter an error and a running in an X environment.
+         (eq window-system 'x))
 
-  (display-battery-mode 1)
-  (setq display-time-day-and-date t)
-  (display-time-mode 1)
+    (display-battery-mode 1)
+    (setq display-time-day-and-date t)
+    (display-time-mode 1)
 
     ;; Changes the name of EXWM-buffers to the corresponding window-name rather than *EXWM*<N>.
     (add-hook 'exwm-update-class-hook
               (lambda ()
-                (exwm-workspace-rename-buffer exwm-class-name)))
+                (exwm-workspace-orkspace-rename-buffer exwm-class-name)))
 
         ;; Creates 3 different workspaces, from 0 to 2.
-        (setq exwm-workspace-number 3)
+    (setq exwm-workspace-number 3)
 
-        ;; These  keys will always be sent to EXWM rather than to the X window.
-        (setq exwm-input-prefix-keys
-              '(?\C-x
-                ?\C-g
-                ?\M-x
-                ?\M-z))
+    ;; These  keys will always be sent to EXWM rather than to the X window.
+    (setq exwm-input-prefix-keys
+          '(?\C-x
+            ?\C-g
+            ?\M-x
+            ?\M-z))
 
-        ;; Sends the key after C-q directly to the X window.
-        ;; (define-key exwm-mode-map [?\C-q] 'exwm-input-send-next-key)
+    ;; Sends the key after C-q directly to the X window.
+    ;; (define-key exwm-mode-map [?\C-q] 'exwm-input-send-next-key)
 
-        (setq exwm-input-global-keys
-              `(
-                ([?\s-r] . exwm-reset)
-                ([s-left] . windmove-left)
-                ([s-right] . windmove-right)
-                ([s-up] . windmove-up)
-                ([s-down] . windmove-down)
-                ([?\s-w] . exwm-workspace-switch)
-                ([?\C-q] . exwm-input-send-next-key)
-                ([?\s-a] . (lambda (command)
-                             (interactive (list (read-shell-command "$ ")))
-                             (start-process-shell-command command nil command)))
-                ([?\s-w] . exwm-workspace-switch)
-                ))
-        ;; Actually starts EXWM
-        (exwm-enable)
-        )
+    (setq exwm-input-global-keys
+          `(
+            ([?\s-r] . exwm-reset)
+            ([s-left] . windmove-left)
+            ([s-right] . windmove-right)
+            ([s-up] . windmove-up)
+            ([s-down] . windmove-down)
+            ([?\s-w] . exwm-workspace-switch)
+            ([?\C-q] . exwm-input-send-next-key)
+            ([?\s-a] . (lambda (command)
+                         (interactive (list (read-shell-command "$ ")))
+                         (start-process-shell-command command nil command)))
+            ([?\s-w] . exwm-workspace-switch)
+            ))
+    ;; Actually starts EXWM
+    (exwm-enable)
+    )
+
+  (when (get-buffer "*window-manager*")
+    (kill-buffer "*window-manager*"))
+  (when (get-buffer "*window-manager-error*")
+    (kill-buffer "*window-manager-error*"))
 #+END_SRC
 ** Minor visual elements
 Visual items that are too minor to fit in their own section.
@@ -129,12 +126,9 @@ Solaire-mode makes it easy to distingush between warnings, popups and messages b
         global-prettify-symbols-mode 1)
 
   (use-package beacon
-    :config
+    :diminish beacon-mode
+    :init
     (beacon-mode 1))
-
-  (use-package mode-icons
-    :config
-    (mode-icons-mode))
 
   (use-package solaire-mode
     :init
@@ -153,10 +147,10 @@ Keeps code fully indented in a nice way.
 ** Line numbers
 Adds line numbers for various major modes.
 #+BEGIN_SRC elisp
-    (define-global-minor-mode prog-line-numbers-mode display-line-numbers-mode
-      (lambda ()
-        (when (derived-mode-p 'prog-mode)
-          (display-line-numbers-mode 1))))
+  (define-global-minor-mode prog-line-numbers-mode display-line-numbers-mode
+    (lambda ()
+      (when (derived-mode-p 'prog-mode)
+        (display-line-numbers-mode 1))))
 #+END_SRC
 ** Dashboard
 Configures the all-important emacs dashboard that shows up on startup 
@@ -264,14 +258,18 @@ Configures Org-mode to make it more attractive and useable.
           org-hide-emphasis-markers t)
     )
 
-    (use-package org-superstar
-      :hook (org-mode . org-superstar-mode))
-    (use-package org-fragtog
-      :hook (org-mode . org-fragtog-mode))
-    (use-package toc-org
-      :hook (org-mode . toc-org-mode))
-    (use-package org-appear
-      :hook (org-mode . org-appear-mode))
+  (use-package org-superstar
+    :hook (org-mode . org-superstar-mode))
+  (use-package org-fragtog
+    :hook (org-mode . org-fragtog-mode))
+  (use-package toc-org
+    :hook (org-mode . toc-org-mode))
+  (use-package org-appear
+    :hook (org-mode . org-appear-mode))
+  (use-package yasnippet
+    :diminish yas-minor-mode
+    :hook (org-mode . yas-minor-mode))
+  (use-package yasnippet-snippets)
 
     (use-package org-modern
       :hook
@@ -284,10 +282,47 @@ Configures Org-mode to make it more attractive and useable.
       (org-modern-hide-stars nil)
       (org-modern-checkbox nil)
       )
-    (use-package org-modern-indent
-      :load-path "~/.emacs.d/site-lisp/org-modern-indent"
-      :hook (org-mode . org-modern-indent-mode))
+
+
+  (unless (file-directory-p "~/.emacs.d/site-lisp/org-modern-indent")
+          (shell-command "git clone https://github.com/jdtsmith/org-modern-indent.git ~/.emacs.d/site-lisp/"))
+  (use-package org-modern-indent
+    :load-path "~/.emacs.d/site-lisp/org-modern-indent"
+    :hook (org-mode . org-modern-indent-mode))
  #+END_SRC
+
+** Lisp
+Emacs is an amazing environment for writing in various lisp dialects, with wonderful support out-of-the-box. However, there are various different packages designed to improve this experience in general or in slight, specific ways. Paredit is 
+#+BEGIN_SRC elisp
+  (use-package paredit
+    :init
+    (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
+    (add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
+    (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
+    (add-hook 'ielm-mode-hook             #'enable-paredit-mode)
+    (add-hook 'lisp-mode-hook             #'enable-paredit-mode)
+    (add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
+    (add-hook 'scheme-mode-hook           #'enable-paredit-mode)
+    (add-hook 'slime-repl-mode-hook       #'enable-paredit-mode)
+
+    (defun override-slime-del-key ()
+      (define-key slime-repl-mode-map
+                  (read-kbd-macro paredit-backward-delete-key) nil))
+    (add-hook 'slime-repl-mode-hook 'override-slime-del-key)
+    )
+
+  (use-package slime
+    :init
+    (setq inferior-lisp-program "sbcl"))
+
+  (use-package rainbow-delimiters
+    :init
+    (setq rainbow-delimiters-mode t))
+
+  (setq show-paren-delay 0)
+  (show-paren-mode)
+#+END_SRC
+
 ** Dired
 Dired is emacs' built in text-based file manager. Its however pretty rough around its edges, such as it opening each directory in a separete buffer making navigation a hassle. However certain tweaks can make it a formidable tool accessible directly within emacs. Take that n³ and midnight commander!
 
@@ -330,11 +365,23 @@ Enable mouse use when running Emacs in a terminal emulator.
   (xterm-mouse-mode)
 #+END_SRC
 ** Golden ratio
+The [[https://en.wikipedia.org/wiki/Golden_ratio][golden ratio]] is a magically beautiful ratio that has been studied for over a thousand years. A Emacs frame, being a rectangle, forms the /golden rectangle/, and we can split windows using it depending on where out focus is. However, we may sometimes not wish for frames to be automatically resized, for example keeping a PDF-file open in a window, and so the ~C-c g~ keybind is defined to quickly toggle it.
+
 #+BEGIN_SRC elisp
   (use-package golden-ratio
-      :init
-      (golden-ratio-mode 1)
-      )
+    :diminish golden-ratio-mode
+    :init
+    (golden-ratio-mode 1)
+    (setq golden-ratio-auto-scale t)
+    (keymap-global-set "C-c g" 'golden-ratio-mode)
+    )
+#+END_SRC
+
+** Yes or no
+Without his setting emacs sometimes asks for confirmation via a "Yes or no" prompt, and sometimes "y or n". This is generally difficult to predict, and so this setting forces the message to always send "y or n" forms, like most programs run in a terminal.
+
+#+BEGIN_SRC elisp
+  (defalias 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
 
 ** Emacs Application Framework
