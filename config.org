@@ -133,6 +133,8 @@ Solaire-mode makes it easy to distingush between warnings, popups and messages b
   (use-package solaire-mode
     :init
     (solaire-global-mode +1))
+
+  (setq pixel-scroll-precision-mode t)
 #+END_SRC
 *** Indentation
 Keeps code fully indented in a nice way.
@@ -173,57 +175,69 @@ Configures the all-important emacs dashboard that shows up on startup
 ** Completion
 Code completion using corfu.
 #+BEGIN_SRC elisp
-      (use-package corfu
-        :custom
-        (setq corfu-auto t)
-        :init
-        (global-corfu-mode))
- 
-      (use-package cape
-        ;; Bind dedicated completion commands
-        ;; Alternative prefix keys: C-c p, M-p, M-+, ...
-        :bind (("C-c p p" . completion-at-point) ;; capf
-               ("C-c p t" . complete-tag)        ;; etags
-               ("C-c p d" . cape-dabbrev)        ;; or dabbrev-completion
-               ("C-c p h" . cape-history)
-               ("C-c p f" . cape-file)
-               ("C-c p k" . cape-keyword)
-               ("C-c p s" . cape-symbol)
-               ("C-c p a" . cape-abbrev)
-               ("C-c p l" . cape-line)
-               ("C-c p w" . cape-dict)
-               ("C-c p \\" . cape-tex)
-               ("C-c p _" . cape-tex)
-               ("C-c p ^" . cape-tex)
-               ("C-c p &" . cape-sgml)
-               ("C-c p r" . cape-rfc1345))
-        :init
-        (add-to-list 'completion-at-point-functions #'cape-dabbrev)
-        (add-to-list 'completion-at-point-functions #'cape-file)
-        (add-to-list 'completion-at-point-functions #'cape-elisp-block)
-        (add-to-list 'completion-at-point-functions #'cape-history)
-        ;;(add-to-list 'completion-at-point-functions #'cape-keyword)
-        ;;(add-to-list 'completion-at-point-functions #'cape-tex)
-        ;;(add-to-list 'completion-at-point-functions #'cape-sgml)
-        ;;(add-to-list 'completion-at-point-functions #'cape-rfc1345)
-        ;;(add-to-list 'completion-at-point-functions #'cape-abbrev)
-        ;;(add-to-list 'completion-at-point-functions #'cape-dict)
-        ;;(add-to-list 'completion-at-point-functions #'cape-symbol)
-        ;;(add-to-list 'completion-at-point-functions #'cape-line)
-        )
+  (use-package corfu
+    :custom
+    (setq corfu-auto t)
+    :init
+    (global-corfu-mode))
 
-      (use-package eglot
-        :commands (eglot eglot-ensure)
-        :hook
-        (python-mode . eglot-ensure)
-        (LaTeX-mode . eglot-ensure)
-        (csharp-mode . omnisharp-mode))
+  (use-package cape
+    ;; Bind dedicated completion commands
+    ;; Alternative prefix keys: C-c p, M-p, M-+, ...
+    :bind (("C-c p p" . completion-at-point) ;; capf
+           ("C-c p t" . complete-tag)        ;; etags
+           ("C-c p d" . cape-dabbrev)        ;; or dabbrev-completion
+           ("C-c p h" . cape-history)
+           ("C-c p f" . cape-file)
+           ("C-c p k" . cape-keyword)
+           ("C-c p s" . cape-symbol)
+           ("C-c p a" . cape-abbrev)
+           ("C-c p l" . cape-line)
+           ("C-c p w" . cape-dict)
+           ("C-c p \\" . cape-tex)
+           ("C-c p _" . cape-tex)
+           ("C-c p ^" . cape-tex)
+           ("C-c p &" . cape-sgml)
+           ("C-c p r" . cape-rfc1345))
+    :init
+    (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+    (add-to-list 'completion-at-point-functions #'cape-file)
+    (add-to-list 'completion-at-point-functions #'cape-elisp-block)
+    (add-to-list 'completion-at-point-functions #'cape-history)
+    ;;(add-to-list 'completion-at-point-functions #'cape-keyword)
+    ;;(add-to-list 'completion-at-point-functions #'cape-tex)
+    ;;(add-to-list 'completion-at-point-functions #'cape-sgml)
+    ;;(add-to-list 'completion-at-point-functions #'cape-rfc1345)
+    ;;(add-to-list 'completion-at-point-functions #'cape-abbrev)
+    ;;(add-to-list 'completion-at-point-functions #'cape-dict)
+    ;;(add-to-list 'completion-at-point-functions #'cape-symbol)
+    ;;(add-to-list 'completion-at-point-functions #'cape-line)
+    )
 
-      (use-package vertico
-        :init
-        (vertico-mode)
-        (setq vertico-count 10)
-        )
+  (use-package eglot
+    :commands (eglot eglot-ensure)
+    :hook
+    (python-mode . eglot-ensure)
+    (LaTeX-mode . eglot-ensure)
+    (csharp-mode . omnisharp-mode))
+
+  (use-package vertico
+    :init
+    (vertico-mode)
+    (setq vertico-count 10)
+    (setq vertico-indexed-mode t)
+    (setq vertico-mouse-mode t)
+    )
+
+  (use-package marginalia
+    :init
+    (marginalia-mode))
+
+  (use-package orderless
+  :ensure t
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic partial-completion)))))
 #+END_SRC
 
 *** Flycheck
