@@ -59,7 +59,7 @@ Compiles elisp files to improve the speed and responsiveness of Emacs at the cos
 ** EXWM
 The Emacs X Window Manager allows you to use your entire desktop within emacs. Other windows are managed like traditional emacs buffers, and different workspaces are implemented using separate emacs frames. This is arguably the largest change to using traditional window managers and desktop environments, and it transforms emacs from simply a program that can do everything to /the/ way to interact with one's computer.
 
-Still, Emacs can still be used without constituting the entire system. Therefore EXWM should only be loaded if no other window manager is running. That way startup time isn't wasted whenever the user wants to run Emacs in the terminal, on a computer using a desktop environment, or another window manager.
+However, Emacs can still be used without constituting the entire system. Therefore EXWM should only be loaded if no other window manager is running. That way startup time isn't wasted whenever the user wants to run Emacs in the terminal, on a computer using a desktop environment, or another window manager.
 
 #+BEGIN_SRC elisp
   (setq switch-to-buffer-obey-display-actions t)
@@ -120,8 +120,6 @@ Visible bell changes the otherwise quite jarring bell sound into a visual flash 
 
 The beacon package shows off the location the the point whenever you move to a window or scroll a buffer so that you don't lose it.
 
-Mode-icons replaces the major mode description in the mode-line with a relevant logo or image.
-
 Solaire-mode makes it easy to distingush between warnings, popups and messages by tinting the background of those buffers slightly darker, as long as the current theme supports it.
 #+BEGIN_SRC elisp
   (setq visible-bell t
@@ -149,14 +147,6 @@ Keeps code fully indented in a nice way.
   (use-package aggressive-indent
     :diminish aggressive-indent-mode
     :hook (prog-mode . aggressive-indent-mode))
-#+END_SRC
-** Line numbers
-Adds line numbers for various major modes.
-#+BEGIN_SRC elisp
-  (define-global-minor-mode prog-line-numbers-mode display-line-numbers-mode
-    (lambda ()
-      (when (derived-mode-p 'prog-mode)
-        (display-line-numbers-mode 1))))
 #+END_SRC
 ** Dashboard
 Configures the all-important emacs dashboard that shows up on startup 
@@ -388,7 +378,7 @@ Enable mouse use when running Emacs in a terminal emulator.
   (xterm-mouse-mode)
 #+END_SRC
 ** Golden ratio
-The [[https://en.wikipedia.org/wiki/Golden_ratio][golden ratio]] is a magically beautiful ratio that has been studied for over a thousand years. A Emacs frame, being a rectangle, forms the /golden rectangle/, and we can split windows using it depending on where out focus is. However, we may sometimes not wish for frames to be automatically resized, for example keeping a PDF-file open in a window, and so the ~C-c g~ keybind is defined to quickly toggle it.
+The [[https://en.wikipedia.org/wiki/Golden_ratio][golden ratio]] is a magically beautiful ratio that has been studied for over a thousand years. An Emacs frame, being a rectangle, forms the /golden rectangle/, and we can split windows using it depending on where our focus is. However, we may sometimes not wish for frames to be automatically resized, for example keeping a PDF-file open in a window, and so the ~C-c g~ keybind is defined to quickly toggle it.
 
 #+BEGIN_SRC elisp
   (use-package golden-ratio
@@ -401,7 +391,7 @@ The [[https://en.wikipedia.org/wiki/Golden_ratio][golden ratio]] is a magically 
 #+END_SRC
 
 ** Yes or no
-Without his setting emacs sometimes asks for confirmation via a "Yes or no" prompt, and sometimes "y or n". This is generally difficult to predict, and so this setting forces the message to always send "y or n" forms, like most programs run in a terminal.
+Without this setting emacs sometimes asks for confirmation via a "Yes or no" prompt, and sometimes "y or n". This is generally difficult to predict, and so this setting forces the message to always send "y or n" forms, like most programs run in a terminal.
 
 #+BEGIN_SRC elisp
   (defalias 'yes-or-no-p 'y-or-n-p)
