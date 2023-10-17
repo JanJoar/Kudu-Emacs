@@ -135,6 +135,7 @@ Solaire-mode makes it easy to distingush between warnings, popups and messages b
     (solaire-global-mode +1))
 
   (setq pixel-scroll-precision-mode t)
+  (global-display-line-numbers-mode)
 #+END_SRC
 *** Indentation
 Keeps code fully indented in a nice way.
@@ -170,6 +171,7 @@ Configures the all-important emacs dashboard that shows up on startup
     (setq dashboard-set-navigator nil)
     (setq dashboard-set-init-info t)
     (setq dashboard-set-footer nil)
+    (add-hook  'dashboard-mode-hook (lambda () (display-line-numbers-mode -1)))
     )
 #+END_SRC
 ** Completion
