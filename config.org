@@ -163,7 +163,7 @@ Configures the all-important emacs dashboard that shows up on startup
     (setq dashboard-icon-type 'all-the-icons)
     (setq dashboard-banner-logo-title "Gnu Emacs")
     (setq dashboard-center-content 'middle)
-    (setq dashboard-startup-banner "~/.emacs.d/KuduLogo_white.svg")
+    (setq dashboard-startup-banner "~/.emacs.d/KuduLogo_white2.svg")
     (setq compilation-ask-about-save nil)
     (setq dashboard-show-shortcuts nil)
     (setq dashboard-items '((recents . 5)))
@@ -353,6 +353,8 @@ Dired is emacs' built in text-based file manager. Its however pretty rough aroun
     (setf dired-kill-when-opening-new-dired-buffer t)
     (setq dired-listing-switches "-aBhl  --group-directories-first")
     (defalias 'eaf-open-in-file-manager #'dired)
+
+  (add-hook 'dired-mode-hook 'toggle-truncate-lines)
 
   (use-package pdf-tools
     :init
