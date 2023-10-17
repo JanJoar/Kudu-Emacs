@@ -51,7 +51,7 @@ Compiles elisp files to improve the speed and responsiveness of Emacs at the cos
 #+BEGIN_SRC elisp
 (use-package auto-compile 
   :ensure t
-  :config
+  :init
   (auto-compile-on-load-mode 1)
   (auto-compile-on-save-mode 1))
 #+END_SRC
@@ -134,7 +134,7 @@ Solaire-mode makes it easy to distingush between warnings, popups and messages b
 
   (use-package solaire-mode
     :init
-    (solaire-global-mode +1))
+    (solaire-global-mode))
 
   (setq pixel-scroll-precision-mode t)
   (global-display-line-numbers-mode)
@@ -147,6 +147,7 @@ Keeps code fully indented in a nice way.
   (setq-default indent-tabs-mode nil)
 
   (use-package aggressive-indent
+    :diminish aggressive-indent-mode
     :hook (prog-mode . aggressive-indent-mode))
 #+END_SRC
 ** Line numbers
@@ -232,17 +233,16 @@ Code completion using corfu.
   (use-package vertico
     :init
     (vertico-mode)
+    :config
     (setq vertico-count 10)
-    (setq vertico-indexed-mode t)
-    (setq vertico-mouse-mode t)
+    (vertico-indexed-mode)
+    (vertico-mouse-mode)
     )
 
   (use-package marginalia
-    :init
-    (marginalia-mode))
+    :hook (vertico-mode . marginalia-mode))
 
   (use-package orderless
-  :ensure t
   :custom
   (completion-styles '(orderless basic))
   (completion-category-overrides '((file (styles basic partial-completion)))))
@@ -265,7 +265,7 @@ Configures Org-mode to make it more attractive and useable.
 
   (use-package org
     :hook (org-mode . visual-line-mode)
-    :init
+    :config
     (setq org-format-latex-options
           (plist-put org-format-latex-options
                      :scale 1.3
@@ -317,15 +317,14 @@ Configures Org-mode to make it more attractive and useable.
 Emacs is an amazing environment for writing in various lisp dialects, with wonderful support out-of-the-box. However, there are various different packages designed to improve this experience in general or in slight, specific ways. Paredit is 
 #+BEGIN_SRC elisp
   (use-package paredit
-    :init
+    :hook (
+           (lisp-mode . paredit-mode)
+           (emacs-lisp-mode . paredit-mode)
+           (scheme-mode . paredit-mode)
+           (slime-mode . paredit-mode)
+           )
+    :config
     (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
-    (add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
-    (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
-    (add-hook 'ielm-mode-hook             #'enable-paredit-mode)
-    (add-hook 'lisp-mode-hook             #'enable-paredit-mode)
-    (add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
-    (add-hook 'scheme-mode-hook           #'enable-paredit-mode)
-    (add-hook 'slime-repl-mode-hook       #'enable-paredit-mode)
 
     (defun override-slime-del-key ()
       (define-key slime-repl-mode-map
@@ -334,11 +333,11 @@ Emacs is an amazing environment for writing in various lisp dialects, with wonde
     )
 
   (use-package slime
-    :init
+    :config
     (setq inferior-lisp-program "sbcl"))
 
   (use-package rainbow-delimiters
-    :init
+    :config
     (setq rainbow-delimiters-mode t))
 
   (setq show-paren-delay 0)
@@ -350,8 +349,8 @@ Dired is emacs' built in text-based file manager. Its however pretty rough aroun
 
 #+BEGIN_SRC elisp
     (use-package openwith
-      :init
-      (openwith-mode t)
+      :hook (dired-mode . openwith-mode)
+      :config
       (setq openwith-associations (list
                                    (list (openwith-make-extension-regexp
                                           '("png" "jpg" "jpeg")) "eog" '(file))
