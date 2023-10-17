@@ -36,12 +36,14 @@ The origin for the name is the kudu, an antelope similar to that of the Gnu, the
 * Configuration
 
 ** Use-package
-Probably one of the most useful packages, even if not very prominent when using emacs, is use-package. It allows you to declaratively write your configuration and have the included emacs package manager download them for you, and also have configurations for packages only run when packages are loaded, similarly to ~(with-eval-after-load ...)~. The variables set here simply enable this behaviour.
+Probably one of the most useful packages, even if not very prominent when using emacs, is use-package. It allows you to declaratively write your configuration and have the included emacs package manager download them for you, and also have configurations for packages only run when packages are loaded, similarly to ~(with-eval-after-load ...)~. The variables set here simply enable this behaviour. The ~diminish~ package hides certain minor modes from being shown in the mode-line and is not installed by default. For this reason its used to check if Kudu has been run before, and therefore if it needs to update its package repos. Feel free to perform this check on any other package, or remove it entirely, but beware that ~(package-refresh-contents)~ must be run before the other ~use-package~ declarations for ~package.el~ to install all the other packages needed.
 
 #+BEGIN_SRC elisp
   (setq use-package-always-defer t
         use-package-always-ensure t)
 
+  (unless (package-installed-p 'diminish)
+      (package-refresh-contents))
   (use-package diminish)
 #+END_SRC
 ** Auto-compile
@@ -171,6 +173,7 @@ Configures the all-important emacs dashboard that shows up on startup
     (setq dashboard-set-navigator nil)
     (setq dashboard-set-init-info t)
     (setq dashboard-set-footer nil)
+    
     (add-hook  'dashboard-mode-hook (lambda () (display-line-numbers-mode -1)))
     )
 #+END_SRC
