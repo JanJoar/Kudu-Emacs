@@ -34,7 +34,7 @@
 (add-hook 'minibuffer-setup-hook #'me/defer-garbage-collection-h)
 (add-hook 'minibuffer-exit-hook #'me/restore-garbage-collection-h)
 
-;; Disabling these things here prevents them from ever loading
+;; Disabling these things here prevents them from ever loading.
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
 (tab-bar-mode -1)
