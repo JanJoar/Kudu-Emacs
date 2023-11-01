@@ -177,6 +177,14 @@ Without this setting emacs sometimes asks for confirmation via a "Yes or no" pro
   (message "test")
 #+END_SRC
 
+The default Emacs mode-line is a bit busy and certain elements of it are difficult to intuitively understand. The ~simple-modeline~ package changes the appearence of the mode-line so that it becomes, well, simpler.
+
+#+BEGIN_SRC elisp
+  (use-package simple-modeline
+    :init
+    (simple-modeline-mode))
+#+END_SRC
+
 ** Dashboard
 Configures the all-important emacs dashboard that shows up on startup 
 #+BEGIN_SRC elisp
@@ -241,6 +249,10 @@ Code completion using corfu.
     ;;(add-to-list 'completion-at-point-functions #'cape-symbol)
     ;;(add-to-list 'completion-at-point-functions #'cape-line)
     )
+  (use-package corfu-terminal
+    :init
+    (unless (display-graphic-p)
+      (corfu-terminal-mode +1)))
 
   (use-package eglot
     :commands (eglot eglot-ensure)
