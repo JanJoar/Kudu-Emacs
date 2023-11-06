@@ -294,7 +294,6 @@ Configures Org-mode to make it more attractive and useable.
       (setq tab-always-indent 'complete))
 
     (use-package org
-      :hook (org-mode . visual-line-mode)
       :config
       (setq org-format-latex-options
             (plist-put org-format-latex-options
@@ -308,6 +307,7 @@ Configures Org-mode to make it more attractive and useable.
             org-toggle-pretty-entities t
             org-hide-leading-stars t
             org-hide-emphasis-markers t)
+      (add-hook 'text-mode-hook 'turn-on-visual-line-mode)
       )
 
     (use-package org-superstar
@@ -323,6 +323,10 @@ Configures Org-mode to make it more attractive and useable.
       :hook (org-mode . yas-minor-mode))
     (use-package yasnippet-snippets)
 
+  (use-package valign
+    :hook (org-mode . valign-mode))
+
+
     (use-package org-modern
       :hook
       (org-mode . org-modern-mode)
@@ -334,8 +338,6 @@ Configures Org-mode to make it more attractive and useable.
       (org-modern-hide-stars nil)
       (org-modern-checkbox nil)
       )
-  (use-package valign
-    :hook (org-mode . valign-mode))
 
     (unless (file-directory-p "~/.emacs.d/site-lisp/org-modern-indent")
       (shell-command "git clone https://github.com/jdtsmith/org-modern-indent.git ~/.emacs.d/site-lisp/org-modern-indent/"))
