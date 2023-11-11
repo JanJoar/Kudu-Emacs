@@ -4,21 +4,45 @@
   "Create and read a text field widget."
   (interactive)
   (switch-to-buffer "*Kudu Installer*")
-  (let ((value "") (button-pressed nil))
-    (widget-create 'editable-field
-                   :size 30
-                   :format "Text Field: %v "
-                   :value value
-                   :action (lambda (widget &rest ignore)
-                             (message "The value is %s" (widget-value widget))))
-    (widget-insert "\n")
-    (widget-create 'push-button
-                   :notify (lambda (widget &rest ignore)
-                             (message "Congratulation!")
-                             (error "Three was the count!"))
-                   "Apply Form")
-    (widget-setup)
-    (message "Text Field Value: %s" value)))
+  (kill-all-local-variables)
+  (let ((inhibit-read-only t))
+    (erase-buffer))
+
+  (widget-insert "\n")
+  
+  (widget-create 'editable-field
+                 :size 30
+                 :format "Hostname: %v "
+                 :action (lambda (widget &rest ignore)
+                           (message "The computer is named %s" (widget-value widget))))
+
+  (widget-insert "\n")
+
+  (widget-create 'editable-field
+                 :size 30
+                 :format "Username: %v "
+                 :action (lambda (widget &rest ignore)
+                           (message "The user is named %s" (widget-value widget))))
+
+  (widget-insert "\n")
+
+  (widget-create 'editable-field
+                 :size 30
+                 :format "Root partition name: %v "
+                 :action (lambda (widget &rest ignore)
+                           (message "The main root partition is named %s" (widget-value widget))))
+
+  (widget-insert "\n")
+
+  (widget-create 'push-button
+                 :notify (lambda (&rest ignore)
+                           (message "yay!"))
+                 "Apply Form")
+
+  
+  (use-local-map widget-keymap)
+  (widget-setup)
+  )
 
 ;; Example usage:
 ;; M-x eval-buffer RET
