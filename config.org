@@ -433,12 +433,19 @@ Magit is wonderful, and one of the killer apps that makes emacs a system than ot
 ** Functions
 The sudo function raises the privelage of the current buffer to root permissions without having to close and open it again through TRAMP.
 #+BEGIN_SRC elisp
-(defun sudo ()
-  (interactive)
-  (let ((position (point)))
-    (find-alternate-file (concat "/sudo::"
-                                 (buffer-file-name (current-buffer))))
-    (goto-char position)))
+  (defun sudo ()
+    (interactive)
+    (let ((position (point)))
+      (find-alternate-file (concat "/sudo::"
+                                   (buffer-file-name (current-buffer))))
+      (goto-char position)))
+
+  (defun kill-magit-buffers ()
+    (interactive)
+    (mapc (lambda (buffer) 
+            (when (eq 'magit-mode (buffer-local-value 'major-mode buffer)) 
+              (kill-buffer buffer))) 
+          (buffer-list)))
 #+END_SRC
 
 ** Emacs Application Framework
