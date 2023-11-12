@@ -422,6 +422,17 @@ Magit is wonderful, and one of the killer apps that makes emacs a system than ot
   (use-package magit)
 #+END_SRC
 
+** Functions
+
+#+BEGIN_SRC elisp
+(defun sudo ()
+  (interactive)
+  (let ((position (point)))
+    (find-alternate-file (concat "/sudo::"
+                                 (buffer-file-name (current-buffer))))
+    (goto-char position)))
+#+END_SRC
+
 ** Emacs Application Framework
 #+BEGIN_SRC elisp
   (use-package eaf
