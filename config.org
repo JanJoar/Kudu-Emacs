@@ -420,10 +420,18 @@ Most of the time when writing parentheses, brackets, and quotes we want to pair 
 Magit is wonderful, and one of the killer apps that makes emacs a system than other editors or IDEs. However it is not installed by default, so it is defined here.
 #+BEGIN_SRC elisp
   (use-package magit)
+
+  (use-package magit-todos
+    :after magit
+    :config (magit-todos-mode 1))
+
+  (use-package magit-delta
+    :after magit
+    :config (magit-delta-mode t))
 #+END_SRC
 
 ** Functions
-
+The sudo function raises the privelage of the current buffer to root permissions without having to close and open it again through TRAMP.
 #+BEGIN_SRC elisp
 (defun sudo ()
   (interactive)
