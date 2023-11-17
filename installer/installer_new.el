@@ -48,4 +48,4 @@ Partition: %s" hostname username partition-name))
 
 ;; Example usage:
 ;; M-x eval-buffer RET
-;; M-x my-text-field-widget
+;; M-x Kudu-installer
