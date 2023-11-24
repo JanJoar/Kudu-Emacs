@@ -165,7 +165,7 @@ The [[https://en.wikipedia.org/wiki/Golden_ratio][golden ratio]] is a magically 
     :diminish golden-ratio-mode
     :init
     (golden-ratio-mode 1)
-    (setq golden-ratio-auto-scale t)
+    (add-hook 'after-init-hook (setq golden-ratio-auto-scale t))
     (keymap-global-set "C-c g" 'golden-ratio-mode)
     )
 #+END_SRC
