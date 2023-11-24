@@ -18,7 +18,7 @@
 #+author: Joar von Arndt
 #+STARTUP: overview
 * What is Kudu?
-Kudu Emacs is originally Joar von Arndt's own configuration for GNU Emacs that has manually been tinkered with to improve its workflow, and now be turned into a fully fledged system compromising Emacs and Guix implemetations of the tools required to form a useable operating system. The goal is to have a fully featured and easily hackable system configurable entierly with lisp, or at least with user-facing tools configurable in its dialects. We wanted to use this as a platform to learn about practical applications of lisp and the design of operating systems and to see if a lisp-system is usable enough for day-to-day computing purposes.
+Kudu Emacs is originally Joar von Arndt's own configuration for GNU Emacs that has manually been tinkered with to improve its workflow, and now be turned into a fully fledged system compromising Emacs and Guix implementations of the tools required to form a useable operating system. The goal is to have a fully featured and easily hackable system configurable entirely with lisp, or at least with user-facing tools configurable in its dialects. We wanted to use this as a platform to learn about practical applications of lisp and the design of operating systems and to see if a lisp-system is usable enough for day-to-day computing purposes.
 
 A lot of inspiration is taken from preëxisting GNU Emacs configurations, most notably:
 - [[https://github.com/snackon/Witchmacs][Witchmacs]]
@@ -62,92 +62,129 @@ The Emacs X Window Manager allows you to use your entire desktop within emacs. O
 However, Emacs can still be used without constituting the entire system. Therefore EXWM should only be loaded if no other window manager is running. That way startup time isn't wasted whenever the user wants to run Emacs in the terminal, on a computer using a desktop environment, or another window manager.
 
 #+BEGIN_SRC elisp
-  (setq switch-to-buffer-obey-display-actions t)
-  (shell-command "wmctrl -m ; echo $status" "*window-manager*" "*window-manager-error*")
+  (use-package exwm
+    :init
+    (setq switch-to-buffer-obey-display-actions t)
+    (shell-command "wmctrl -m ; echo $status" "*window-manager*" "*window-manager-error*")
 
-  (when (and
-         (get-buffer "*window-manager-error*") ;; The shell command has to both encounter an error and a running in an X environment.
-         (eq window-system 'x))
+    (when (and
+           (get-buffer "*window-manager-error*") ;; The shell command has to both encounter an error and a running in an X environment.
+           (eq window-system 'x))
 
-    (display-battery-mode 1)
-    (setq display-time-day-and-date t)
-    (display-time-mode 1)
+      (display-battery-mode 1)
+      (setq display-time-day-and-date t)
+      (display-time-mode 1)
 
-    ;; Changes the name of EXWM-buffers to the corresponding window-name rather than *EXWM*<N>.
-    (add-hook 'exwm-update-class-hook
-              (lambda ()
-                (exwm-workspace-orkspace-rename-buffer exwm-class-name)))
+      ;; Changes the name of EXWM-buffers to the corresponding window-name rather than *EXWM*<N>.
+      (add-hook 'exwm-update-class-hook
+                (lambda ()
+                  (exwm-workspace-rename-buffer exwm-class-name)))
 
-        ;; Creates 3 different workspaces, from 0 to 2.
-    (setq exwm-workspace-number 3)
+      ;; Creates 3 different workspaces, from 0 to 2.
+      (setq exwm-workspace-number 3)
 
-    ;; These  keys will always be sent to EXWM rather than to the X window.
-    (setq exwm-input-prefix-keys
-          '(?\C-x
-            ?\C-g
-            ?\M-x
-            ?\M-z))
+      ;; These  keys will always be sent to EXWM rather than to the X window.
+      (setq exwm-input-prefix-keys
+            '(?\C-x
+              ?\C-g
+              ?\M-x
+              ?\M-z))
 
-    ;; Sends the key after C-q directly to the X window.
-    ;; (define-key exwm-mode-map [?\C-q] 'exwm-input-send-next-key)
+      ;; Sends the key after C-q directly to the X window.
+      ;; (define-key exwm-mode-map [?\C-q] 'exwm-input-send-next-key)
 
-    (setq exwm-input-global-keys
-          `(
-            ([?\s-r] . exwm-reset)
-            ([s-left] . windmove-left)
-            ([s-right] . windmove-right)
-            ([s-up] . windmove-up)
-            ([s-down] . windmove-down)
-            ([?\s-w] . exwm-workspace-switch)
-            ([?\C-q] . exwm-input-send-next-key)
-            ([?\s-a] . (lambda (command)
-                         (interactive (list (read-shell-command "$ ")))
-                         (start-process-shell-command command nil command)))
-            ([?\s-w] . exwm-workspace-switch)
-            ))
-    ;; Actually starts EXWM
-    (exwm-enable)
-    )
+      (setq exwm-input-global-keys
+            `(
+              ([?\s-r] . exwm-reset)
+              ([s-left] . windmove-left)
+              ([s-right] . windmove-right)
+              ([s-up] . windmove-up)
+              ([s-down] . windmove-down)
+              ([?\s-w] . exwm-workspace-switch)
+              ([?\C-q] . exwm-input-send-next-key)
+              ([?\s-a] . (lambda (command)
+                           (interactive (list (read-shell-command "$ ")))
+                           (start-process-shell-command command nil command)))
+              ([?\s-w] . exwm-workspace-switch)
+              ))
+      ;; Actually starts EXWM
+      (exwm-enable)
+      )
 
-  (when (get-buffer "*window-manager*")
-    (kill-buffer "*window-manager*"))
-  (when (get-buffer "*window-manager-error*")
-    (kill-buffer "*window-manager-error*"))
+    (when (get-buffer "*window-manager*")
+      (kill-buffer "*window-manager*"))
+    (when (get-buffer "*window-manager-error*")
+      (kill-buffer "*window-manager-error*")))
 #+END_SRC
-** Minor visual elements
-Visual items that are too minor to fit in their own section.
-Visible bell changes the otherwise quite jarring bell sound into a visual flash on it top and bottom of the emacs frame. ~prettify-symbols-mode~ allows certain major modes to change the appearance of strings, the classic example being the greek letter lambda in lisp-modes for lambda calculus.
-
-The beacon package shows off the location the the point whenever you move to a window or scroll a buffer so that you don't lose it.
-
-Solaire-mode makes it easy to distingush between warnings, popups and messages by tinting the background of those buffers slightly darker, as long as the current theme supports it.
+** General visual elements
+Visible bell changes the otherwise quite jarring bell sound into a visual flash on it top and bottom of the emacs frame. ~prettify-symbols-mode~ allows certain major modes to change the appearance of strings, the classic example being the greek letter lambda in lisp-modes for lambda calculus. ~pixel-scroll-precision-mode~ allows you to scroll past things like images without buffers jumping around all the time.
+ 
 #+BEGIN_SRC elisp
   (setq visible-bell t
-        global-prettify-symbols-mode 1)
+        global-prettify-symbols-mode 1
+        pixel-scroll-precision-mode t)
+    (global-display-line-numbers-mode)
+#+END_SRC
 
-  (use-package beacon
+The beacon package shows off the location the the point whenever you move to a window or scroll a buffer so that you don't lose it.
+#+BEGIN_SRC elisp
+    (use-package beacon
     :diminish beacon-mode
     :init
     (beacon-mode 1))
-
-  (use-package solaire-mode
-    :init
-    (solaire-global-mode))
-
-  (setq pixel-scroll-precision-mode t)
-  (global-display-line-numbers-mode)
 #+END_SRC
-*** Indentation
-Keeps code fully indented in a nice way.
+
+Solaire-mode makes it easy to distingush between warnings, popups and messages by tinting the background of those buffers slightly darker, as long as the current theme supports it.
 #+BEGIN_SRC elisp
-  (setq-default tab-width 2)
-  (setq-default standard-indent 4)
+        (use-package solaire-mode
+          :init
+          (solaire-global-mode))
+        (setq pixel-scroll-precision-mode t)
+#+END_SRC
+
+Formats tabs to Linux-kernel standards and keeps them so using the ~aggressive-indent~ package.
+#+BEGIN_SRC elisp
+  (setq-default tab-width 8)
+  (setq-default standard-indent 8)
   (setq-default indent-tabs-mode nil)
 
   (use-package aggressive-indent
     :diminish aggressive-indent-mode
     :hook (prog-mode . aggressive-indent-mode))
 #+END_SRC
+
+Enable mouse use when running Emacs in a terminal emulator.
+#+BEGIN_SRC elisp
+  (xterm-mouse-mode)
+#+END_SRC
+
+The [[https://en.wikipedia.org/wiki/Golden_ratio][golden ratio]] is a magically beautiful ratio that has been studied for over a thousand years. An Emacs frame, being a rectangle, forms the /golden rectangle/, and we can split windows using it depending on where our focus is. However, we may sometimes not wish for frames to be automatically resized, for example keeping a PDF-file open in a window, and so the ~C-c g~ keybind is defined to quickly toggle it.
+
+#+BEGIN_SRC elisp
+  (use-package golden-ratio
+    :diminish golden-ratio-mode
+    :init
+    (golden-ratio-mode 1)
+    (add-hook 'after-init-hook (setq golden-ratio-auto-scale t))
+    (keymap-global-set "C-c g" 'golden-ratio-mode)
+    )
+#+END_SRC
+
+Without this setting emacs sometimes asks for confirmation via a "Yes or no" prompt, and sometimes "y or n". This is generally difficult to predict, and so this setting forces the message to always send "y or n" forms, like most programs run in a terminal.
+
+#+BEGIN_SRC elisp
+  (defalias 'yes-or-no-p 'y-or-n-p)
+  (message "test")
+#+END_SRC
+
+The default Emacs mode-line is a bit busy and certain elements of it are difficult to intuitively understand. The ~simple-modeline~ package changes the appearence of the mode-line so that it becomes, well, simpler.
+
+#+BEGIN_SRC elisp
+  (use-package simple-modeline
+    :init
+    (simple-modeline-mode))
+#+END_SRC
+
 ** Dashboard
 Configures the all-important emacs dashboard that shows up on startup 
 #+BEGIN_SRC elisp
@@ -155,7 +192,7 @@ Configures the all-important emacs dashboard that shows up on startup
     :init
     (dashboard-setup-startup-hook)
     (setq dashboard-icon-type 'all-the-icons)
-    (setq dashboard-banner-logo-title "Gnu Emacs")
+    (setq dashboard-banner-logo-title "Welcome to Kudu Emacs!")
     (setq dashboard-center-content 'middle)
     (setq dashboard-startup-banner
           (if (window-system)
@@ -212,6 +249,10 @@ Code completion using corfu.
     ;;(add-to-list 'completion-at-point-functions #'cape-symbol)
     ;;(add-to-list 'completion-at-point-functions #'cape-line)
     )
+  (use-package corfu-terminal
+    :init
+    (unless (display-graphic-p)
+      (corfu-terminal-mode +1)))
 
   (use-package eglot
     :commands (eglot eglot-ensure)
@@ -238,7 +279,6 @@ Code completion using corfu.
   (completion-category-overrides '((file (styles basic partial-completion)))))
 #+END_SRC
 
-*** Flycheck
 Tangentally related is flycheck, providing in-buffer syntax checking.
 #+BEGIN_SRC elisp
   (use-package flycheck
@@ -248,40 +288,44 @@ Tangentally related is flycheck, providing in-buffer syntax checking.
 ** Org-mode
 Configures Org-mode to make it more attractive and useable.
 #+BEGIN_SRC elisp
-  (use-package emacs
-    :init
-    (setq completion-cycle-threshold 2)
-    (setq tab-always-indent 'complete))
+    (use-package emacs
+      :init
+      (setq completion-cycle-threshold 2)
+      (setq tab-always-indent 'complete))
 
-  (use-package org
-    :hook (org-mode . visual-line-mode)
-    :config
-    (setq org-format-latex-options
-          (plist-put org-format-latex-options
-                     :scale 1.3
-                     ))
-    (setq org-format-latex-options
-          (plist-put org-format-latex-options
-                     :html-scale 3
-                     ))
-    (setq org-startup-indented t
-          org-toggle-pretty-entities t
-          org-hide-leading-stars t
-          org-hide-emphasis-markers t)
-    )
+    (use-package org
+      :config
+      (setq org-format-latex-options
+            (plist-put org-format-latex-options
+                       :scale 1.3
+                       ))
+      (setq org-format-latex-options
+            (plist-put org-format-latex-options
+                       :html-scale 3
+                       ))
+      (setq org-startup-indented t
+            org-toggle-pretty-entities t
+            org-hide-leading-stars t
+            org-hide-emphasis-markers t)
+      (add-hook 'text-mode-hook 'turn-on-visual-line-mode)
+      )
 
-  (use-package org-superstar
-    :hook (org-mode . org-superstar-mode))
-  (use-package org-fragtog
-    :hook (org-mode . org-fragtog-mode))
-  (use-package toc-org
-    :hook (org-mode . toc-org-mode))
-  (use-package org-appear
-    :hook (org-mode . org-appear-mode))
-  (use-package yasnippet
-    :diminish yas-minor-mode
-    :hook (org-mode . yas-minor-mode))
-  (use-package yasnippet-snippets)
+    (use-package org-superstar
+      :hook (org-mode . org-superstar-mode))
+    (use-package org-fragtog
+      :hook (org-mode . org-fragtog-mode))
+    (use-package toc-org
+      :hook (org-mode . toc-org-mode))
+    (use-package org-appear
+      :hook (org-mode . org-appear-mode))
+    (use-package yasnippet
+      :diminish yas-minor-mode
+      :hook (org-mode . yas-minor-mode))
+    (use-package yasnippet-snippets)
+
+  (use-package valign
+    :hook (org-mode . valign-mode))
+
 
     (use-package org-modern
       :hook
@@ -295,12 +339,12 @@ Configures Org-mode to make it more attractive and useable.
       (org-modern-checkbox nil)
       )
 
+    (unless (file-directory-p "~/.emacs.d/site-lisp/org-modern-indent")
+      (shell-command "git clone https://github.com/jdtsmith/org-modern-indent.git ~/.emacs.d/site-lisp/org-modern-indent/"))
+    (use-package org-modern-indent
+      :load-path "~/.emacs.d/site-lisp/org-modern-indent"
+      :hook (org-mode . org-modern-indent-mode))
 
-  (unless (file-directory-p "~/.emacs.d/site-lisp/org-modern-indent")
-          (shell-command "git clone https://github.com/jdtsmith/org-modern-indent.git ~/.emacs.d/site-lisp/"))
-  (use-package org-modern-indent
-    :load-path "~/.emacs.d/site-lisp/org-modern-indent"
-    :hook (org-mode . org-modern-indent-mode))
  #+END_SRC
 
 ** Lisp
@@ -372,29 +416,36 @@ Most of the time when writing parentheses, brackets, and quotes we want to pair 
                               ))
   (electric-pair-mode t)
 #+END_SRC
-** Mouse in terminal
-Enable mouse use when running Emacs in a terminal emulator.
+** Magit
+Magit is wonderful, and one of the killer apps that makes emacs a system than other editors or IDEs. However it is not installed by default, so it is defined here.
 #+BEGIN_SRC elisp
-  (xterm-mouse-mode)
-#+END_SRC
-** Golden ratio
-The [[https://en.wikipedia.org/wiki/Golden_ratio][golden ratio]] is a magically beautiful ratio that has been studied for over a thousand years. An Emacs frame, being a rectangle, forms the /golden rectangle/, and we can split windows using it depending on where our focus is. However, we may sometimes not wish for frames to be automatically resized, for example keeping a PDF-file open in a window, and so the ~C-c g~ keybind is defined to quickly toggle it.
+  (use-package magit)
 
-#+BEGIN_SRC elisp
-  (use-package golden-ratio
-    :diminish golden-ratio-mode
-    :init
-    (golden-ratio-mode 1)
-    (setq golden-ratio-auto-scale t)
-    (keymap-global-set "C-c g" 'golden-ratio-mode)
-    )
+  (use-package magit-todos
+    :after magit
+    :config (magit-todos-mode 1))
+
+  (use-package magit-delta
+    :after magit
+    :config (magit-delta-mode t))
 #+END_SRC
 
-** Yes or no
-Without this setting emacs sometimes asks for confirmation via a "Yes or no" prompt, and sometimes "y or n". This is generally difficult to predict, and so this setting forces the message to always send "y or n" forms, like most programs run in a terminal.
-
+** Functions
+The sudo function raises the privelage of the current buffer to root permissions without having to close and open it again through TRAMP.
 #+BEGIN_SRC elisp
-  (defalias 'yes-or-no-p 'y-or-n-p)
+  (defun sudo ()
+    (interactive)
+    (let ((position (point)))
+      (find-alternate-file (concat "/sudo::"
+                                   (buffer-file-name (current-buffer))))
+      (goto-char position)))
+
+  (defun kill-magit-buffers ()
+    (interactive)
+    (mapc (lambda (buffer) 
+            (when (eq 'magit-mode (buffer-local-value 'major-mode buffer)) 
+              (kill-buffer buffer))) 
+          (buffer-list)))
 #+END_SRC
 
 ** Emacs Application Framework
