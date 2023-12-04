@@ -450,6 +450,10 @@ The sudo function raises the privelage of the current buffer to root permissions
 
 ** Emacs Application Framework
 #+BEGIN_SRC elisp
+  (unless (file-directory-p "~/.emacs.d/site-lisp/emacs-application-framework")
+    (shell-command "git clone git clone --depth=1 -b master https://github.com/emacs-eaf/emacs-application-framework.git")
+    (eaf-inst))
+
   (use-package eaf
     :load-path "~/.emacs.d/site-lisp/emacs-application-framework"
     :config
