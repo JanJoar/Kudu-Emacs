@@ -40,7 +40,7 @@
                            (widget-setup))
                  "other work")
   (widget-insert
-    " for more information.\n\nNumbers: count to three below\n")
+   " for more information.\n\nNumbers: count to three below\n")
   (setq widget-example-repeat
         (widget-create 'editable-list
                        :entry-format "%i %d %v"
@@ -71,19 +71,12 @@
                  '(item "One") '(item "Another One.")
                  '(item "A Final One."))
   (widget-insert "\n")
-    (widget-create 'push-button
-                 :notify (lambda (&rest ignore)
-                           (let ((name (widget-value (widget-children (widget-at (point))))))
-                             (if (= (length (widget-value widget-example-repeat)) 3)
-                                 (message "Congratulations, %s!" name)
-                               (error "Three was the count!"))))
-                 "Apply Form")
   (widget-create 'push-button
                  :notify (lambda (&rest ignore)
                            (if (= (length
                                    (widget-value widget-example-repeat))
                                   3)
-                               (message "Congratulation" )
+                               (message "Congratulation!")
                              (error "Three was the count!")))
                  "Apply Form")
   (widget-insert " ")
@@ -93,27 +86,4 @@
                  "Reset Form")
   (widget-insert "\n")
   (use-local-map widget-keymap)
-  (widget-setup)) 
-
-(require 'widget)
-
-(defun my-widget-program ()
-  "Create a simple widget program."
-  (interactive)
-  (switch-to-buffer "*Widget Program*")
-  (erase-buffer)
-  (widget-create 'editable-field
-                 :size 20
-                 :format "Name: %v "
-                 :notify (lambda (&rest ignore)
-                           (message "Hello, %s!" (widget-value (widget-children (widget-at (point)))))))
-  (widget-insert "\n\n")
-  (widget-create 'push-button
-                 :notify (lambda (&rest ignore)
-                           (message "Button pressed! Name: %s" (widget-value (widget-children (widget-at (point)))))) "Press me")
-  (widget-insert "\n")
-  (use-local-map widget-keymap)
   (widget-setup))
-
-;; Run the widget program
-(my-widget-program)
