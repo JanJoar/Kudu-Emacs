@@ -8,13 +8,13 @@
   (let ((inhibit-read-only t))
     (erase-buffer))
   (remove-overlays)
-  (let ((hostname "") (username "") (partition ""))
+  (let ((hostname "") (username "") (disk ""))
     (widget-insert "\n")
     (setq disks (get-disks))
     (message (car disks))
     (widget-create 'editable-field
                    :size 30
-                   :format "Toastname: %v "
+                   :format "Hostname: %v "
                    :notify (lambda (widget &rest ignore)
                              (setq hostname (widget-value widget))))
 
@@ -23,7 +23,7 @@
                    :value "One"                                                                         
                    :tag "radio-tag"                                                                     
                    :notify (lambda (widget &rest ignore)                                                
-                             (setq partition                                                          
+                             (setq disk                                                          
                                    (widget-value widget)))
                    `(item ,(nth 0 disks))
                    `(item ,(nth 1 disks))
@@ -50,7 +50,7 @@
     (widget-insert "\n")
     (widget-create 'push-button
                    :notify (lambda (&rest ignore)
-                             (upload hostname username partition)
+                             (upload hostname username disk)
                              )
                    "Apply Form")
 
@@ -59,16 +59,15 @@
     (widget-setup)
     ))
 
-(defun upload (hostname username partition)
-  (message "format")
+(defun upload (hostname username disk)
   (setq cmd (format
-             "./install.sh --hostname %s --username %s --partition %s"
+             "./test_install.sh --hostname %s --username %s --disk %s"
              hostname
              username
-             partition
+             disk-name
+
              ))
-  (message cmd)
-  (shell-command cmd)
+  (message (shell-command-to-string cmd))
   )
 
 ;; Example usage:

@@ -1,4 +1,4 @@
 #!/bin/sh
-echo sda 
-echo sdb
-echo sdc
+disks=$(lsblk -o NAME,TYPE -n -p -l | grep 'disk' | awk '{print $1}')
+# Print each disk on a new line
+echo "$disks"
