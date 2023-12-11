@@ -14,7 +14,7 @@
     (message (car disks))
     (widget-create 'editable-field
                    :size 30
-                   :format "Hostname: %v "
+                   :format "Toastname: %v "
                    :notify (lambda (widget &rest ignore)
                              (setq hostname (widget-value widget))))
 
@@ -60,14 +60,15 @@
     ))
 
 (defun upload (hostname username disk)
+  (message "format")
   (setq cmd (format
-             "./test_install.sh --hostname %s --username %s --disk %s"
+             "bash ./install_test.sh --hostname %s --username %s --disk %s &"
              hostname
              username
-             disk-name
-
+             disk
              ))
-  (message (shell-command-to-string cmd))
+  (message cmd)
+  (shell-command cmd)
   )
 
 ;; Example usage:

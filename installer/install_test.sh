@@ -1,5 +1,10 @@
 #!/bin/bash
 
+for i in {1..10}; do
+    echo $i
+    sleep 1
+done
+
 while [[ "$#" -gt 0 ]]; do
 	case $1 in
 		--hostname)
@@ -10,8 +15,8 @@ while [[ "$#" -gt 0 ]]; do
 			username="$2"
 			shift
 			;;
-		--partition)
-			partition="$2"
+		--disk)
+			disk="$2"
 			shift
 			;;
 		*)
@@ -41,4 +46,4 @@ scm=$(substitute_variables "$scheme_template" DISK HOSTNAME USERNAME SWAP_UUID R
 echo "$scm"
 echo "Hostname: $hostname"
 echo "Username: $username"
-echo "Partition: $partition"
+echo "Partition: $disk"
