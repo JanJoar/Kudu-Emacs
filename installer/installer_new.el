@@ -8,7 +8,7 @@
   (let ((inhibit-read-only t))
     (erase-buffer))
   (remove-overlays)
-  (let ((hostname "") (username "") (partition ""))
+  (let ((hostname "") (username "") (disk ""))
     (widget-insert "\n")
     (setq disks (get-disks))
     (message (car disks))
@@ -23,7 +23,7 @@
                    :value "One"                                                                         
                    :tag "radio-tag"                                                                     
                    :notify (lambda (widget &rest ignore)                                                
-                             (setq partition                                                          
+                             (setq disk                                                          
                                    (widget-value widget)))
                    `(item ,(nth 0 disks))
                    `(item ,(nth 1 disks))
@@ -50,7 +50,7 @@
     (widget-insert "\n")
     (widget-create 'push-button
                    :notify (lambda (&rest ignore)
-                             (upload hostname username partition)
+                             (upload hostname username disk)
                              )
                    "Apply Form")
 
@@ -59,13 +59,13 @@
     (widget-setup)
     ))
 
-(defun upload (hostname username partition)
+(defun upload (hostname username disk)
   (message "format")
   (setq cmd (format
-             "./install.sh --hostname %s --username %s --partition %s"
+             "./install.sh --hostname %s --username %s --disk %s"
              hostname
              username
-             partition
+             disk
              ))
   (message cmd)
   (shell-command cmd)
