@@ -50,8 +50,7 @@
            %desktop-services))
   (bootloader (bootloader-configuration
                 (bootloader grub-bootloader)
-                (targets (list "$DISK"))
-                (keyboard-layout keyboard-layout)))
+                (targets '("$DISK"))))
   (swap-devices (list (swap-space
                         (target (uuid
                                  "$SWAP_UUID"

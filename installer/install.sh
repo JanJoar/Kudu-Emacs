@@ -69,7 +69,7 @@ function install() {
 	ROOT_UUID=$(get_part_uuid $root_part)
 
 	scheme_template=$(cat guix_config.scm)
-	scm=$(substitue_variables $scheme_template DISK HOSTNAME USERNAME SWAP_UUID ROOT_UUID)
+	scm=$(substitute_variables "$scheme_template" DISK HOSTNAME USERNAME SWAP_UUID ROOT_UUID)
 
 	mkdir /mnt/etc
 	echo "$scm" > /mnt/etc/config.scm
