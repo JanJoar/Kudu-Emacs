@@ -451,12 +451,13 @@ The sudo function raises the privelage of the current buffer to root permissions
 ** Emacs Application Framework
 #+BEGIN_SRC elisp
   (unless (file-directory-p "~/.emacs.d/site-lisp/emacs-application-framework")
-    (shell-command "git clone git clone --depth=1 -b master https://github.com/emacs-eaf/emacs-application-framework.git")
-    (eaf-inst))
-
+    (shell-command "git clone --depth=1 -b master https://github.com/emacs-eaf/emacs-application-framework.git ~/.emacs.d/site-lisp/emacs-application-framework/"))
+  (if (get-buffer "*Shell Command Output*") (kill-buffer "*Shell Command Output*"))
+  
   (use-package eaf
     :load-path "~/.emacs.d/site-lisp/emacs-application-framework"
     :config
+    (eaf-install-and-update)
     (eaf-browser-continue-where-left-off t)
     (eaf-browser-enable-adblocker t)
     (browse-url-browser-function 'eaf-open-browser)
@@ -474,12 +475,3 @@ The sudo function raises the privelage of the current buffer to root permissions
     )
 #+END_SRC
 
-** Server
-Launch the Emacs server after init.
-#+BEGIN_SRC elisp
-;  (add-hook 'after-init-hook '(unless (and
-;                                       (fboundp 'server-running-p)
-;                                       (server-running-p)
-;                                       )
-;                                (server-start)))
-#+END_SRC
