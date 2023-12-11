@@ -19,27 +19,14 @@
                              (setq hostname (widget-value widget))))
 
     (widget-insert "\n")
-    (widget-create 'radio-button-choice                                                                 
-                   :value "One"                                                                         
-                   :tag "radio-tag"                                                                     
-                   :notify (lambda (widget &rest ignore)                                                
-                             (setq disk                                                          
-                                   (widget-value widget)))
-                   `(item ,(nth 0 disks))
-                   `(item ,(nth 1 disks))
-                   `(item ,(nth 2 disks))
-                   `(item ,(nth 3 disks))
-                   `(item ,(nth 4 disks))
-                   `(item ,(nth 5 disks))
-                   `(item ,(nth 6 disks))
-                   `(item ,(nth 7 disks))
-                   `(item ,(nth 8 disks))
-                   `(item ,(nth 9 disks))
-                   `(item ,(nth 11 disks))
-                   `(item ,(nth 12 disks))
-                   `(item ,(nth 13 disks))
-                   `(item ,(nth 69 disks))                   
-                   )
+    (apply
+     #'widget-create
+     'radio-button-choice
+     :tag "radio-tag"
+     :notify (lambda (widget &rest ignore)
+               (setq disk
+                     (widget-value widget)))
+     (mapcar (lambda (disk) `(item ,disk)) disks))
     
     (widget-insert "\n")
     (widget-create 'editable-field
