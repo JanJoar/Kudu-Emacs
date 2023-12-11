@@ -24,7 +24,8 @@ done
 
 function get_parts() {
 	disk=$1
-	part=$(lsblk -o NAME,TYPE -n -p -l | awk -v disk="$disk" '$2=="part" && index($1, disk)==1 {print $1}')
+	part=$(lsblk -o NAME,TYPE -n -p -l | awk -v disk="$disk" '$2=="part"')
+	echo "$part"
 }
 function substitute_variables() {
 	local str="$1"
@@ -39,9 +40,9 @@ function make_disk() {
 	sfdisk -f $disk < part.sfdisk
 	parted -s $disk resizepart 3 100%
 	part=$(get_parts $disk)
-	BOOT_PART=$part | head -n 1 | tail -n 1
-	SWAP_PART=$part | head -n 2 | tail -n 1
-	ROOT_PART=$part | head -n 3 | tail -n 1
+	BOOT_PART=$(echo "$part" | awk 'NR==1{print $1}')
+	SWAP_PART=$(echo "$part" | awk 'NR==2{print $1}')
+	ROOT_PART=$(echo "$part" | awk 'NR==3{print $1}')
 
 	mkfs.fat -F32 $BOOT_PART
 	mkfs.ext4 $ROOT_PART
@@ -61,8 +62,8 @@ function install() {
 	USERNAME=$3
 
 	part=$(get_parts $disk)
-	swap_part=$part | head -n 2 | tail -n 1
-	root_part=$part | head -n 3 | tail -n 1
+	swap_part=$(echo "$part" | awk 'NR==2{print $1}')
+	root_part=$(echo "$part" | awk 'NR==3{print $1}')
 
 	SWAP_UUID=$(get_part_uuid $swap_part)
 	ROOT_UUID=$(get_part_uuid $root_part)

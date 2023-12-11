@@ -62,7 +62,7 @@
 (defun upload (hostname username disk)
   (message "format")
   (setq cmd (format
-             "./install.sh --hostname %s --username %s --disk %s"
+             "bash ./install.sh --hostname %s --username %s --disk %s"
              hostname
              username
              disk
