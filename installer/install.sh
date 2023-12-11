@@ -36,7 +36,7 @@ function substitute_variables() {
 }
 function make_disk() {
 	disk=$1
-	sfdisk -f $disk < part
+	sfdisk -f $disk < part.sfdisk
 	parted -s $disk resizepart 3 100%
 	part=$(get_parts $disk)
 	BOOT_PART=$part | head -n 1 | tail -n 1
