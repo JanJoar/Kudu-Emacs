@@ -45,7 +45,7 @@ function make_disk() {
 	ROOT_PART=$(echo "$part" | awk 'NR==3{print $1}')
 
 	mkfs.fat -F32 $BOOT_PART
-	mkfs.ext4 $ROOT_PART
+	mkfs.ext4 -F $ROOT_PART
 	mkswap $SWAP_PART
 
 	swapon $SWAP_PART
