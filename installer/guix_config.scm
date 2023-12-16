@@ -11,7 +11,16 @@
 
 ;; Indicate which modules to import to access the variables
 ;; used in this configuration.
-(use-modules (gnu))
+(use-modules 
+  (gnu)
+  (gnu packages emacs)
+  (gnu packages emacs-xyz)
+  (gnu packages screen)
+  (gnu packages linux)
+  (gnu packages version-control)
+  (gnu packages gnuzilla)
+  (gnu packages games)
+  )
 (use-service-modules cups desktop networking ssh xorg)
 
 (operating-system
@@ -24,14 +33,25 @@
   (users (cons* (user-account
                   (name "$USERNAME")
                   (group "users")
-                  (home-directory "/home/t")
+                  (home-directory "/home/$USERNAME")
                   (supplementary-groups '("wheel" "netdev" "audio" "video")))
                 %base-user-accounts))
 
   ;; Packages installed system-wide.  Users can also install packages
   ;; under their own account: use 'guix search KEYWORD' to search
   ;; for packages and 'guix install PACKAGE' to install a package.
-  (packages (append (list (specification->package "nss-certs"))
+  (packages (append (list 
+		      (specification->package "nss-certs")
+		      screen
+		      emacs
+		      emacs-exwm
+		      wmctl
+		      brightnessctl
+		      git
+		      icecat
+		      openttd
+		      %base-packages
+		      )
                     %base-packages))
 
   ;; Below is the list of system services.  To search for available

@@ -73,8 +73,11 @@ function install() {
 
 	mkdir /mnt/etc
 	echo "$scm" > /mnt/etc/config.scm
+	guix pull
+	hash guix
 	guix system init /mnt/etc/config.scm /mnt
 
+	mkdir -p /mnt/home/$USERNAME/
 	git clone https://github.com/JanJoar/Kudu-Emacs.git /mnt/$HOME/.emacs.d -b devel
 
 }
