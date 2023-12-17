@@ -74,6 +74,10 @@ function install() {
 	mkdir /mnt/etc
 	echo "$scm" > /mnt/etc/config.scm
 	guix pull
+ 	guix package -u
+	hash guix
+ 	guix pull
+ 	guix package -u
 	hash guix
 	guix system init /mnt/etc/config.scm /mnt
 
