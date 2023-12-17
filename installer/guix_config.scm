@@ -45,7 +45,6 @@
 		      screen
 		      emacs
 		      emacs-exwm
-		      wmctl
 		      brightnessctl
 		      git
 		      icecat
