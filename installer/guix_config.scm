@@ -49,7 +49,6 @@
 		      git
 		      icecat
 		      openttd
-		      %base-packages
 		      )
                     %base-packages))
 
