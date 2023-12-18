@@ -42,9 +42,9 @@ Probably one of the most useful packages, even if not very prominent when using 
   (setq use-package-always-defer t
         use-package-always-ensure t)
 
-  (unless (package-installed-p 'diminish)
-      (package-refresh-contents))
-  (use-package diminish)
+  (unless (package-installed-p 'use-package)
+      (package-refresh-contents)
+      (package-install 'use-package))
 #+END_SRC
 ** Auto-compile
 Compiles elisp files to improve the speed and responsiveness of Emacs at the cost of first-time startup time. The settings in ~init.el~ makes sure that updated elisp files take priority over older, compiled files.
@@ -206,6 +206,7 @@ Configures the all-important emacs dashboard that shows up on startup
     (setq dashboard-set-footer nil)
 
     (add-hook  'dashboard-mode-hook (lambda () (display-line-numbers-mode -1)))
+    (dashboard-open)
     )
 #+END_SRC
 ** Completion
