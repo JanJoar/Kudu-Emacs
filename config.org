@@ -136,6 +136,7 @@ The beacon package shows off the location the the point whenever you move to a w
 #+END_SRC
 
 Solaire-mode makes it easy to distingush between warnings, popups and messages by tinting the background of those buffers slightly darker, as long as the current theme supports it.
+
 #+BEGIN_SRC elisp
         (use-package solaire-mode
           :init
@@ -144,6 +145,7 @@ Solaire-mode makes it easy to distingush between warnings, popups and messages b
 #+END_SRC
 
 Formats tabs to Linux-kernel standards and keeps them so using the ~aggressive-indent~ package.
+
 #+BEGIN_SRC elisp
   (setq-default tab-width 8)
   (setq-default standard-indent 8)
@@ -155,20 +157,9 @@ Formats tabs to Linux-kernel standards and keeps them so using the ~aggressive-i
 #+END_SRC
 
 Enable mouse use when running Emacs in a terminal emulator.
+
 #+BEGIN_SRC elisp
   (xterm-mouse-mode)
-#+END_SRC
-
-The [[https://en.wikipedia.org/wiki/Golden_ratio][golden ratio]] is a magically beautiful ratio that has been studied for over a thousand years. An Emacs frame, being a rectangle, forms the /golden rectangle/, and we can split windows using it depending on where our focus is. However, we may sometimes not wish for frames to be automatically resized, for example keeping a PDF-file open in a window, and so the ~C-c g~ keybind is defined to quickly toggle it.
-
-#+BEGIN_SRC elisp
-  (use-package golden-ratio
-    :diminish golden-ratio-mode
-    :init
-    (golden-ratio-mode 1)
-    (add-hook 'after-init-hook (setq golden-ratio-auto-scale t))
-    (keymap-global-set "C-c g" 'golden-ratio-mode)
-    )
 #+END_SRC
 
 Without this setting emacs sometimes asks for confirmation via a "Yes or no" prompt, and sometimes "y or n". This is generally difficult to predict, and so this setting forces the message to always send "y or n" forms, like most programs run in a terminal.
@@ -178,12 +169,35 @@ Without this setting emacs sometimes asks for confirmation via a "Yes or no" pro
   (message "test")
 #+END_SRC
 
-The default Emacs mode-line is a bit busy and certain elements of it are difficult to intuitively understand. The ~simple-modeline~ package changes the appearence of the mode-line so that it becomes, well, simpler.
+The default Emacs mode-line is a bit busy and certain elements of it are difficult to intuitively understand. This simplifies it considerably to make it more readable and also adds a header line.
 
 #+BEGIN_SRC elisp
-  (use-package simple-modeline
-    :init
-    (simple-modeline-mode))
+  (defun mode-line-padding ()
+    (let ((r-length (length (format-mode-line mode-line-end-spaces))))
+      (propertize " "
+                  'display `(space :align-to (- right ,r-length)))))
+
+  (setq-default mode-line-format
+              '(
+                "|"
+                "%e"
+                (:eval (unless (string-match-p "\\*.*\\*" (buffer-name))
+                    (let* ((read-only (and buffer-read-only (buffer-file-name)))
+                           (modified (buffer-modified-p)))
+                      (propertize
+                       (if read-only "" (if modified " !" " "))))))
+                " "
+                (:eval (propertize (format "%s" (buffer-name)) 'face 'bold))
+                " "
+                (:eval (mode-line-padding))
+                (:eval (setq mode-line-end-spaces mode-line-misc-info))
+                ))
+  (setq-default header-line-format
+                '(
+                  " | "
+                  (:eval (propertize (format "%s" mode-name) 'face 'bold))
+                  " "
+                  ))
 #+END_SRC
 
 ** Dashboard
