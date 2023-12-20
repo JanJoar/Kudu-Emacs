@@ -107,6 +107,12 @@ However, Emacs can still be used without constituting the entire system. Therefo
                            (interactive (list (read-shell-command "$ ")))
                            (start-process-shell-command command nil command)))
               ([?\s-w] . exwm-workspace-switch)
+              ([?\s-u] . (lambda ()
+                            (interactive)
+                            (shell-command "brightnessctl --quiet --min-value set +10")))
+              ([?\s-d] . (lambda ()
+                           (interactive)
+                           (shell-command "brightnessctl --quiet --min-value set 10-")))
               ))
       ;; Actually starts EXWM
       (exwm-enable)
@@ -117,6 +123,7 @@ However, Emacs can still be used without constituting the entire system. Therefo
     (when (get-buffer "*window-manager-error*")
       (kill-buffer "*window-manager-error*")))
 #+END_SRC
+
 ** General visual elements
 Visible bell changes the otherwise quite jarring bell sound into a visual flash on it top and bottom of the emacs frame. ~prettify-symbols-mode~ allows certain major modes to change the appearance of strings, the classic example being the greek letter lambda in lisp-modes for lambda calculus. ~pixel-scroll-precision-mode~ allows you to scroll past things like images without buffers jumping around all the time.
  
@@ -367,12 +374,11 @@ Configures Org-mode to make it more attractive and useable.
 Emacs is an amazing environment for writing in various lisp dialects, with wonderful support out-of-the-box. However, there are various different packages designed to improve this experience in general or in slight, specific ways. Paredit is 
 #+BEGIN_SRC elisp
   (use-package paredit
-    :hook (
-           (lisp-mode . paredit-mode)
+    :hook ((lisp-mode . paredit-mode)
            (emacs-lisp-mode . paredit-mode)
            (scheme-mode . paredit-mode)
-           (slime-mode . paredit-mode)
-           )
+           (slime-mode . paredit-mode))
+
     :config
     (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
 
@@ -382,12 +388,12 @@ Emacs is an amazing environment for writing in various lisp dialects, with wonde
     (add-hook 'slime-repl-mode-hook 'override-slime-del-key)
     )
 
-  (use-package slime
+  (use-package sly
     :config
     (setq inferior-lisp-program "sbcl"))
 
   (use-package rainbow-delimiters
-    :config
+    :init
     (setq rainbow-delimiters-mode t))
 
   (setq show-paren-delay 0)
@@ -395,7 +401,7 @@ Emacs is an amazing environment for writing in various lisp dialects, with wonde
 #+END_SRC
 
 ** Dired
-Dired is emacs' built in text-based file manager. Its however pretty rough around its edges, such as it opening each directory in a separete buffer making navigation a hassle. However certain tweaks can make it a formidable tool accessible directly within emacs. Take that n³ and midnight commander!
+Dired is emacs' built in text-based file manager. It's however pretty rough around its edges, such as it opening each directory in a separete buffer making navigation a hassle. However certain tweaks can make it a formidable tool accessible directly within emacs. Take that n³ and midnight commander!
 
 #+BEGIN_SRC elisp
     (use-package openwith
