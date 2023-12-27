@@ -21,7 +21,7 @@
                          (device (uuid
                                   "$ROOT_UUID"
 				  'ext4))
-                         (type "ext4")) %base-file-systems)))
+                         (type "ext4")) %base-file-systems))
 
   ;; This is where user accounts are specified.  The "root"
   ;; account is implicit, and is initially created with the

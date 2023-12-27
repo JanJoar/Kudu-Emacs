@@ -30,7 +30,6 @@
  (keyboard-layout (keyboard-layout "$KEYMAP"))
  (host-name "$HOSTNAME")
 
- ;; The list of user accounts ('root' is implicit).
  (users (cons* (user-account
                 (name "$USERNAME")
                 (group "users")
