@@ -26,8 +26,8 @@
 
 (operating-system
  (locale "en_US.utf8")
- (timezone "Europe/Stockholm")
- (keyboard-layout (keyboard-layout "se"))
+ (timezone "$TIMEZONE")
+ (keyboard-layout (keyboard-layout "$KEYMAP"))
  (host-name "$HOSTNAME")
 
  ;; The list of user accounts ('root' is implicit).
@@ -46,7 +46,7 @@
 		    screen
 		    emacs
 		    emacs-exwm
-                    wmctrl
+		    wmctrl
 		    brightnessctl
 		    git
 		    icecat

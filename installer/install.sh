@@ -14,6 +14,18 @@ while [[ "$#" -gt 0 ]]; do
 			disk="$2"
 			shift
 			;;
+		--create-iso)
+			iso=true
+			shift
+			;;
+		--timezone)
+			timezone="$2"
+			shift
+			;;
+		--keymap)
+			keymap="$2"
+			shift
+			;;
 		*)
 			echo "Unknown option: $1"
 			exit 1
@@ -35,6 +47,15 @@ function substitute_variables() {
 	done
 	echo "$str"
 }
+function scm_file() {
+	iso=$1
+	if [ "$iso" = true ]; then
+		echo "guix_iso.scm"
+		return
+	fi
+	echo "guix_config.scm"
+}
+
 function make_disk() {
 	disk=$1
 	sfdisk -f $disk < part.sfdisk
@@ -60,6 +81,10 @@ function install() {
 	DISK=$1
 	HOSTNAME=$2
 	USERNAME=$3
+	SCM_FILE=$4
+	TIMEZONE=$5
+	KEYMAP=$6
+
 
 	part=$(get_parts $disk)
 	swap_part=$(echo "$part" | awk 'NR==2{print $1}')
@@ -68,8 +93,8 @@ function install() {
 	SWAP_UUID=$(get_part_uuid $swap_part)
 	ROOT_UUID=$(get_part_uuid $root_part)
 
-	scheme_template=$(cat guix_config.scm)
-	scm=$(substitute_variables "$scheme_template" DISK HOSTNAME USERNAME SWAP_UUID ROOT_UUID)
+	scheme_template=$(cat $SCM_FILE)
+	scm=$(substitute_variables "$scheme_template" DISK HOSTNAME USERNAME SWAP_UUID ROOT_UUID TIMEZONE KEYMAP)
 
 	mkdir /mnt/etc
 	echo "$scm" > /mnt/etc/config.scm
@@ -87,4 +112,10 @@ function install() {
 }
 
 make_disk $disk
-install $disk $hostname $username
+install				\
+	$disk			\
+	$hostname		\
+	$username		\
+	$(scm_file $iso)	\
+	$timezone		\
+	$keymap

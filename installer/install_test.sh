@@ -1,10 +1,5 @@
 #!/bin/bash
 
-for i in {1..10}; do
-    echo $i
-    sleep 1
-done
-
 while [[ "$#" -gt 0 ]]; do
 	case $1 in
 		--hostname)
@@ -17,6 +12,18 @@ while [[ "$#" -gt 0 ]]; do
 			;;
 		--disk)
 			disk="$2"
+			shift
+			;;
+		--create-iso)
+			iso=true
+			shift
+			;;
+		--timezone)
+			timezone="$2"
+			shift
+			;;
+		--keymap)
+			keymap="$2"
 			shift
 			;;
 		*)
@@ -35,14 +42,25 @@ function substitute_variables() {
 	done
 	echo "$str"
 }
+function scm_file() {
+	iso=$1
+	if [ "$iso" = true ]; then
+		echo "guix_iso.scm"
+		return
+	fi
+	echo "guix_config.scm"
+}
 
 DISK=$disk
 USERNAME=$username
 HOSTNAME=$hostname
+SCM_FILE=$(scm_file $iso)
+TIMEZONE=$timezone
+KEYMAP=$keymap
 SWAP_UUID="swaps uuid"
 ROOT_UUID="roots uuid"
 scheme_template=$(cat guix_config.scm)
-scm=$(substitute_variables "$scheme_template" DISK HOSTNAME USERNAME SWAP_UUID ROOT_UUID)
+scm=$(substitute_variables "$scheme_template" DISK HOSTNAME USERNAME SWAP_UUID ROOT_UUID TIMEZONE KEYMAP)
 echo "$scm"
 echo "Hostname: $hostname"
 echo "Username: $username"
