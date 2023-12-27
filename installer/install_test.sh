@@ -59,7 +59,7 @@ TIMEZONE=$timezone
 KEYMAP=$keymap
 SWAP_UUID="swaps uuid"
 ROOT_UUID="roots uuid"
-scheme_template=$(cat guix_config.scm)
+scheme_template=$(cat $SCM_FILE)
 scm=$(substitute_variables "$scheme_template" DISK HOSTNAME USERNAME SWAP_UUID ROOT_UUID TIMEZONE KEYMAP)
 echo "$scm"
 echo "Hostname: $hostname"
