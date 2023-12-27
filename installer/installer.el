@@ -134,14 +134,11 @@
      (shell-command-to-string (concat "sh " x))
      "\n" t)))
 
-(defun get-nl-separated-and-sorted (x)
-  (interactive "fEnter file path: ")
+(defun get-nl-seperated (x)
   (with-temp-buffer
     (insert-file-contents x)
     (let ((lines (split-string (buffer-string) "\n" t)))
-      (setq lines (delete "" lines))
-      (setq lines (sort lines 'string<)) 
-      lines)))
+      (sort lines #'string<))))
 
 (defun get-disks ()
   "Get a list of disks on the system."
