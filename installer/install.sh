@@ -73,11 +73,25 @@ function make_disk() {
 	mount $ROOT_PART /mnt
 	herd start cow-store /mnt
 }
+function make_disk_iso() {
+	disk=$1
+	sfdisk -f $disk < part_iso.sfdisk
+	parted -s $disk resizepart 3 100%
+	part=$(get_parts $disk)
+	BOOT_PART=$(echo "$part" | awk 'NR==1{print $1}')
+	ROOT_PART=$(echo "$part" | awk 'NR==2{print $1}')
+
+	mkfs.fat -F32 $BOOT_PART
+	mkfs.ext4 -F $ROOT_PART
+
+	mount $ROOT_PART /mnt
+	herd start cow-store /mnt
+}
 function get_part_uuid() {
 	part=$1
 	blkid -s UUID -o value $part
 }
-function install() {
+function guixInit() {
 	DISK=$1
 	HOSTNAME=$2
 	USERNAME=$3
@@ -106,16 +120,38 @@ function install() {
 	hash guix
 	guix system init /mnt/etc/config.scm /mnt
 
-	mkdir -p /mnt/home/$USERNAME/
-	git clone https://github.com/JanJoar/Kudu-Emacs.git /mnt/$HOME/.emacs.d -b devel
+}
+function setup_system() {
+	USERNAME=$1
 
+	mkdir -p /mnt/home/$USERNAME/
+	git clone https://github.com/JanJoar/Kudu-Emacs.git /mnt/home/$USERNAME/.emacs.d -b devel
+}
+function setup_iso() {
+	cp ./* /mnt/root
+	echo "emacs -nw -q -l installer.el --eval (Kudu-Installer)" > /mnt/root/.bashrc
 }
 
-make_disk $disk
-install				\
-	$disk			\
-	$hostname		\
-	$username		\
-	$(scm_file $iso)	\
-	$timezone		\
-	$keymap
+
+if [ "$iso" = true ]; then
+	make_disk_iso $disk
+	setup_iso
+	guixInit			\
+		$disk			\
+		$hostname		\
+		$username		\
+		$(scm_file $iso)	\
+		$timezone		\
+		$keymap
+else
+	make_disk $disk
+	setup_system $username
+	guixInit			\
+		$disk			\
+		$hostname		\
+		$username		\
+		$(scm_file $iso)	\
+		$timezone		\
+		$keymap
+fi
+

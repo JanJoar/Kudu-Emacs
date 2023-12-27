@@ -21,7 +21,7 @@
   (use-local-map widget-keymap)
   (widget-setup)
   (beginning-of-buffer)
-
+  (widget-forward 1)
 
   )
 (defun setup-keymap ()
