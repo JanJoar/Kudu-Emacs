@@ -76,7 +76,7 @@ function make_disk() {
 function make_disk_iso() {
 	disk=$1
 	sfdisk -f $disk < part_iso.sfdisk
-	parted -s $disk resizepart 3 100%
+	parted -s $disk resizepart 2 100%
 	part=$(get_parts $disk)
 	BOOT_PART=$(echo "$part" | awk 'NR==1{print $1}')
 	ROOT_PART=$(echo "$part" | awk 'NR==2{print $1}')
@@ -128,14 +128,16 @@ function setup_system() {
 	git clone https://github.com/JanJoar/Kudu-Emacs.git /mnt/home/$USERNAME/.emacs.d -b devel
 }
 function setup_iso() {
+	mkdir -p /mnt/root
 	cp ./* /mnt/root
-	echo "emacs -nw -q -l installer.el --eval (Kudu-Installer)" > /mnt/root/.bashrc
+	git clone https://github.com/JanJoar/Kudu-Emacs.git /mnt/root -b devel
+	dir="/root/Kudu-Emacs/installer"
+	echo "emacs -nw -q -l $dir/installer.el --eval (Kudu-Installer) --chdir $dir" > /mnt/root/.bashrc
 }
 
 
 if [ "$iso" = true ]; then
 	make_disk_iso $disk
-	setup_iso
 	guixInit			\
 		$disk			\
 		$hostname		\
@@ -143,9 +145,9 @@ if [ "$iso" = true ]; then
 		$(scm_file $iso)	\
 		$timezone		\
 		$keymap
+	setup_iso
 else
 	make_disk $disk
-	setup_system $username
 	guixInit			\
 		$disk			\
 		$hostname		\
@@ -153,5 +155,6 @@ else
 		$(scm_file $iso)	\
 		$timezone		\
 		$keymap
+	setup_system $username
 fi
 
