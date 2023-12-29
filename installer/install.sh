@@ -32,7 +32,7 @@ done
 
 function get_parts() {
 	disk=$1
-	part=$(lsblk -o NAME,TYPE -n -p -l | awk -v disk="$disk" '$2=="part"')
+	part=$(lsblk -o NAME,TYPE -n -p -l | awk -v disk="$disk" '$2=="part"' | grep $disk)
 	echo "$part"
 }
 function substitute_variables() {
