@@ -22,5 +22,9 @@
 	(type "ext4")) %base-file-systems))
 	(users %base-user-accounts)
 	(packages (append (list git emacs) %base-packages))
+	(services
+		(append
+		(list (service dhcp-client-service-type))
+		%base-services))
 	(services %base-services)
 )
