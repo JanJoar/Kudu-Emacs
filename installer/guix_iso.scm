@@ -3,6 +3,7 @@
 	(gnu packages emacs)
 	(gnu packages version-control)
 	)
+(use-service-modules networking)
 (operating-system
 	(host-name "kudu-inst")
 	(timezone "Europe/Stockholm")
