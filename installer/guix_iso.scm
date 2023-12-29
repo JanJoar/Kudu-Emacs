@@ -26,5 +26,4 @@
 		(append
 		(list (service dhcp-client-service-type))
 		%base-services))
-	(services %base-services)
 )
