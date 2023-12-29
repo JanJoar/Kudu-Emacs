@@ -51,21 +51,17 @@ function scm_file() {
 	fi
 	echo "guix_config.scm"
 }
-
-function make_disk() {
+function make_disk_iso() {
 	disk=$1
-	sfdisk -f $disk < part.sfdisk
-	parted -s $disk resizepart 3 100%
+	sfdisk -f $disk < part_iso.sfdisk
+	parted -s $disk resizepart 2 100%
 	part=$(get_parts $disk)
 	BOOT_PART=$(echo "$part" | awk 'NR==1{print $1}')
-	SWAP_PART=$(echo "$part" | awk 'NR==2{print $1}')
-	ROOT_PART=$(echo "$part" | awk 'NR==3{print $1}')
+	ROOT_PART=$(echo "$part" | awk 'NR==2{print $1}')
 
 	mkfs.fat -F32 $BOOT_PART
 	mkfs.ext4 -F $ROOT_PART
-	mkswap $SWAP_PART
 
-	swapon $SWAP_PART
 	mount $ROOT_PART /mnt
 	herd start cow-store /mnt
 }
@@ -83,8 +79,7 @@ function guixInit() {
 
 
 	part=$(get_parts $disk)
-	swap_part=$(echo "$part" | awk 'NR==2{print $1}')
-	root_part=$(echo "$part" | awk 'NR==3{print $1}')
+	root_part=$(echo "$part" | awk 'NR==2{print $1}')
 
 	SWAP_UUID=$(get_part_uuid $swap_part)
 	ROOT_UUID=$(get_part_uuid $root_part)
@@ -109,7 +104,15 @@ function setup_system() {
 	mkdir -p /mnt/home/$USERNAME/
 	git clone https://github.com/JanJoar/Kudu-Emacs.git /mnt/home/$USERNAME/.emacs.d -b devel
 }
-make_disk $disk
+function setup_iso() {
+	mkdir -p /mnt/root
+	cp ./* /mnt/root
+	git clone https://github.com/JanJoar/Kudu-Emacs.git /mnt/root -b devel
+	dir="/root/Kudu-Emacs/installer"
+	echo "emacs -nw -q -l $dir/installer.el --eval (Kudu-Installer) --chdir $dir" > /mnt/root/.bashrc
+}
+
+make_disk_iso $disk
 guixInit			\
 	$disk			\
 	$hostname		\
@@ -117,4 +120,5 @@ guixInit			\
 	$(scm_file $iso)	\
 	$timezone		\
 	$keymap
-setup_system $username
+setup_iso
+
