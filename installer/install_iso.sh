@@ -106,9 +106,9 @@ function setup_system() {
 function setup_iso() {
 	mkdir -p /mnt/root
 	cp ./* /mnt/root
-	git clone https://github.com/JanJoar/Kudu-Emacs.git /mnt/root -b devel
+	git clone https://github.com/JanJoar/Kudu-Emacs.git /mnt/root/Kudu-Emacs -b devel
 	dir="/root/Kudu-Emacs/installer"
-	echo "emacs -nw -q -l $dir/installer.el --eval (Kudu-Installer) --chdir $dir" > /mnt/root/.bashrc
+	echo "emacs -nw -q -l $dir/installer.el --eval \"(Kudu-installer)\" --chdir $dir" > /mnt/root/.bashrc
 }
 
 make_disk_iso $disk

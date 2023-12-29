@@ -22,7 +22,6 @@
   (widget-setup)
   (beginning-of-buffer)
   (widget-forward 1)
-
   )
 (defun setup-keymap ()
   (interactive)
@@ -52,6 +51,7 @@
   (use-local-map widget-keymap)
   (widget-setup)
   (beginning-of-buffer)
+  (widget-forward 1)
   )
 (defun setup-timezone (keymap)
   (interactive)
@@ -78,6 +78,8 @@
                    "Apply Form"))
   (use-local-map widget-keymap)
   (widget-setup)
+  (beginning-of-buffer)
+  (widget-forward 1)
   )
 
 (defun Installation-options (timezone keymap)
@@ -88,7 +90,7 @@
   (remove-overlays)
   (let ((hostname "") (username "") (disk ""))
     (widget-insert "\n")
-    (setq disks (get-shell "./get_disks_test.sh"))
+    (setq disks (get-shell "./get_disks.sh"))
     (message (car disks))
     (widget-create 'editable-field
                    :size 30
@@ -128,12 +130,14 @@
     
     (use-local-map widget-keymap)
     (widget-setup)
+    (beginning-of-buffer)
+    (widget-forward 1)
     ))
 
 (defun upload (hostname username disk timezone keymap)
   (message "format")
   (setq cmd (format
-             "bash ./install_test.sh --hostname %s --username %s --disk %s --timezone %s --keymap %s &"
+             "bash ./install.sh --hostname %s --username %s --disk %s --timezone %s --keymap %s &"
              hostname
              username
              disk
@@ -158,22 +162,6 @@
     (let ((lines (split-string (buffer-string) "\n" t)))
       (sort lines #'string<))))
 
-(defun get-disks ()
-  "Get a list of disks on the system."
-  (interactive)
-  (when (eq system-type 'gnu/linux)
-    (split-string
-     (shell-command-to-string "./get_disks.sh")
-     "\n" t))
-  )
-(defun get-keymaps ()
-  "Get a list of disks on the system."
-  (interactive)
-  (when (eq system-type 'gnu/linux)
-    (split-string
-     (shell-command-to-string "sh ./get_keymaps_test.sh")
-     "\n" t))
-  )
 (defun read-file-into-string (file-path)
   "Read the content of FILE-PATH into a string."
   (with-temp-buffer
