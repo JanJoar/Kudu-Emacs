@@ -81,11 +81,10 @@ function guixInit() {
 	part=$(get_parts $disk)
 	root_part=$(echo "$part" | awk 'NR==2{print $1}')
 
-	SWAP_UUID=$(get_part_uuid $swap_part)
 	ROOT_UUID=$(get_part_uuid $root_part)
 
 	scheme_template=$(cat $SCM_FILE)
-	scm=$(substitute_variables "$scheme_template" DISK HOSTNAME USERNAME SWAP_UUID ROOT_UUID TIMEZONE KEYMAP)
+	scm=$(substitute_variables "$scheme_template" DISK HOSTNAME USERNAME ROOT_UUID TIMEZONE KEYMAP)
 
 	mkdir /mnt/etc
 	echo "$scm" > /mnt/etc/config.scm

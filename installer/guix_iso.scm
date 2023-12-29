@@ -22,3 +22,4 @@
 	(users %base-user-accounts)
 	(packages (append (list git emacs) %base-packages))
 	(services %base-services)
+)
