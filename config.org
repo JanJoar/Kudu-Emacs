@@ -116,7 +116,7 @@ However, Emacs can still be used without constituting the entire system. Therefo
 #+END_SRC
 
 ** General visual elements
-Visible bell changes the otherwise quite jarring bell sound into a visual flash on it top and bottom of the emacs frame. ~prettify-symbols-mode~ allows certain major modes to change the appearance of strings, the classic example being the greek letter lambda in lisp-modes for lambda calculus. ~pixel-scroll-precision-mode~ allows you to scroll past things like images without buffers jumping around all the time.
+Visible bell changes the otherwise quite jarring bell sound into a visual flash on it top and bottom of the emacs frame. ~prettify-symbols-mode~ allows certain major modes to change the appearance of strings, the classic example being the Greek letter lambda in lisp-modes for lambda calculus. ~pixel-scroll-precision-mode~ allows you to scroll past things like images without buffers jumping around all the time.
  
 #+BEGIN_SRC elisp
   (setq visible-bell t
@@ -125,7 +125,7 @@ Visible bell changes the otherwise quite jarring bell sound into a visual flash 
     (global-display-line-numbers-mode)
 #+END_SRC
 
-The beacon package shows off the location the the point whenever you move to a window or scroll a buffer so that you don't lose it.
+The beacon package shows off the location the point whenever you move to a window or scroll a buffer so that you don't lose it.
 #+BEGIN_SRC elisp
     (use-package beacon
     :diminish beacon-mode
@@ -133,7 +133,7 @@ The beacon package shows off the location the the point whenever you move to a w
     (beacon-mode 1))
 #+END_SRC
 
-Solaire-mode makes it easy to distingush between warnings, popups and messages by tinting the background of those buffers slightly darker, as long as the current theme supports it.
+Solaire-mode makes it easy to distinguish between warnings, popups and messages by tinting the background of those buffers slightly darker, as long as the current theme supports it.
 
 #+BEGIN_SRC elisp
         (use-package solaire-mode
@@ -229,7 +229,7 @@ When editing just one window, left-aligned text is awkwardly too far to the left
 #+END_SRC
 
 ** Dashboard
-Configures the all-important emacs dashboard that shows up on startup 
+Configures the all-important emacs dashboard that shows up on startup.
 #+BEGIN_SRC elisp
   (use-package dashboard
     :init
@@ -396,14 +396,14 @@ Code completion using corfu.
      :preview-key '(:debounce 0.4 any)))
 #+END_SRC
 
-Tangentally related is flycheck, providing in-buffer syntax checking.
+Tangentially related is flycheck, providing in-buffer syntax checking.
 #+BEGIN_SRC elisp
   (use-package flycheck
     :config (global-flycheck-mode +1))
 #+END_SRC
 
 ** Org-mode
-Configures Org-mode to make it more attractive and useable.
+Configures Org-mode to make it more attractive and usable.
 #+BEGIN_SRC elisp
     (use-package emacs
       :init
@@ -467,7 +467,7 @@ Configures Org-mode to make it more attractive and useable.
  #+END_SRC
 
 ** Lisp
-Emacs is an amazing environment for writing in various lisp dialects, with wonderful support out-of-the-box. However, there are various different packages designed to improve this experience in general or in slight, specific ways. ~Paredit~ is a transformational package for editing S-expressions in a structural way. ~Sly~ is a fork of the popular ~SLIME~ package for an integrated common lisp REPL among other things. It is superiour to ~SLIME~ because it has ASCII-art cats. 
+Emacs is an amazing environment for writing in various lisp dialects, with wonderful support out-of-the-box. However, there are various different packages designed to improve this experience in general or in slight, specific ways. ~Paredit~ is a transformational package for editing S-expressions in a structural way. ~Sly~ is a fork of the popular ~SLIME~ package for an integrated common lisp REPL among other things. It is superior to ~SLIME~ because it has ASCII-art cats. 
 #+BEGIN_SRC elisp
   (use-package paredit
     :hook ((lisp-mode . paredit-mode)
@@ -490,7 +490,7 @@ Emacs is an amazing environment for writing in various lisp dialects, with wonde
   (show-paren-mode)
 #+END_SRC
 
-Due to Kudus's deep integration with the GNU Guix system, it is only natural to improve the systems used to interact with guile and scheme specifically. For this the ~guix.el~ and the wonderful ~geiser~ packages are used, where ~guix.el~ is a magit-inspiried Emacs frontend and ~geiser~ is a package aiming to improve the scheme experience in emacs.
+Due to Kudus's deep integration with the GNU Guix system, it is only natural to improve the systems used to interact with guile and scheme specifically. For this the ~guix.el~ and the wonderful ~geiser~ packages are used, where ~guix.el~ is a magit-inspired Emacs frontend and ~geiser~ is a package aiming to improve the scheme experience in emacs.
 
 #+BEGIN_SRC elisp
   (use-package guix)
@@ -499,7 +499,7 @@ Due to Kudus's deep integration with the GNU Guix system, it is only natural to 
 #+END_SRC
 
 ** Dired
-Dired is emacs' built in text-based file manager. It's however pretty rough around its edges, such as it opening each directory in a separete buffer making navigation a hassle. However certain tweaks can make it a formidable tool accessible directly within emacs. Take that n³ and midnight commander!
+Dired is emacs' built in text-based file manager. It's however pretty rough around its edges, such as it opening each directory in a separate buffer making navigation a hassle. However certain tweaks can make it a formidable tool accessible directly within emacs. Take that n³ and midnight commander!
 
 #+BEGIN_SRC elisp
     (use-package openwith
@@ -554,7 +554,7 @@ Magit is wonderful, and one of the killer apps that makes emacs a system than ot
 #+END_SRC
 
 ** Functions
-The sudo function raises the privelage of the current buffer to root permissions without having to close and open it again through TRAMP.
+The sudo function raises the privilege of the current buffer to root permissions without having to close and open it again through ~TRAMP~.
 #+BEGIN_SRC elisp
   (defun sudo ()
     (interactive)
