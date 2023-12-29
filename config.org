@@ -173,7 +173,6 @@ Without this setting emacs sometimes asks for confirmation via a "Yes or no" pro
 
 #+BEGIN_SRC elisp
   (defalias 'yes-or-no-p 'y-or-n-p)
-  (message "test")
 #+END_SRC
 
 The default Emacs mode-line is a bit busy and certain elements of it are difficult to intuitively understand. This simplifies it considerably to make it more readable and also adds a header line.
@@ -192,7 +191,7 @@ The default Emacs mode-line is a bit busy and certain elements of it are difficu
                     (let* ((read-only (and buffer-read-only (buffer-file-name)))
                            (modified (buffer-modified-p)))
                       (propertize
-                       (if read-only "" (if modified " !" " "))))))
+                       (if read-only "  " (if modified " !" "  "))))))
                 " "
                 (:eval (propertize (format "%s" (buffer-name)) 'face 'bold))
                 " "
@@ -228,6 +227,14 @@ When editing just one window, left-aligned text is awkwardly too far to the left
   (setq perfect-margin-ignore-filters nil)
   ;; auto-center special windows
   (setq perfect-margin-ignore-regexps nil))
+#+END_SRC
+
+~Rainbow-delimiters~ differentiates layers of parentheses using different colours so that they can be identified at a glance.
+
+#+BEGIN_SRC elisp
+  (use-package rainbow-delimiters
+    :init
+    (setq rainbow-delimiters-mode t))
 #+END_SRC
 
 ** Dashboard
@@ -286,15 +293,8 @@ Code completion using corfu.
       (add-to-list 'completion-at-point-functions #'cape-file)
       (add-to-list 'completion-at-point-functions #'cape-elisp-block)
       (add-to-list 'completion-at-point-functions #'cape-history)
-      (add-to-list 'completion-at-point-functions #'cape-keyword)
-      (add-to-list 'completion-at-point-functions #'cape-tex)
-      (add-to-list 'completion-at-point-functions #'cape-sgml)
-      (add-to-list 'completion-at-point-functions #'cape-rfc1345)
-      (add-to-list 'completion-at-point-functions #'cape-abbrev)
-      (add-to-list 'completion-at-point-functions #'cape-dict)
-      (add-to-list 'completion-at-point-functions #'cape-symbol)
-      (add-to-list 'completion-at-point-functions #'cape-line)
-      )
+      (add-to-list 'completion-at-point-functions #'cape-keyword))
+  
     (use-package corfu-terminal
       :init
       (unless (display-graphic-p)
@@ -446,7 +446,9 @@ Configures Org-mode to make it more attractive and useable.
       :hook (org-mode . org-appear-mode))
     (use-package yasnippet
       :diminish yas-minor-mode
-      :hook (org-mode . yas-minor-mode))
+      :hook (org-mode . yas-minor-mode)
+      :config
+      (yas-load-directory "~/.emacs.d/snippets/"))
     (use-package yasnippet-snippets)
 
   (use-package valign
@@ -474,33 +476,35 @@ Configures Org-mode to make it more attractive and useable.
  #+END_SRC
 
 ** Lisp
-Emacs is an amazing environment for writing in various lisp dialects, with wonderful support out-of-the-box. However, there are various different packages designed to improve this experience in general or in slight, specific ways. Paredit is 
+Emacs is an amazing environment for writing in various lisp dialects, with wonderful support out-of-the-box. However, there are various different packages designed to improve this experience in general or in slight, specific ways. ~Paredit~ is a transformational package for editing S-expressions in a structural way. ~Sly~ is a fork of the popular ~SLIME~ package for an integrated common lisp REPL among other things. It is superiour to ~SLIME~ because it has ASCII-art cats. 
 #+BEGIN_SRC elisp
   (use-package paredit
     :hook ((lisp-mode . paredit-mode)
            (emacs-lisp-mode . paredit-mode)
            (scheme-mode . paredit-mode)
            (slime-mode . paredit-mode))
-
     :config
-    (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
+    (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t))
 
-    (defun override-slime-del-key ()
-      (define-key slime-repl-mode-map
-                  (read-kbd-macro paredit-backward-delete-key) nil))
-    (add-hook 'slime-repl-mode-hook 'override-slime-del-key)
-    )
+  (defun override-slime-del-key ()
+    (define-key slime-repl-mode-map
+                (read-kbd-macro paredit-backward-delete-key) nil))
+  (add-hook 'slime-repl-mode-hook 'override-slime-del-key)
 
   (use-package sly
     :config
     (setq inferior-lisp-program "sbcl"))
 
-  (use-package rainbow-delimiters
-    :init
-    (setq rainbow-delimiters-mode t))
-
   (setq show-paren-delay 0)
   (show-paren-mode)
+#+END_SRC
+
+Due to Kudus's deep integration with the GNU Guix system, it is only natural to improve the systems used to interact with guile and scheme specifically. For this the ~guix.el~ and the wonderful ~geiser~ packages are used, where ~guix.el~ is a magit-inspiried Emacs frontend and ~geiser~ is a package aiming to improve the scheme experience in emacs.
+
+#+BEGIN_SRC elisp
+  (use-package guix)
+
+  (use-package geiser-guile)
 #+END_SRC
 
 ** Dired
@@ -581,25 +585,23 @@ The sudo function raises the privelage of the current buffer to root permissions
   (unless (file-directory-p "~/.emacs.d/site-lisp/emacs-application-framework")
     (shell-command "git clone --depth=1 -b master https://github.com/emacs-eaf/emacs-application-framework.git ~/.emacs.d/site-lisp/emacs-application-framework/"))
   (if (get-buffer "*Shell Command Output*") (kill-buffer "*Shell Command Output*"))
-  
-  (use-package eaf
-    :load-path "~/.emacs.d/site-lisp/emacs-application-framework"
-    :config
-    (eaf-install-and-update)
-    (eaf-browser-continue-where-left-off t)
-    (eaf-browser-enable-adblocker t)
-    (browse-url-browser-function 'eaf-open-browser)
-    (defalias 'browse-web #'eaf-open-browser)
-    (setq eaf-browser-default-search-engine "duckduckgo")
-    (setq eaf-browse-blank-page-url "https://duckduckgo.com")
-    (eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
-    (eaf-bind-key scroll_down "C-p" eaf-pdf-viewer-keybinding)
-    (eaf-bind-key take_photo "p" eaf-camera-keybinding)
-    (eaf-bind-key nil "M-q" eaf-browser-keybinding)
 
-    (require 'eaf-browser)
-    (require 'eaf-map)
-    (require 'eaf-music-player)
-    )
+  (add-to-list 'load-path "~/.emacs.d/site-lisp/emacs-application-framework/")
+  (require 'eaf)
+  (require 'eaf-browser)
+  (require 'eaf-map)
+
+  (use-package eaf
+      :load-path "~/.emacs.d/site-lisp/emacs-application-framework.emacs.d/site-lisp/emacs-application-framework"
+      :config
+      (eaf-browser-enable-adblocker t)
+      (browse-url-browser-function 'eaf-open-browser-open-browser)
+      (defalias 'browse-web #'eaf-open-browser)
+      (setq eaf-browser-default-search-engine "duckduckgo")
+      (setq eaf-browse-blank-page-url "https://duckduckgo.com")
+      (eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
+      (eaf-bind-key scroll_down "C-p" eaf-pdf-viewer-keybinding)
+      (eaf-bind-key take_photo "p" eaf-camera-keybinding)
+      (eaf-bind-key nil "M-q" eaf-browser-keybinding))
 #+END_SRC
 
