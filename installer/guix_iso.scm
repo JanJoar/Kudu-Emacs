@@ -6,7 +6,7 @@
 (use-service-modules networking)
 (operating-system
 	(host-name "kudu-inst")
-	(timezone "Europe/Stockholm")
+	(timezone "Europe/Vatican")
 	(locale "en_US.utf8")
 
 	(bootloader (bootloader-configuration
