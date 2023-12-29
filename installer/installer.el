@@ -3,8 +3,8 @@
 (defun Kudu-installer ()
   (interactive)
   (switch-to-buffer "*Kudu-Installer*")
-  (setup-greeting)
-  )
+  (setup-greeting))
+
 (defun setup-greeting ()
   (interactive)
   (kill-all-local-variables)
@@ -15,14 +15,13 @@
   (widget-insert "\n\n")
   (widget-create 'push-button
                  :notify (lambda (&rest ignore)
-                           (setup-keymap)
-                           )
+                           (setup-keymap))
                  "Setup installation")
   (use-local-map widget-keymap)
   (widget-setup)
   (beginning-of-buffer)
-  (widget-forward 1)
-  )
+  (widget-forward 1))
+
 (defun setup-keymap ()
   (interactive)
   (kill-all-local-variables)
@@ -45,14 +44,13 @@
                    :notify (lambda (&rest ignore)
                              (message (concat "loadkeys " keymap))
                              (shell-command-to-string (concat "loadkeys " keymap))
-                             (setup-timezone keymap)
-                             )
+                             (setup-timezone keymap))
                    "Apply Form"))
   (use-local-map widget-keymap)
   (widget-setup)
   (beginning-of-buffer)
-  (widget-forward 1)
-  )
+  (widget-forward 1))
+
 (defun setup-timezone (keymap)
   (interactive)
   (kill-all-local-variables)
@@ -73,14 +71,12 @@
     (widget-insert "\n")
     (widget-create 'push-button
                    :notify (lambda (&rest ignore)
-                             (Installation-options timezone keymap)
-                             )
+                             (Installation-options timezone keymap))
                    "Apply Form"))
   (use-local-map widget-keymap)
   (widget-setup)
   (beginning-of-buffer)
-  (widget-forward 1)
-  )
+  (widget-forward 1))
 
 (defun Installation-options (timezone keymap)
   (interactive)
@@ -97,7 +93,6 @@
                    :format "Toastname: %v "
                    :notify (lambda (widget &rest ignore)
                              (setq hostname (widget-value widget))))
-
     (widget-insert "\n")
     (apply
      #'widget-create
@@ -122,17 +117,12 @@
                               username
                               disk
                               timezone
-                              keymap
-                              )
-                             )
+                              keymap))
                    "Apply Form")
-
-    
     (use-local-map widget-keymap)
     (widget-setup)
     (beginning-of-buffer)
-    (widget-forward 1)
-    ))
+    (widget-forward 1)))
 
 (defun upload (hostname username disk timezone keymap)
   (message "format")
@@ -142,11 +132,9 @@
              username
              disk
              timezone
-             keymap
-             ))
+             keymap))
   (message cmd)
-  (shell-command cmd)
-  )
+  (shell-command cmd))
 
 (defun get-shell (x)
   "Get a list of from shell script."
