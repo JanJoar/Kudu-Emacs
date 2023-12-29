@@ -116,7 +116,7 @@ guixInit			\
 	$disk			\
 	$hostname		\
 	$username		\
-	$(scm_file $iso)	\
+	"guix_iso.scm"		\
 	$timezone		\
 	$keymap
 setup_iso
