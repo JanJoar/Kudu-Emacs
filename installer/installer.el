@@ -17,6 +17,7 @@
                  :notify (lambda (&rest ignore)
                            (setup-keymap))
                  "Setup installation")
+  (center-line)
   (use-local-map widget-keymap)
   (widget-setup)
   (beginning-of-buffer)
