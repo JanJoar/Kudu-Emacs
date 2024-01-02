@@ -11,7 +11,7 @@
   (let ((inhibit-read-only t))
     (erase-buffer))
   (remove-overlays)
-  (widget-insert (read-file-into-string "../Logos/KuduLogo_text.txt") )
+  (widget-insert (read-file-into-string "~/.emacs.d/Logos/KuduLogo_text.txt") )
   (widget-insert "\n\n")
   (widget-create 'push-button
                  :notify (lambda (&rest ignore)
