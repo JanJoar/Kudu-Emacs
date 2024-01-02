@@ -29,7 +29,7 @@
     (erase-buffer))
   (remove-overlays)
   (let ((keymap ""))
-    (setq keymaps (get-nl-seperated "./keymaps"))
+    (setq keymaps (get-nl-seperated "~/.emacs.d/installer/keymaps"))
     (widget-insert "Keymap: \n")
     (apply
      #'widget-create
@@ -58,7 +58,7 @@
     (erase-buffer))
   (remove-overlays)
   (let ((timezone ""))
-    (setq timezones(get-nl-seperated "./timezones"))
+    (setq timezones(get-nl-seperated "~/.emacs.d/installer/timezones"))
     (widget-insert "Timezone: \n")
     (apply
      #'widget-create
@@ -86,7 +86,7 @@
   (remove-overlays)
   (let ((hostname "") (username "") (disk ""))
     (widget-insert "\n")
-    (setq disks (get-shell "./get_disks.sh"))
+    (setq disks (get-shell "~/.emacs.d/installer/get_disks.sh"))
     (message (car disks))
     (widget-create 'editable-field
                    :size 30
@@ -127,7 +127,7 @@
 (defun upload (hostname username disk timezone keymap)
   (message "format")
   (setq cmd (format
-             "bash ./install.sh --hostname %s --username %s --disk %s --timezone %s --keymap %s &"
+             "bash ~/.emacs.d/installer/install.sh --hostname %s --username %s --disk %s --timezone %s --keymap %s &"
              hostname
              username
              disk
