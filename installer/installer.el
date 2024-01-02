@@ -93,7 +93,8 @@
                    :format "Toastname: %v "
                    :notify (lambda (widget &rest ignore)
                              (setq hostname (widget-value widget))))
-    (widget-insert "\n")
+    (widget-insert "\n \n")
+    (widget-insert "Disk to use:")
     (apply
      #'widget-create
      'radio-button-choice
@@ -103,7 +104,7 @@
                      (widget-value widget)))
      (mapcar (lambda (disk) `(item ,disk)) disks))
     
-    (widget-insert "\n")
+    (widget-insert "\n \n")
     (widget-create 'editable-field
                    :size 30
                    :format "Username: %v "
@@ -125,7 +126,7 @@
     (widget-forward 1)))
 
 (defun upload (hostname username disk timezone keymap)
-  (message "format")
+  (message "Formatting bash command...")
   (setq cmd (format
              "bash ~/.emacs.d/installer/install.sh --hostname %s --username %s --disk %s --timezone %s --keymap %s &"
              hostname
