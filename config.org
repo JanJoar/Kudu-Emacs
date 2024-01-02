@@ -583,16 +583,13 @@ The sudo function raises the privilege of the current buffer to root permissions
   (require 'eaf-map)
 
   (use-package eaf
-      :load-path "~/.emacs.d/site-lisp/emacs-application-framework.emacs.d/site-lisp/emacs-application-framework"
+      :load-path "~/.emacs.d/site-lisp/emacs-application-framework"
       :config
-      (eaf-browser-enable-adblocker t)
-      (browse-url-browser-function 'eaf-open-browser-open-browser)
+      (require 'eaf-browser)
+      (require 'eaf-map)
       (defalias 'browse-web #'eaf-open-browser)
       (setq eaf-browser-default-search-engine "duckduckgo")
       (setq eaf-browse-blank-page-url "https://duckduckgo.com")
-      (eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
-      (eaf-bind-key scroll_down "C-p" eaf-pdf-viewer-keybinding)
-      (eaf-bind-key take_photo "p" eaf-camera-keybinding)
       (eaf-bind-key nil "M-q" eaf-browser-keybinding))
 #+END_SRC
 
