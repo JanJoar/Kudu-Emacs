@@ -20,6 +20,7 @@
 
 (setq load-prefer-newer t) ;; Loads the newer file if one exists. This means emacs will prioritise files with newer changes. 
 
+(setq native-comp-async-report-warnings-errors nil)
 (defvar Kudu-gui-logo "~/.emacs.d/Logos/KuduLogo_red.svg")
 (shell-command "touch ~/.emacs.d/secret.org && touch ~/.emacs.d/secret.el && touch ~/.emacs.d/custom.el")
 (kill-buffer "*Shell Command Output*")

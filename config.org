@@ -151,7 +151,7 @@ Formats tabs to Linux-kernel standards and keeps them so using the ~aggressive-i
 
   (use-package aggressive-indent
     :diminish aggressive-indent-mode
-    :hook (prog-mode . aggressive-indent-mode))
+    :init (global-aggressive-indent-mode))
 #+END_SRC
 
 Enable mouse use when running Emacs in a terminal emulator.
@@ -208,24 +208,34 @@ Adds as nicely formated clock in all cases, even when not running in EXWM.
 When editing just one window, left-aligned text is awkwardly too far to the left. The ~perfect-margin~ package fixes this by centering the contents of the window when only one is present.
 
 #+BEGIN_SRC elisp
-(use-package perfect-margin
-  :custom
-  (perfect-margin-visible-width 128)
-  :init
-  ;; enable perfect-mode
-  (perfect-margin-mode t)
-  ;; auto-center minibuffer windows
-  (setq perfect-margin-ignore-filters nil)
-  ;; auto-center special windows
-  (setq perfect-margin-ignore-regexps nil))
+  (use-package perfect-margin
+    :custom
+    (perfect-margin-visible-width 128)
+    :init
+    ;; enable perfect-mode
+    (perfect-margin-mode t)
+    ;; auto-center minibuffer windows
+    (setq perfect-margin-ignore-filters nil)
+    ;; auto-center special windows
+    (setq perfect-margin-ignore-regexps nil))
 #+END_SRC
 
-~Rainbow-delimiters~ differentiates layers of parentheses using different colours so that they can be identified at a glance.
+~rainbow-delimiters~ differentiates layers of parentheses using different colours so that they can be identified at a glance.
 
 #+BEGIN_SRC elisp
   (use-package rainbow-delimiters
+    :init (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
+#+END_SRC
+
+~smartparens~ is intended to help in a similar way by highlighting the current sexp
+
+#+BEGIN_SRC elisp
+  (use-package smartparens
+    :hook
+    (prog-mode . smartparens-mode)
+    (text-mode . smartparens-mode)
     :init
-    (setq rainbow-delimiters-mode t))
+    (require 'smartparens-config))
 #+END_SRC
 
 ** Dashboard
@@ -253,68 +263,89 @@ Configures the all-important emacs dashboard that shows up on startup.
     )
 #+END_SRC
 ** Completion
-Code completion using corfu.
-#+BEGIN_SRC elisp
-    (use-package corfu
-      :custom
-      (setq corfu-auto t)
-      :init
-      (global-corfu-mode))
 
-    (use-package cape
-      ;; Bind dedicated completion commands
-      ;; Alternative prefix keys: C-c p, M-p, M-+, ...
-      :bind (("C-c p p" . completion-at-point) ;; capf
-             ("C-c p t" . complete-tag)        ;; etags
-             ("C-c p d" . cape-dabbrev)        ;; or dabbrev-completion
-             ("C-c p h" . cape-history)
-             ("C-c p f" . cape-file)
-             ("C-c p k" . cape-keyword)
-             ("C-c p s" . cape-symbol)
-             ("C-c p a" . cape-abbrev)
-             ("C-c p l" . cape-line)
-             ("C-c p w" . cape-dict)
-             ("C-c p \\" . cape-tex)
-             ("C-c p _" . cape-tex)
-             ("C-c p ^" . cape-tex)
-             ("C-c p &" . cape-sgml)
-             ("C-c p r" . cape-rfc1345))
-      :init
-      (add-to-list 'completion-at-point-functions #'cape-dabbrev)
-      (add-to-list 'completion-at-point-functions #'cape-file)
-      (add-to-list 'completion-at-point-functions #'cape-elisp-block)
-      (add-to-list 'completion-at-point-functions #'cape-history)
-      (add-to-list 'completion-at-point-functions #'cape-keyword))
-  
-    (use-package corfu-terminal
+In-buffer code completion using ~corfu~.
+By default ~corfu~ only works in a GUI environment, but the ~corfu-terminal~ package allows for use when run using the ~-nw~ flag.
+
+#+BEGIN_SRC elisp
+  (use-package corfu
+    :custom
+    (setq corfu-auto t)
+    :init
+    (global-corfu-mode))
+
+  (use-package corfu-terminal
       :init
       (unless (display-graphic-p)
         (corfu-terminal-mode +1)))
+  #+END_SRC
 
-    (use-package eglot
-      :commands (eglot eglot-ensure)
-      :hook
-      (python-mode . eglot-ensure)
-      (LaTeX-mode . eglot-ensure)
-      (csharp-mode . omnisharp-mode))
+  ~corfu~ does not provide candidates for completion, but this is provided by ~cape~, or the Completion At Point Extensions package.
+  
+  #+BEGIN_SRC elisp
+      (use-package cape
+        ;; Bind dedicated completion commands
+        ;; Alternative prefix keys: C-c p, M-p, M-+, ...
+        :bind (("C-c p p" . completion-at-point) ;; capf
+               ("C-c p t" . complete-tag)        ;; etags
+               ("C-c p d" . cape-dabbrev)        ;; or dabbrev-completion
+               ("C-c p h" . cape-history)
+               ("C-c p f" . cape-file)
+               ("C-c p k" . cape-keyword)
+               ("C-c p s" . cape-symbol)
+               ("C-c p a" . cape-abbrev)
+               ("C-c p l" . cape-line)
+               ("C-c p w" . cape-dict)
+               ("C-c p \\" . cape-tex)
+               ("C-c p _" . cape-tex)
+               ("C-c p ^" . cape-tex)
+               ("C-c p &" . cape-sgml)
+               ("C-c p r" . cape-rfc1345))
+        :init
+        (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+        (add-to-list 'completion-at-point-functions #'cape-file)
+        (add-to-list 'completion-at-point-functions #'cape-elisp-block)
+        (add-to-list 'completion-at-point-functions #'cape-history)
+        (add-to-list 'completion-at-point-functions #'cape-keyword))
+ #+END_SRC
 
-    (use-package vertico
-      :init
-      (vertico-mode)
-      :config
-      (setq vertico-count 10)
-      (vertico-indexed-mode)
-      (vertico-mouse-mode)
-      )
+ Uses ~vertico~ to show minibuffer completion, and ~marginalia~ and ~orderless~ to format it.
+ 
+ #+BEGIN_SRC elisp
+     (use-package vertico
+       :init
+       (vertico-mode)
+       :config
+       (setq vertico-count 10)
+       (vertico-indexed-mode)
+       (vertico-mouse-mode))
 
-    (use-package marginalia
-      :hook (vertico-mode . marginalia-mode))
+     (use-package marginalia
+       :hook (vertico-mode . marginalia-mode))
 
-    (use-package orderless
-    :custom
-    (completion-styles '(orderless basic))
-    (completion-category-overrides '((file (styles basic partial-completion)))))
+     (use-package orderless
+     :custom
+     (completion-styles '(orderless basic prescient))
+     (completion-category-overrides '((file (styles basic partial-completion)))))
+#+END_SRC
 
+Shows those completion results that are hopefullt most useful, both in the minibuffer and the main buffer.
+
+#+BEGIN_SRC elisp
+  (use-package prescient
+    :init
+    (setq prescient-persist-mode t)
+    (setq prescient-history-length 5)
+    (setq prescient-sort-full-matches-first t))
+  (use-package corfu-prescient
+    :init (corfu-prescient-mode +1))
+  (use-package vertico-prescient
+    :init (vertico-prescient-mode +1))
+#+END_SRC
+
+~consult~ provides various functions that integrates with the completion API.
+
+#+BEGIN_SRC elisp
   (use-package consult
     :bind (;; C-c bindings in `mode-specific-map'
            ("C-c M-x" . consult-mode-command)
@@ -455,8 +486,7 @@ Configures Org-mode to make it more attractive and usable.
       (org-modern-table-vertical 1)
       (org-modern-star nil)
       (org-modern-hide-stars nil)
-      (org-modern-checkbox nil)
-      )
+      (org-modern-checkbox nil))
 
     (unless (file-directory-p "~/.emacs.d/site-lisp/org-modern-indent")
       (shell-command "git clone https://github.com/jdtsmith/org-modern-indent.git ~/.emacs.d/site-lisp/org-modern-indent/"))
@@ -467,20 +497,14 @@ Configures Org-mode to make it more attractive and usable.
  #+END_SRC
 
 ** Lisp
-Emacs is an amazing environment for writing in various lisp dialects, with wonderful support out-of-the-box. However, there are various different packages designed to improve this experience in general or in slight, specific ways. ~Paredit~ is a transformational package for editing S-expressions in a structural way. ~Sly~ is a fork of the popular ~SLIME~ package for an integrated common lisp REPL among other things. It is superior to ~SLIME~ because it has ASCII-art cats. 
+Emacs is an amazing environment for writing in various lisp dialects, with wonderful support out-of-the-box. However, there are various different packages designed to improve this experience in general or in slight, specific ways. ~lispy~ is a transformational package for editing S-expressions in a structural way. ~Sly~ is a fork of the popular ~SLIME~ package for an integrated common lisp REPL among other things. It is superior to ~SLIME~ because it has ASCII-art cats. 
 #+BEGIN_SRC elisp
-  (use-package paredit
-    :hook ((lisp-mode . paredit-mode)
-           (emacs-lisp-mode . paredit-mode)
-           (scheme-mode . paredit-mode)
-           (slime-mode . paredit-mode))
-    :config
-    (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t))
-
-  (defun override-slime-del-key ()
-    (define-key slime-repl-mode-map
-                (read-kbd-macro paredit-backward-delete-key) nil))
-  (add-hook 'slime-repl-mode-hook 'override-slime-del-key)
+  (use-package lispy
+    :hook
+    (lisp-mode . lispy-mode)
+    (emacs-lisp-mode . paredit-mode)
+    (scheme-mode . lispy-mode)
+    (slime-mode . lispy-mode))
 
   (use-package sly
     :config
