@@ -238,6 +238,19 @@ When editing just one window, left-aligned text is awkwardly too far to the left
     (require 'smartparens-config))
 #+END_SRC
 
+Adds little icons for completion frameworks
+
+#+BEGIN_SRC elisp
+    (use-package svg-lib)
+    (use-package kind-icon
+      :after corfu
+      :custom (kind-icon-default-face 'corfu-default)
+      :init (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)
+      (unless (display-graphic-p)
+        (setq kind-icon-use-icons nil))
+  )
+#+END_SRC
+
 ** Dashboard
 Configures the all-important emacs dashboard that shows up on startup.
 #+BEGIN_SRC elisp
@@ -272,12 +285,15 @@ By default ~corfu~ only works in a GUI environment, but the ~corfu-terminal~ pac
     :custom
     (setq corfu-auto t)
     :init
-    (global-corfu-mode))
+    (global-corfu-mode)
+    (setq corfu-popupinfo-delay 0.5)
+    (corfu-popupinfo-mode +1))
 
   (use-package corfu-terminal
       :init
       (unless (display-graphic-p)
         (corfu-terminal-mode +1)))
+
   #+END_SRC
 
   ~corfu~ does not provide candidates for completion, but this is provided by ~cape~, or the Completion At Point Extensions package.
