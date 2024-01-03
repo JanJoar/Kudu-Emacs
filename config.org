@@ -629,22 +629,27 @@ Magit is wonderful, and one of the killer apps that makes emacs a system than ot
     :config (magit-delta-mode t))
 #+END_SRC
 
-** Functions
+** Interactive Functions
 
 The sudo function raises the privilege of the current buffer to root permissions without having to close and open it again through ~TRAMP~.
 
 #+BEGIN_SRC elisp
   (defun sudo ()
+    "Opens the current buffer at point with root privelages using TRAMP"
     (interactive)
     (let ((position (point)))
       (find-alternate-file (concat "/sudo::"
                                    (buffer-file-name (current-buffer))))
       (goto-char position)))
+#+END_SRC
 
+Magit can sometimes create a lot of buffers for different processes that are annoying to close one by one, this function closes all buffers whose name contains "magit".
+
+#+BEGIN_SRC elisp
   (defun kill-magit-buffers ()
     (interactive)
     (mapc (lambda (buffer) 
-            (when (eq 'magit-mode (buffer-local-value 'major-mode buffer)) 
+            (if (buffer-match-p ".*magit.*" buffer) 
               (kill-buffer buffer))) 
           (buffer-list)))
 #+END_SRC
