@@ -56,6 +56,29 @@ However, Emacs can still be used without constituting the entire system. Therefo
 #+BEGIN_SRC elisp
   (use-package exwm
     :init
+
+    ;; EXWM related functions
+
+    (defun xrandr-find-monitor-names ()
+      "Returns a list of connected monitors"
+      (let ((xrandr-contents nil) (monitor-names nil))
+        (shell-command "xrandr" "*xrandr-output*")
+        (switch-to-buffer "*xrandr-output*")
+        (setq xrandr-contents (buffer-string))
+        (kill-buffer "*xrandr-output*")
+        (setq xrandr-contents (replace-regexp-in-string "\\(.* connected\\).*\n\\|.*\n" "\\1" xrandr-contents))
+        (remove "" (split-string xrandr-contents " connected"))))
+
+    (defun exwm-monitors-format ()
+      "Formats the list from xrandr-find-monitor-names to apply EXWM workspaces"
+      (let ((monitors (xrandr-find-monitor-names)) (counter 0) (return-value nil))
+        (while monitors
+          (push counter return-value)
+          (push (car monitors) return-value)
+          (setq counter (+ counter 1))
+          (setq monitors (cdr monitors)))
+        (nreverse return-value)))
+
     (setq switch-to-buffer-obey-display-actions t)
     (shell-command "wmctrl -m ; echo $status" "*window-manager*" "*window-manager-error*")
 
@@ -99,15 +122,14 @@ However, Emacs can still be used without constituting the entire system. Therefo
                            (start-process-shell-command command nil command)))
               ([?\s-w] . exwm-workspace-switch)
               ([?\s-u] . (lambda ()
-                            (interactive)
-                            (shell-command "brightnessctl --quiet --min-value set +10")))
+                           (interactive)
+                           (shell-command "brightnessctl --quiet --min-value set +10")))
               ([?\s-d] . (lambda ()
                            (interactive)
                            (shell-command "brightnessctl --quiet --min-value set 10-")))
               ))
       ;; Actually starts EXWM
-      (exwm-enable)
-      )
+      (exwm-enable))
 
     (when (get-buffer "*window-manager*")
       (kill-buffer "*window-manager*"))
