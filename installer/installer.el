@@ -94,8 +94,7 @@
                    :format "Toastname: %v "
                    :notify (lambda (widget &rest ignore)
                              (setq hostname (widget-value widget))))
-    (widget-insert "\n \n")
-    (widget-insert "Disk to use:")
+    (widget-insert "\n\n Disk to use:\n")
     (apply
      #'widget-create
      'radio-button-choice
