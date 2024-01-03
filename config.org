@@ -27,25 +27,33 @@ The origin for the name is the kudu, an antelope similar to that of the Gnu, the
 * Configuration
 
 ** Use-package
-Probably one of the most useful packages, even if not very prominent when using emacs, is use-package. It allows you to declaratively write your configuration and have the included emacs package manager download them for you, and also have configurations for packages only run when packages are loaded, similarly to ~(with-eval-after-load ...)~. The variables set here simply enable this behaviour. The ~diminish~ package hides certain minor modes from being shown in the mode-line and is not installed by default. For this reason its used to check if Kudu has been run before, and therefore if it needs to update its package repos. Feel free to perform this check on any other package, or remove it entirely, but beware that ~(package-refresh-contents)~ must be run before the other ~use-package~ declarations for ~package.el~ to install all the other packages needed.
+
+Probably one of the most useful packages, even if not very prominent when using emacs, is ~use-package~. It allows you to declaratively write your configuration and have the included emacs package manager download them for you, and also have configurations for packages only run when packages are loaded, similarly to ~(with-eval-after-load ...)~. The variables set here simply enable this behaviour. If the version of Emacs is older than Emacs 29, ~use-package~ won't be available by default. It is therefore installed here as well.
+
+The ~diminish~ package hides certain minor modes from being shown in the mode-line and is not installed by default. For this reason its used to check if Kudu has been run before, and therefore if it needs to update its package repos. Feel free to perform this check on any other package, or remove it entirely, but beware that ~(package-refresh-contents)~ must be run before the other ~use-package~ declarations for ~package.el~ to install all the other packages needed.
 
 #+BEGIN_SRC elisp
   (setq use-package-always-defer t
         use-package-always-ensure t)
 
-  (unless (package-installed-p 'use-package)
+  (unless (package-installed-p 'diminish)
       (package-refresh-contents)
-      (package-install 'use-package))
+      (package-install 'use-package)
+      (package-install diminish))
 #+END_SRC
 
 ** Auto-compile
+
 Compiles elisp files to improve the speed and responsiveness of Emacs at the cost of first-time startup time. The settings in ~init.el~ makes sure that updated elisp files take priority over older, compiled files.
+
 #+BEGIN_SRC elisp
-(use-package auto-compile 
-  :ensure t
-  :init
-  (auto-compile-on-load-mode 1)
-  (auto-compile-on-save-mode 1))
+    (use-package auto-compile 
+      :ensure t
+      :init
+      (auto-compile-on-load-mode 1)
+      (auto-compile-on-save-mode 1))
+  
+  (setq native-comp-async-report-warnings-errors nil)
 #+END_SRC
 
 ** EXWM
@@ -148,6 +156,7 @@ Visible bell changes the otherwise quite jarring bell sound into a visual flash 
 #+END_SRC
 
 The beacon package shows off the location the point whenever you move to a window or scroll a buffer so that you don't lose it.
+
 #+BEGIN_SRC elisp
     (use-package beacon
     :diminish beacon-mode
@@ -274,7 +283,9 @@ Adds little icons for completion frameworks
 #+END_SRC
 
 ** Dashboard
+
 Configures the all-important emacs dashboard that shows up on startup.
+
 #+BEGIN_SRC elisp
   (use-package dashboard
     :init
@@ -292,13 +303,15 @@ Configures the all-important emacs dashboard that shows up on startup.
     (setq dashboard-set-navigator nil)
     (setq dashboard-set-init-info t)
     (setq dashboard-set-footer nil)
+    (dashboard-setup-startup-hook)
 
-    (add-hook  'dashboard-mode-hook (lambda () (display-line-numbers-mode -1)))
-    (dashboard-open)
-    )
+    (add-hook  'dashboard-mode-hook (lambda () (display-line-numbers-mode -1))))
 #+END_SRC
+
 ** Completion
+
 *** Corfu
+
 In-buffer code completion using ~corfu~.
 By default ~corfu~ only works in a GUI environment, but the ~corfu-terminal~ package allows for use when run using the ~-nw~ flag.
 
@@ -319,6 +332,7 @@ By default ~corfu~ only works in a GUI environment, but the ~corfu-terminal~ pac
   #+END_SRC
 
 *** Cape
+
   ~corfu~ does not provide candidates for completion, but this is provided by ~cape~, or the Completion At Point Extensions package.
   
   #+BEGIN_SRC elisp
@@ -349,6 +363,7 @@ By default ~corfu~ only works in a GUI environment, but the ~corfu-terminal~ pac
  #+END_SRC
 
 *** Minibuffer Completion
+
  Uses ~vertico~ to show minibuffer completion, and ~marginalia~ and ~orderless~ to format it.
  
  #+BEGIN_SRC elisp
@@ -370,6 +385,7 @@ By default ~corfu~ only works in a GUI environment, but the ~corfu-terminal~ pac
 #+END_SRC
 
 *** Prescient
+
 Shows those completion results that are hopefullt most useful, both in the minibuffer and the main buffer.
 
 #+BEGIN_SRC elisp
@@ -385,6 +401,7 @@ Shows those completion results that are hopefullt most useful, both in the minib
 #+END_SRC
 
 *** Consult
+
 ~consult~ provides various functions that integrates with the completion API.
 
 #+BEGIN_SRC elisp
@@ -470,6 +487,7 @@ Shows those completion results that are hopefullt most useful, both in the minib
 #+END_SRC
 
 *** Flycheck
+
 Tangentially related is flycheck, providing in-buffer syntax checking.
 
 #+BEGIN_SRC elisp
@@ -562,6 +580,7 @@ Emacs is an amazing environment for writing in various lisp dialects, with wonde
 #+END_SRC
 
 *** Scheme
+
 Due to Kudus's deep integration with the GNU Guix system, it is only natural to improve the systems used to interact with guile and scheme specifically. For this the ~guix.el~ and the wonderful ~geiser~ packages are used, where ~guix.el~ is a magit-inspired Emacs frontend and ~geiser~ is a package aiming to improve the scheme experience in emacs.
 
 #+BEGIN_SRC elisp
@@ -571,6 +590,7 @@ Due to Kudus's deep integration with the GNU Guix system, it is only natural to 
 #+END_SRC
 
 *** Parens pairing
+
 Most of the time when writing parentheses, brackets, and quotes we want to pair them. This significantly improves comfort since you no longer need to stretch for modifier keys to finish of the pair. And even if you do, ~electric-pair-mode~ will detect it and move the point past as if you had just entered the character. This is of course not just useful for lisp, but in any context when writing pairs of brackets or parentheses.
 
 #+BEGIN_SRC elisp
@@ -604,6 +624,7 @@ Dired is emacs' built in text-based file manager. It's however pretty rough arou
 #+END_SRC
 
 ** PDF-tools
+
 The default "docview" mode of viewing pdfs is quite bad, and is improved immensely by the pdf-tools package. For some this may not be enough, and it is possible to replace it with an external pdf viewer (like evince or zathura).
 
 #+BEGIN_SRC elisp
