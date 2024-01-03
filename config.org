@@ -23,7 +23,7 @@
 The complexity and extensibility of GNU Emacs, paired with its lack of integration with contemporary technical standards, has driven the development of Emacs distributions that contain packages and functionality not included by the GNU project. Kudu is a project meant to expand the scope of such distributions to every user-facing part of the operating system using dialects of the lisp programming language. This allows the user to easily and seamlessly "live in Emacs", using tools integrated directly into the program, such as the Emacs X Window Manager (EXWM), guix.el, and the Emacs Application Framework (EAF). Earlier distributions have focused on integrating Emacs within an otherwise alien system, like DOOM's and Spacemacs' focus on keybinds derived from the Vi editor, to maximize the number of workflows that the distribution could be incorporated into. Kudu does not take this approach, but rather empowers the user to construct their own system within a completely configurable system. All tools are written in lisp, the simple syntax of which allows for a seamless experience and self-sufficient system capable of performing all the daily tasks of modern life. It is hoped that this declarative and atomic system offered by GNU Guix will allow more secure and maintainable infrastructure.
 
 
-The origin for the name is the kudu, an antelope similar to that of the Gnu, the namesake of the GNU Project. Kudu is not part of the GNU Project, and it's developers are not members of GNU or the FSF. However we share a positive opinion of free software and therefore want to contribute to its mainstream adoption. 
+The origin for the name is the kudu, an antelope similar to that of the Gnu, the namesake of the GNU Project. Kudu is not part of the GNU Project, and its developers are not members of GNU or the FSF. However we share a positive opinion of free software and therefore want to contribute to its mainstream adoption. 
 * Configuration
 
 ** Use-package
@@ -276,7 +276,7 @@ Configures the all-important emacs dashboard that shows up on startup.
     )
 #+END_SRC
 ** Completion
-
+*** Corfu
 In-buffer code completion using ~corfu~.
 By default ~corfu~ only works in a GUI environment, but the ~corfu-terminal~ package allows for use when run using the ~-nw~ flag.
 
@@ -296,6 +296,7 @@ By default ~corfu~ only works in a GUI environment, but the ~corfu-terminal~ pac
 
   #+END_SRC
 
+*** Cape
   ~corfu~ does not provide candidates for completion, but this is provided by ~cape~, or the Completion At Point Extensions package.
   
   #+BEGIN_SRC elisp
@@ -325,6 +326,7 @@ By default ~corfu~ only works in a GUI environment, but the ~corfu-terminal~ pac
         (add-to-list 'completion-at-point-functions #'cape-keyword))
  #+END_SRC
 
+*** Minibuffer Completion
  Uses ~vertico~ to show minibuffer completion, and ~marginalia~ and ~orderless~ to format it.
  
  #+BEGIN_SRC elisp
@@ -345,6 +347,7 @@ By default ~corfu~ only works in a GUI environment, but the ~corfu-terminal~ pac
      (completion-category-overrides '((file (styles basic partial-completion)))))
 #+END_SRC
 
+*** Prescient
 Shows those completion results that are hopefullt most useful, both in the minibuffer and the main buffer.
 
 #+BEGIN_SRC elisp
@@ -359,6 +362,7 @@ Shows those completion results that are hopefullt most useful, both in the minib
     :init (vertico-prescient-mode +1))
 #+END_SRC
 
+*** Consult
 ~consult~ provides various functions that integrates with the completion API.
 
 #+BEGIN_SRC elisp
@@ -443,14 +447,18 @@ Shows those completion results that are hopefullt most useful, both in the minib
      :preview-key '(:debounce 0.4 any)))
 #+END_SRC
 
+*** Flycheck
 Tangentially related is flycheck, providing in-buffer syntax checking.
+
 #+BEGIN_SRC elisp
   (use-package flycheck
     :config (global-flycheck-mode +1))
 #+END_SRC
 
 ** Org-mode
+
 Configures Org-mode to make it more attractive and usable.
+
 #+BEGIN_SRC elisp
     (use-package emacs
       :init
@@ -509,11 +517,12 @@ Configures Org-mode to make it more attractive and usable.
     (use-package org-modern-indent
       :load-path "~/.emacs.d/site-lisp/org-modern-indent"
       :hook (org-mode . org-modern-indent-mode))
-
  #+END_SRC
 
 ** Lisp
-Emacs is an amazing environment for writing in various lisp dialects, with wonderful support out-of-the-box. However, there are various different packages designed to improve this experience in general or in slight, specific ways. ~lispy~ is a transformational package for editing S-expressions in a structural way. ~Sly~ is a fork of the popular ~SLIME~ package for an integrated common lisp REPL among other things. It is superior to ~SLIME~ because it has ASCII-art cats. 
+
+Emacs is an amazing environment for writing in various lisp dialects, with wonderful support out-of-the-box. However, there are various different packages designed to improve this experience in general or in slight, specific ways. ~lispy~ is a transformational package for editing S-expressions in a structural way. ~Sly~ is a fork of the popular ~SLIME~ package for an integrated common lisp REPL among other things. It is superior to ~SLIME~ because it has ASCII-art cats.
+
 #+BEGIN_SRC elisp
   (use-package lispy
     :hook
@@ -530,6 +539,7 @@ Emacs is an amazing environment for writing in various lisp dialects, with wonde
   (show-paren-mode)
 #+END_SRC
 
+*** Scheme
 Due to Kudus's deep integration with the GNU Guix system, it is only natural to improve the systems used to interact with guile and scheme specifically. For this the ~guix.el~ and the wonderful ~geiser~ packages are used, where ~guix.el~ is a magit-inspired Emacs frontend and ~geiser~ is a package aiming to improve the scheme experience in emacs.
 
 #+BEGIN_SRC elisp
@@ -538,7 +548,20 @@ Due to Kudus's deep integration with the GNU Guix system, it is only natural to 
   (use-package geiser-guile)
 #+END_SRC
 
-** Dired
+*** Parens pairing
+Most of the time when writing parentheses, brackets, and quotes we want to pair them. This significantly improves comfort since you no longer need to stretch for modifier keys to finish of the pair. And even if you do, ~electric-pair-mode~ will detect it and move the point past as if you had just entered the character. This is of course not just useful for lisp, but in any context when writing pairs of brackets or parentheses.
+
+#+BEGIN_SRC elisp
+  (setq electric-pair-pairs '(
+                              (?\{ . ?\})
+                              (?\( . ?\))
+                              (?\[ . ?\])
+                              (?\" . ?\")))
+  (electric-pair-mode t)
+#+END_SRC
+
+** File management
+
 Dired is emacs' built in text-based file manager. It's however pretty rough around its edges, such as it opening each directory in a separate buffer making navigation a hassle. However certain tweaks can make it a formidable tool accessible directly within emacs. Take that n³ and midnight commander!
 
 #+BEGIN_SRC elisp
@@ -549,38 +572,29 @@ Dired is emacs' built in text-based file manager. It's however pretty rough arou
                                    (list (openwith-make-extension-regexp
                                           '("png" "jpg" "jpeg")) "eog" '(file))
                                    (list (openwith-make-extension-regexp
-                                          '("mkv" "mp4" "avi")) "mpv" '(file))
-                                   )))
-    (setf dired-kill-when-opening-new-dired-buffer t)
-    (setq dired-listing-switches "-aBhl  --group-directories-first")
-    (defalias 'eaf-open-in-file-manager #'dired)
+                                          '("mkv" "mp4" "avi")) "mpv" '(file)))))
+
+  (setf dired-kill-when-opening-new-dired-buffer t)
+  (setq dired-listing-switches "-aBhl  --group-directories-first")
+  (defalias 'eaf-open-in-file-manager #'dired)
 
   (add-hook 'dired-mode-hook 'toggle-truncate-lines)
+#+END_SRC
 
+** PDF-tools
+The default "docview" mode of viewing pdfs is quite bad, and is improved immensely by the pdf-tools package. For some this may not be enough, and it is possible to replace it with an external pdf viewer (like evince or zathura).
+
+#+BEGIN_SRC elisp
   (use-package pdf-tools
     :init
     (pdf-loader-install)
-    (add-hook  'pdf-view-mode-hook (lambda () (display-line-numbers-mode -1)))
-    )
-
+    (add-hook  'pdf-view-mode-hook (lambda () (display-line-numbers-mode -1))))
   #+END_SRC
   
-** Parens pairing
-Most of the time when writing parentheses, brackets, and quotes we want to pair them. This significantly improves comfort since you no longer need to stretch for modifier keys to finish of the pair. And even if you do, ~electric-pair-mode~ will detect it and move the point past as if you had just entered the character.
-
-#+BEGIN_SRC elisp
-  (setq electric-pair-pairs '(
-                              (?\{ . ?\})
-                              (?\( . ?\))
-                              (?\[ . ?\])
-                              (?\" . ?\")
-                              (?\$ . ?\$)
-                              ))
-  (electric-pair-mode t)
-#+END_SRC
-
 ** Magit
+
 Magit is wonderful, and one of the killer apps that makes emacs a system than other editors or IDEs. However it is not installed by default, so it is defined here.
+
 #+BEGIN_SRC elisp
   (use-package magit)
 
@@ -594,7 +608,9 @@ Magit is wonderful, and one of the killer apps that makes emacs a system than ot
 #+END_SRC
 
 ** Functions
+
 The sudo function raises the privilege of the current buffer to root permissions without having to close and open it again through ~TRAMP~.
+
 #+BEGIN_SRC elisp
   (defun sudo ()
     (interactive)
@@ -612,6 +628,9 @@ The sudo function raises the privilege of the current buffer to root permissions
 #+END_SRC
 
 ** Emacs Application Framework
+
+The /Emacs Application Framework/ (EAF) provides a multitude of programs, most notably a browser, that more tigtly integrate with the Emacs than Icecat or other browsers allow for when used in conjunction with EXWM. While they mostly are usable with a REPL-style lisp interaction, they are nevertheless incredibly useful. 
+
 #+BEGIN_SRC elisp
   (unless (file-directory-p "~/.emacs.d/site-lisp/emacs-application-framework")
     (shell-command "git clone --depth=1 -b master https://github.com/emacs-eaf/emacs-application-framework.git ~/.emacs.d/site-lisp/emacs-application-framework/"))
@@ -630,6 +649,7 @@ The sudo function raises the privilege of the current buffer to root permissions
       (defalias 'browse-web #'eaf-open-browser)
       (setq eaf-browser-default-search-engine "duckduckgo")
       (setq eaf-browse-blank-page-url "https://duckduckgo.com")
-      (eaf-bind-key nil "M-q" eaf-browser-keybinding))
+      (eaf-bind-key nil "M-q" eaf-browser-keybinding)
+      (setq eaf-byte-compile-apps t))
 #+END_SRC
 
