@@ -34,7 +34,8 @@ The ~diminish~ package hides certain minor modes from being shown in the mode-li
 
 #+BEGIN_SRC elisp
   (setq use-package-always-defer t
-        use-package-always-ensure t)
+        use-package-always-ensure t
+        use-package-verbose t)
 
   (unless (package-installed-p 'diminish)
       (package-refresh-contents)
@@ -54,6 +55,14 @@ Compiles elisp files to improve the speed and responsiveness of Emacs at the cos
       (auto-compile-on-save-mode 1))
   
   (setq native-comp-async-report-warnings-errors nil)
+#+END_SRC
+
+** Backups
+
+Emacs usually stores backups in the same directory as the files themselves, cluttering up your nice and tidy system. This moves them to a dedicated directory within ~.emacs.d~.
+
+#+BEGIN_SRC elisp
+  (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 #+END_SRC
 
 ** EXWM
