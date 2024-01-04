@@ -509,7 +509,7 @@ Configures Org-mode to make it more attractive and usable.
 #+BEGIN_SRC elisp
   (setq completion-cycle-threshold 2)
   (setq tab-always-indent 'complete)
-  (add-hook org-mode-hook '#flyspell-mode)
+  (add-hook org-mode-hook #'flyspell-mode)
 
   (use-package org
     :config
