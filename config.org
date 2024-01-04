@@ -509,7 +509,6 @@ Configures Org-mode to make it more attractive and usable.
 #+BEGIN_SRC elisp
   (setq completion-cycle-threshold 2)
   (setq tab-always-indent 'complete)
-  (add-hook org-mode-hook #'flyspell-mode)
 
   (use-package org
     :config
@@ -684,20 +683,17 @@ Magit can sometimes create a lot of buffers for different processes that are ann
 The /Emacs Application Framework/ (EAF) provides a multitude of programs, most notably a browser, that more tigtly integrate with the Emacs than Icecat or other browsers allow for when used in conjunction with EXWM. While they mostly are usable with a REPL-style lisp interaction, they are nevertheless incredibly useful. 
 
 #+BEGIN_SRC elisp
-  (if (display-graphic-p)
-      (unless (file-directory-p "~/.emacs.d/site-lisp/emacs-application-framework/")
-        (shell-command "git clone --depth=1 -b master https://github.com/emacs-eaf/emacs-application-framework.git ~/.emacs.d/site-lisp/emacs-application-framework/"))
-    (if (get-buffer "*Shell Command Output*") (kill-buffer "*Shell Command Output*"))
+    (unless (file-directory-p "~/.emacs.d/site-lisp/emacs-application-framework/")
+      (shell-command "git clone --depth=1 -b master https://github.com/emacs-eaf/emacs-application-framework.git ~/.emacs.d/site-lisp/emacs-application-framework/"))
+  (if (get-buffer "*Shell Command Output*") (kill-buffer "*Shell Command Output*"))
 
-    (add-to-list 'load-path "~/.emacs.d/site-lisp/emacs-application-framework/")
-    (require 'eaf)
-    (require 'eaf-browser)
-    (require 'eaf-map)
+  (add-to-list 'load-path "~/.emacs.d/site-lisp/emacs-application-framework/")
 
-    (use-package eaf
-      :load-path "~/.emacs.d/site-lisp/emacs-application-framework"
-      :config
-      (require 'eaf-browser)
+  (use-package eaf
+    :load-path "~/.emacs.d/site-lisp/emacs-application-framework"
+    :config
+    (if (display-graphic-p)
+        (require 'eaf-browser)
       (require 'eaf-map)
       (defalias 'browse-web #'eaf-open-browser)
       (setq eaf-browser-default-search-engine "duckduckgo")
