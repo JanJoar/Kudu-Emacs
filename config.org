@@ -556,7 +556,7 @@ Configures Org-mode to make it more attractive and usable.
     (org-modern-checkbox nil))
 
   (unless (file-directory-p "~/.emacs.d/site-lisp/org-modern-indent")
-    (shell-command "git clone https://github.com/jdtsmith/org-modern-indent.git://github.com/jdtsmith/org-modern-indent.git ~/.emacs.d/site-lisp/org-modern-indent/./"))
+    (async-shell-command "git clone https://github.com/jdtsmith/org-modern-indent.git://github.com/jdtsmith/org-modern-indent.git ~/.emacs.d/site-lisp/org-modern-indent/"))
   (use-package org-modern-indent
     :load-path "~/.emacs.d/site-lisp/org-modern-indent"
     :hook (org-mode . org-modern-indent-mode))
@@ -651,6 +651,16 @@ Magit is wonderful, and one of the killer apps that makes emacs a system than ot
   (use-package magit-delta
     :after magit
     :config (magit-delta-mode t))
+#+END_SRC
+
+** Tooling
+
+Emacs has a wonderful undo-system, but it can be hard to get an idea of how it works intuitively. ~undo-tree~ helps with this by creating a wonderful visualization for your branching undo, well, tree.
+
+#+BEGIN_SRC elisp
+  (use-package undo-tree
+    :init
+    (global-undo-tree-mode +1))
 #+END_SRC
 
 ** Interactive Functions

@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: Display math environment
+# key: math
+# --
+\[
+${0:}
+\]
