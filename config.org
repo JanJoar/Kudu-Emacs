@@ -40,7 +40,7 @@ The ~diminish~ package hides certain minor modes from being shown in the mode-li
   (unless (package-installed-p 'diminish)
       (package-refresh-contents)
       (package-install 'use-package)
-      (package-install diminish))
+      (package-install 'diminish))
 #+END_SRC
 
 ** Auto-compile
