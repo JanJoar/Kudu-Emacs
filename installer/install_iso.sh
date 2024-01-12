@@ -86,6 +86,8 @@ function guixInit() {
 	scheme_template=$(cat $SCM_FILE)
 	scm=$(substitute_variables "$scheme_template" DISK HOSTNAME USERNAME ROOT_UUID TIMEZONE KEYMAP)
 
+	cp ../logos/Kudu_grub_image.svg /mnt/etc/Kudu_grub_image.svg
+
 	mkdir /mnt/etc
 	echo "$scm" > /mnt/etc/config.scm
 	guix pull

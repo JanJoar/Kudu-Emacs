@@ -69,7 +69,12 @@
           %desktop-services))
  (bootloader (bootloader-configuration
               (bootloader grub-bootloader)
-              (targets '("$DISK"))))
+              (targets '("$DISK")))
+	      (theme
+		(grub-theme
+		  (resolution '(1920 . 1080))
+		  (image (local-file "/etc/Kudu_grub_image.svg")))))
+ 
  (swap-devices (list (swap-space
                       (target (uuid
                                "$SWAP_UUID"

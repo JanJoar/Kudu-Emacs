@@ -11,7 +11,7 @@
   (let ((inhibit-read-only t))
     (erase-buffer))
   (remove-overlays)
-  (widget-insert (read-file-into-string "~/.emacs.d/Logos/KuduLogo_text.txt") )
+  (widget-insert (read-file-into-string "../Logos/KuduLogo_text.txt") )
   (widget-insert "\n\n")
   (widget-create 'push-button
                  :notify (lambda (&rest ignore)
@@ -30,7 +30,7 @@
     (erase-buffer))
   (remove-overlays)
   (let ((keymap ""))
-    (setq keymaps (get-nl-seperated "~/.emacs.d/installer/keymaps"))
+    (setq keymaps (get-nl-seperated "../installer/keymaps"))
     (widget-insert "Keymap: \n")
     (apply
      #'widget-create
@@ -59,7 +59,7 @@
     (erase-buffer))
   (remove-overlays)
   (let ((timezone ""))
-    (setq timezones(get-nl-seperated "~/.emacs.d/installer/timezones"))
+    (setq timezones(get-nl-seperated "../installer/timezones"))
     (widget-insert "Timezone: \n")
     (apply
      #'widget-create
@@ -87,7 +87,7 @@
   (remove-overlays)
   (let ((hostname "") (username "") (disk ""))
     (widget-insert "\n")
-    (setq disks (get-shell "~/.emacs.d/installer/get_disks.sh"))
+    (setq disks (get-shell "../installer/get_disks.sh"))
     (message (car disks))
     (widget-create 'editable-field
                    :size 30
@@ -128,7 +128,7 @@
 (defun upload (hostname username disk timezone keymap)
   (message "Formatting bash command...")
   (setq cmd (format
-             "bash ~/.emacs.d/installer/install.sh --hostname %s --username %s --disk %s --timezone %s --keymap %s &"
+             "bash ../installer/install.sh --hostname %s --username %s --disk %s --timezone %s --keymap %s &"
              hostname
              username
              disk
