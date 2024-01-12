@@ -663,7 +663,7 @@ Emacs has a wonderful undo-system, but it can be hard to get an idea of how it w
     (global-undo-tree-mode +1))
 #+END_SRC
 
-** Interactive Functions
+** Functions
 
 The sudo function raises the privilege of the current buffer to root permissions without having to close and open it again through ~TRAMP~.
 
@@ -686,6 +686,14 @@ Magit can sometimes create a lot of buffers for different processes that are ann
             (if (buffer-match-p ".*magit.*" buffer) 
               (kill-buffer buffer))) 
           (buffer-list)))
+#+END_SRC
+
+Emacs does not have a nice easy to use elisp  function for calculating the factorial of a value, this adds it. This works out particularly nicely since the standard notation for the factorial of a value uses prefix notation.
+
+#+BEGIN_SRC elisp
+  (defun ! (n)
+    "An emacs function to calculate the factorial of n using the calc library"
+    (string-to-number (calc-eval (format "%s!" n))))
 #+END_SRC
 
 ** Emacs Application Framework
