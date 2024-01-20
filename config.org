@@ -18,42 +18,51 @@
 #+author: Joar von Arndt
 #+STARTUP: overview
 * What is Kudu?
-Kudu Emacs is originally Joar von Arndt's own configuration for GNU Emacs that has manually been tinkered with to improve its workflow, and now be turned into a fully fledged system compromising Emacs and Guix implementations of the tools required to form a useable operating system. The goal is to have a fully featured and easily hackable system configurable entirely with lisp, or at least with user-facing tools configurable in its dialects. We wanted to use this as a platform to learn about practical applications of lisp and the design of operating systems and to see if a lisp-system is usable enough for day-to-day computing purposes.
+[[https://github.com/JanJoar/Kudu-Emacs/blob/main/Logos/KuduLogo_red.svg]]
 
-A lot of inspiration is taken from preëxisting GNU Emacs configurations, most notably:
-- [[https://github.com/snackon/Witchmacs][Witchmacs]]
-- [[https://seagle0128.github.io/.emacs.d/][Centaur Emacs]]
-- [[https://github.com/rougier/nano-emacs][N Λ N O - Emacs]]
+The complexity and extensibility of GNU Emacs, paired with its lack of integration with contemporary technical standards, has driven the development of Emacs distributions that contain packages and functionality not included by the GNU project. Kudu is a project meant to expand the scope of such distributions to every user-facing part of the operating system using dialects of the lisp programming language. This allows the user to easily and seamlessly "live in Emacs", using tools integrated directly into the program, such as the Emacs X Window Manager (EXWM), guix.el, and the Emacs Application Framework (EAF). Earlier distributions have focused on integrating Emacs within an otherwise alien system, like DOOM's and Spacemacs' focus on keybinds derived from the Vi editor, to maximize the number of workflows that the distribution could be incorporated into. Kudu does not take this approach, but rather empowers the user to construct their own system within a completely configurable system. All tools are written in lisp, the simple syntax of which allows for a seamless experience and self-sufficient system capable of performing all the daily tasks of modern life. It is hoped that this declarative and atomic system offered by GNU Guix will allow more secure and maintainable infrastructure.
 
-Naturally it also incorporates aspects of other GNU/Linux distributions (Most notably GNU Guix) like:
-- Declarative systems configuration
-- A fully fledged installer written in Emacs Lisp
-- A working GUI environment
 
-Naturally various inspirations are taken from from other people and their documentation scattered across the Blogosphere or in the READMEs of the respective Emacs packages.
-
-The origin for the name is the kudu, an antelope similar to that of the Gnu, the namesake of the GNU Project. Kudu is not part of the GNU Project, and it's developers are not members of GNU or the FSF. However we share a positive opinion of free software and therefore want to contribute to its mainstream adoption. 
+The origin for the name is the kudu, an antelope similar to that of the Gnu, the namesake of the GNU Project. Kudu is not part of the GNU Project, and its developers are not members of GNU or the FSF. However we share a positive opinion of free software and therefore want to contribute to its mainstream adoption. 
 * Configuration
 
 ** Use-package
-Probably one of the most useful packages, even if not very prominent when using emacs, is use-package. It allows you to declaratively write your configuration and have the included emacs package manager download them for you, and also have configurations for packages only run when packages are loaded, similarly to ~(with-eval-after-load ...)~. The variables set here simply enable this behaviour. The ~diminish~ package hides certain minor modes from being shown in the mode-line and is not installed by default. For this reason its used to check if Kudu has been run before, and therefore if it needs to update its package repos. Feel free to perform this check on any other package, or remove it entirely, but beware that ~(package-refresh-contents)~ must be run before the other ~use-package~ declarations for ~package.el~ to install all the other packages needed.
+
+Probably one of the most useful packages, even if not very prominent when using emacs, is ~use-package~. It allows you to declaratively write your configuration and have the included emacs package manager download them for you, and also have configurations for packages only run when packages are loaded, similarly to ~(with-eval-after-load ...)~. The variables set here simply enable this behaviour. If the version of Emacs is older than Emacs 29, ~use-package~ won't be available by default. It is therefore installed here as well.
+
+The ~diminish~ package hides certain minor modes from being shown in the mode-line and is not installed by default. For this reason its used to check if Kudu has been run before, and therefore if it needs to update its package repos. Feel free to perform this check on any other package, or remove it entirely, but beware that ~(package-refresh-contents)~ must be run before the other ~use-package~ declarations for ~package.el~ to install all the other packages needed.
 
 #+BEGIN_SRC elisp
   (setq use-package-always-defer t
-        use-package-always-ensure t)
+        use-package-always-ensure t
+        use-package-verbose t)
 
   (unless (package-installed-p 'diminish)
-      (package-refresh-contents))
-  (use-package diminish)
+      (package-refresh-contents)
+      (package-install 'use-package)
+      (package-install 'diminish))
 #+END_SRC
+
 ** Auto-compile
+
 Compiles elisp files to improve the speed and responsiveness of Emacs at the cost of first-time startup time. The settings in ~init.el~ makes sure that updated elisp files take priority over older, compiled files.
+
 #+BEGIN_SRC elisp
-(use-package auto-compile 
-  :ensure t
-  :init
-  (auto-compile-on-load-mode 1)
-  (auto-compile-on-save-mode 1))
+    (use-package auto-compile 
+      :ensure t
+      :init
+      (auto-compile-on-load-mode 1)
+      (auto-compile-on-save-mode 1))
+  
+  (setq native-comp-async-report-warnings-errors nil)
+#+END_SRC
+
+** Backups
+
+Emacs usually stores backups in the same directory as the files themselves, cluttering up your nice and tidy system. This moves them to a dedicated directory within ~.emacs.d~.
+
+#+BEGIN_SRC elisp
+  (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 #+END_SRC
 
 ** EXWM
@@ -64,6 +73,29 @@ However, Emacs can still be used without constituting the entire system. Therefo
 #+BEGIN_SRC elisp
   (use-package exwm
     :init
+
+    ;; EXWM related functions
+
+    (defun xrandr-find-monitor-names ()
+      "Returns a list of connected monitors"
+      (let ((xrandr-contents nil) (monitor-names nil))
+        (shell-command "xrandr" "*xrandr-output*")
+        (switch-to-buffer "*xrandr-output*")
+        (setq xrandr-contents (buffer-string))
+        (kill-buffer "*xrandr-output*")
+        (setq xrandr-contents (replace-regexp-in-string "\\(.* connected\\).*\n\\|.*\n" "\\1" xrandr-contents))
+        (remove "" (split-string xrandr-contents " connected"))))
+
+    (defun exwm-monitors-format ()
+      "Formats the list from xrandr-find-monitor-names to apply EXWM workspaces"
+      (let ((monitors (xrandr-find-monitor-names)) (counter 0) (return-value nil))
+        (while monitors
+          (push counter return-value)
+          (push (car monitors) return-value)
+          (setq counter (+ counter 1))
+          (setq monitors (cdr monitors)))
+        (nreverse return-value)))
+
     (setq switch-to-buffer-obey-display-actions t)
     (shell-command "wmctrl -m ; echo $status" "*window-manager*" "*window-manager-error*")
 
@@ -106,18 +138,24 @@ However, Emacs can still be used without constituting the entire system. Therefo
                            (interactive (list (read-shell-command "$ ")))
                            (start-process-shell-command command nil command)))
               ([?\s-w] . exwm-workspace-switch)
+              ([?\s-u] . (lambda ()
+                           (interactive)
+                           (shell-command "brightnessctl --quiet --min-value set +10")))
+              ([?\s-d] . (lambda ()
+                           (interactive)
+                           (shell-command "brightnessctl --quiet --min-value set 10-")))
               ))
       ;; Actually starts EXWM
-      (exwm-enable)
-      )
+      (exwm-enable))
 
     (when (get-buffer "*window-manager*")
       (kill-buffer "*window-manager*"))
     (when (get-buffer "*window-manager-error*")
       (kill-buffer "*window-manager-error*")))
 #+END_SRC
+
 ** General visual elements
-Visible bell changes the otherwise quite jarring bell sound into a visual flash on it top and bottom of the emacs frame. ~prettify-symbols-mode~ allows certain major modes to change the appearance of strings, the classic example being the greek letter lambda in lisp-modes for lambda calculus. ~pixel-scroll-precision-mode~ allows you to scroll past things like images without buffers jumping around all the time.
+Visible bell changes the otherwise quite jarring bell sound into a visual flash on it top and bottom of the emacs frame. ~prettify-symbols-mode~ allows certain major modes to change the appearance of strings, the classic example being the Greek letter lambda in lisp-modes for lambda calculus. ~pixel-scroll-precision-mode~ allows you to scroll past things like images without buffers jumping around all the time.
  
 #+BEGIN_SRC elisp
   (setq visible-bell t
@@ -126,7 +164,8 @@ Visible bell changes the otherwise quite jarring bell sound into a visual flash 
     (global-display-line-numbers-mode)
 #+END_SRC
 
-The beacon package shows off the location the the point whenever you move to a window or scroll a buffer so that you don't lose it.
+The beacon package shows off the location the point whenever you move to a window or scroll a buffer so that you don't lose it.
+
 #+BEGIN_SRC elisp
     (use-package beacon
     :diminish beacon-mode
@@ -134,7 +173,8 @@ The beacon package shows off the location the the point whenever you move to a w
     (beacon-mode 1))
 #+END_SRC
 
-Solaire-mode makes it easy to distingush between warnings, popups and messages by tinting the background of those buffers slightly darker, as long as the current theme supports it.
+Solaire-mode makes it easy to distinguish between warnings, popups and messages by tinting the background of those buffers slightly darker, as long as the current theme supports it.
+
 #+BEGIN_SRC elisp
         (use-package solaire-mode
           :init
@@ -143,6 +183,7 @@ Solaire-mode makes it easy to distingush between warnings, popups and messages b
 #+END_SRC
 
 Formats tabs to Linux-kernel standards and keeps them so using the ~aggressive-indent~ package.
+
 #+BEGIN_SRC elisp
   (setq-default tab-width 8)
   (setq-default standard-indent 8)
@@ -150,43 +191,109 @@ Formats tabs to Linux-kernel standards and keeps them so using the ~aggressive-i
 
   (use-package aggressive-indent
     :diminish aggressive-indent-mode
-    :hook (prog-mode . aggressive-indent-mode))
+    :init (global-aggressive-indent-mode))
 #+END_SRC
 
 Enable mouse use when running Emacs in a terminal emulator.
+
 #+BEGIN_SRC elisp
   (xterm-mouse-mode)
-#+END_SRC
-
-The [[https://en.wikipedia.org/wiki/Golden_ratio][golden ratio]] is a magically beautiful ratio that has been studied for over a thousand years. An Emacs frame, being a rectangle, forms the /golden rectangle/, and we can split windows using it depending on where our focus is. However, we may sometimes not wish for frames to be automatically resized, for example keeping a PDF-file open in a window, and so the ~C-c g~ keybind is defined to quickly toggle it.
-
-#+BEGIN_SRC elisp
-  (use-package golden-ratio
-    :diminish golden-ratio-mode
-    :init
-    (golden-ratio-mode 1)
-    (add-hook 'after-init-hook (setq golden-ratio-auto-scale t))
-    (keymap-global-set "C-c g" 'golden-ratio-mode)
-    )
 #+END_SRC
 
 Without this setting emacs sometimes asks for confirmation via a "Yes or no" prompt, and sometimes "y or n". This is generally difficult to predict, and so this setting forces the message to always send "y or n" forms, like most programs run in a terminal.
 
 #+BEGIN_SRC elisp
   (defalias 'yes-or-no-p 'y-or-n-p)
-  (message "test")
 #+END_SRC
 
-The default Emacs mode-line is a bit busy and certain elements of it are difficult to intuitively understand. The ~simple-modeline~ package changes the appearence of the mode-line so that it becomes, well, simpler.
+The default Emacs mode-line is a bit busy and certain elements of it are difficult to intuitively understand. This simplifies it considerably to make it more readable and also adds a header line.
 
 #+BEGIN_SRC elisp
-  (use-package simple-modeline
+  (defun mode-line-padding ()
+    (let ((r-length (length (format-mode-line mode-line-end-spaces))))
+      (propertize " "
+                  'display `(space :align-to (- right ,r-length)))))
+
+  (setq-default mode-line-format
+              '(
+                "|"
+                "%e"
+                (:eval (unless (string-match-p "\\*.*\\*" (buffer-name))
+                    (let* ((read-only (and buffer-read-only (buffer-file-name)))
+                           (modified (buffer-modified-p)))
+                      (propertize
+                       (if read-only "  " (if modified " !" "  "))))))
+                " "
+                (:eval (propertize (format "%s" (buffer-name)) 'face 'bold))
+                " "
+                (:eval (mode-line-padding))
+                (:eval (setq mode-line-end-spaces mode-line-misc-info))
+                ))
+  (setq-default header-line-format
+                '(
+                  "  "
+                  (:eval (propertize (format "%s" mode-name) 'face 'bold))
+                  " "
+                  ))
+#+END_SRC
+
+Adds as nicely formated clock in all cases, even when not running in EXWM.
+
+#+BEGIN_SRC elisp
+  (setq display-time-default-load-average nil)
+  (setq display-time-24hr-format t)
+  (display-time-mode 1)
+#+END_SRC
+
+When editing just one window, left-aligned text is awkwardly too far to the left. The ~perfect-margin~ package fixes this by centering the contents of the window when only one is present.
+
+#+BEGIN_SRC elisp
+  (use-package perfect-margin
+    :custom
+    (perfect-margin-visible-width 128)
     :init
-    (simple-modeline-mode))
+    ;; enable perfect-mode
+    (perfect-margin-mode t)
+    ;; auto-center minibuffer windows
+    (setq perfect-margin-ignore-filters nil)
+    ;; auto-center special windows
+    (setq perfect-margin-ignore-regexps nil))
+#+END_SRC
+
+~rainbow-delimiters~ differentiates layers of parentheses using different colours so that they can be identified at a glance.
+
+#+BEGIN_SRC elisp
+  (use-package rainbow-delimiters
+    :init (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
+#+END_SRC
+
+~smartparens~ is intended to help in a similar way by highlighting the current sexp.
+
+#+BEGIN_SRC elisp
+  (use-package smartparens
+    :hook
+    (prog-mode . smartparens-mode)
+    (text-mode . smartparens-mode)
+    :init
+    (require 'smartparens-config))
+#+END_SRC
+
+Adds little icons for completion frameworks.
+
+#+BEGIN_SRC elisp
+  (use-package svg-lib)
+  (use-package kind-icon
+    :after corfu
+    :custom (kind-icon-default-face 'corfu-default)
+    :init (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)
+    (unless (display-graphic-p)
+      (setq kind-icon-use-icons nil)))
 #+END_SRC
 
 ** Dashboard
-Configures the all-important emacs dashboard that shows up on startup 
+
+Configures the all-important emacs dashboard that shows up on startup.
+
 #+BEGIN_SRC elisp
   (use-package dashboard
     :init
@@ -204,182 +311,303 @@ Configures the all-important emacs dashboard that shows up on startup
     (setq dashboard-set-navigator nil)
     (setq dashboard-set-init-info t)
     (setq dashboard-set-footer nil)
+    (dashboard-setup-startup-hook)
 
-    (add-hook  'dashboard-mode-hook (lambda () (display-line-numbers-mode -1)))
-    )
+    (add-hook  'dashboard-mode-hook (lambda () (display-line-numbers-mode -1))))
 #+END_SRC
+
 ** Completion
-Code completion using corfu.
+
+*** Corfu
+
+In-buffer code completion using ~corfu~.
+By default ~corfu~ only works in a GUI environment, but the ~corfu-terminal~ package allows for use when run using the ~-nw~ flag.
+
 #+BEGIN_SRC elisp
   (use-package corfu
     :custom
     (setq corfu-auto t)
     :init
-    (global-corfu-mode))
+    (global-corfu-mode)
+    (setq corfu-popupinfo-delay 0.5)
+    (corfu-popupinfo-mode +1))
 
-  (use-package cape
-    ;; Bind dedicated completion commands
-    ;; Alternative prefix keys: C-c p, M-p, M-+, ...
-    :bind (("C-c p p" . completion-at-point) ;; capf
-           ("C-c p t" . complete-tag)        ;; etags
-           ("C-c p d" . cape-dabbrev)        ;; or dabbrev-completion
-           ("C-c p h" . cape-history)
-           ("C-c p f" . cape-file)
-           ("C-c p k" . cape-keyword)
-           ("C-c p s" . cape-symbol)
-           ("C-c p a" . cape-abbrev)
-           ("C-c p l" . cape-line)
-           ("C-c p w" . cape-dict)
-           ("C-c p \\" . cape-tex)
-           ("C-c p _" . cape-tex)
-           ("C-c p ^" . cape-tex)
-           ("C-c p &" . cape-sgml)
-           ("C-c p r" . cape-rfc1345))
-    :init
-    (add-to-list 'completion-at-point-functions #'cape-dabbrev)
-    (add-to-list 'completion-at-point-functions #'cape-file)
-    (add-to-list 'completion-at-point-functions #'cape-elisp-block)
-    (add-to-list 'completion-at-point-functions #'cape-history)
-    ;;(add-to-list 'completion-at-point-functions #'cape-keyword)
-    ;;(add-to-list 'completion-at-point-functions #'cape-tex)
-    ;;(add-to-list 'completion-at-point-functions #'cape-sgml)
-    ;;(add-to-list 'completion-at-point-functions #'cape-rfc1345)
-    ;;(add-to-list 'completion-at-point-functions #'cape-abbrev)
-    ;;(add-to-list 'completion-at-point-functions #'cape-dict)
-    ;;(add-to-list 'completion-at-point-functions #'cape-symbol)
-    ;;(add-to-list 'completion-at-point-functions #'cape-line)
-    )
   (use-package corfu-terminal
-    :init
-    (unless (display-graphic-p)
-      (corfu-terminal-mode +1)))
+      :init
+      (unless (display-graphic-p)
+        (corfu-terminal-mode +1)))
+  #+END_SRC
 
-  (use-package eglot
-    :commands (eglot eglot-ensure)
-    :hook
-    (python-mode . eglot-ensure)
-    (LaTeX-mode . eglot-ensure)
-    (csharp-mode . omnisharp-mode))
+*** Cape
 
-  (use-package vertico
-    :init
-    (vertico-mode)
-    :config
-    (setq vertico-count 10)
-    (vertico-indexed-mode)
-    (vertico-mouse-mode)
-    )
+  ~corfu~ does not provide candidates for completion, but this is provided by ~cape~, or the Completion At Point Extensions package.
+  
+  #+BEGIN_SRC elisp
+      (use-package cape
+        ;; Bind dedicated completion commands
+        ;; Alternative prefix keys: C-c p, M-p, M-+, ...
+        :bind (("C-c p p" . completion-at-point) ;; capf
+               ("C-c p t" . complete-tag)        ;; etags
+               ("C-c p d" . cape-dabbrev)        ;; or dabbrev-completion
+               ("C-c p h" . cape-history)
+               ("C-c p f" . cape-file)
+               ("C-c p k" . cape-keyword)
+               ("C-c p s" . cape-symbol)
+               ("C-c p a" . cape-abbrev)
+               ("C-c p l" . cape-line)
+               ("C-c p w" . cape-dict)
+               ("C-c p \\" . cape-tex)
+               ("C-c p _" . cape-tex)
+               ("C-c p ^" . cape-tex)
+               ("C-c p &" . cape-sgml)
+               ("C-c p r" . cape-rfc1345))
+        :init
+        (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+        (add-to-list 'completion-at-point-functions #'cape-file)
+        (add-to-list 'completion-at-point-functions #'cape-elisp-block)
+        (add-to-list 'completion-at-point-functions #'cape-history)
+        (add-to-list 'completion-at-point-functions #'cape-keyword))
+ #+END_SRC
 
-  (use-package marginalia
-    :hook (vertico-mode . marginalia-mode))
+*** Minibuffer Completion
 
-  (use-package orderless
-  :custom
-  (completion-styles '(orderless basic))
-  (completion-category-overrides '((file (styles basic partial-completion)))))
+ Uses ~vertico~ to show minibuffer completion, and ~marginalia~ and ~orderless~ to format it.
+ 
+ #+BEGIN_SRC elisp
+     (use-package vertico
+       :init
+       (vertico-mode)
+       :config
+       (setq vertico-count 10)
+       (vertico-indexed-mode)
+       (vertico-mouse-mode))
+
+     (use-package marginalia
+       :hook (vertico-mode . marginalia-mode))
+
+     (use-package orderless
+     :custom
+     (completion-styles '(orderless basic prescient))
+     (completion-category-overrides '((file (styles basic partial-completion)))))
 #+END_SRC
 
-Tangentally related is flycheck, providing in-buffer syntax checking.
+*** Prescient
+
+Shows those completion results that are hopefully most useful, both in the minibuffer and the main buffer.
+
+#+BEGIN_SRC elisp
+  (use-package prescient
+    :init
+    (setq prescient-persist-mode t)
+    (setq prescient-history-length 5)
+    (setq prescient-sort-full-matches-first t))
+  (use-package corfu-prescient
+    :init (corfu-prescient-mode +1))
+  (use-package vertico-prescient
+    :init (vertico-prescient-mode +1))
+#+END_SRC
+
+*** Consult
+
+~consult~ provides various functions that integrates with the completion API.
+
+#+BEGIN_SRC elisp
+  (use-package consult
+    :bind (;; C-c bindings in `mode-specific-map'
+           ("C-c M-x" . consult-mode-command)
+           ("C-c h" . consult-history)
+           ("C-c k" . consult-kmacro)
+           ("C-c m" . consult-man)
+           ("C-c i" . consult-info)
+           ([remap Info-search] . consult-info)
+           ;; C-x bindings in `ctl-x-map'
+           ("C-x M-:" . consult-complex-command)     ;; orig. repeat-complex-command
+           ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
+           ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
+           ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
+           ("C-x t b" . consult-buffer-other-tab)    ;; orig. switch-to-buffer-other-tab
+           ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
+           ("C-x p b" . consult-project-buffer)      ;; orig. project-switch-to-buffer
+           ;; Custom M-# bindings for fast register access
+           ("M-#" . consult-register-load)
+           ("M-'" . consult-register-store)          ;; orig. abbrev-prefix-mark (unrelated)
+           ("C-M-#" . consult-register)
+           ;; Other custom bindings
+           ("M-y" . consult-yank-pop)                ;; orig. yank-pop
+           ;; M-g bindings in `goto-map'
+           ("M-g e" . consult-compile-error)
+           ("M-g f" . consult-flymake)               ;; Alternative: consult-flycheck
+           ("M-g g" . consult-goto-line)             ;; orig. goto-line
+           ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
+           ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading
+           ("M-g m" . consult-mark)
+           ("M-g k" . consult-global-mark)
+           ("M-g i" . consult-imenu)
+           ("M-g I" . consult-imenu-multi)
+           ;; M-s bindings in `search-map'
+           ("M-s d" . consult-find)                  ;; Alternative: consult-fd
+           ("M-s c" . consult-locate)
+           ("M-s g" . consult-grep)
+           ("M-s G" . consult-git-grep)
+           ("M-s r" . consult-ripgrep)
+           ("M-s l" . consult-line)
+           ("M-s L" . consult-line-multi)
+           ("M-s k" . consult-keep-lines)
+           ("M-s u" . consult-focus-lines)
+           ;; Isearch integration
+           ("M-s e" . consult-isearch-history)
+           :map isearch-mode-map
+           ("M-e" . consult-isearch-history)         ;; orig. isearch-edit-string
+           ("M-s e" . consult-isearch-history)       ;; orig. isearch-edit-string
+           ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
+           ("M-s L" . consult-line-multi)            ;; needed by consult-line to detect isearch
+           ;; Minibuffer history
+           :map minibuffer-local-map
+           ("M-s" . consult-history)                 ;; orig. next-matching-history-element
+           ("M-r" . consult-history))                ;; orig. previous-matching-history-element
+
+    :init
+    ;; Optionally tweak the register preview window.
+    ;; This adds thin lines, sorting and hides the mode line of the window.
+    (advice-add #'register-preview :override #'consult-register-window)
+
+    ;; Use Consult to select xref locations with preview
+    (setq xref-show-xrefs-function #'consult-xref
+          xref-show-definitions-function #'consult-xref)
+
+    :config
+    ;; Optionally configure preview. The default value
+    ;; is 'any, such that any key triggers the preview.
+    ;; (setq consult-preview-key 'any)
+    ;; (setq consult-preview-key "M-.")
+    ;; (setq consult-preview-key '("S-<down>" "S-<up>"))
+    ;; For some commands and buffer sources it is useful to configure the
+    ;; :preview-key on a per-command basis using the `consult-customize' macro.
+    (consult-customize
+     consult-theme :preview-key '(:debounce 0.2 any)
+     consult-ripgrep consult-git-grep consult-grep
+     consult-bookmark consult-recent-file consult-xref
+     consult--source-bookmark consult--source-file-register
+     consult--source-recent-file consult--source-project-recent-file
+     ;; :preview-key "M-."
+     :preview-key '(:debounce 0.4 any)))
+#+END_SRC
+
+*** Flycheck
+
+Tangentially related is flycheck, providing in-buffer syntax checking.
+
 #+BEGIN_SRC elisp
   (use-package flycheck
     :config (global-flycheck-mode +1))
 #+END_SRC
 
 ** Org-mode
-Configures Org-mode to make it more attractive and useable.
+
+Configures Org-mode to make it more attractive and usable.
+
 #+BEGIN_SRC elisp
-    (use-package emacs
-      :init
-      (setq completion-cycle-threshold 2)
-      (setq tab-always-indent 'complete))
+  (setq completion-cycle-threshold 2)
+  (setq tab-always-indent 'complete)
 
-    (use-package org
-      :config
-      (setq org-format-latex-options
-            (plist-put org-format-latex-options
-                       :scale 1.3
-                       ))
-      (setq org-format-latex-options
-            (plist-put org-format-latex-options
-                       :html-scale 3
-                       ))
-      (setq org-startup-indented t
-            org-toggle-pretty-entities t
-            org-hide-leading-stars t
-            org-hide-emphasis-markers t)
-      (add-hook 'text-mode-hook 'turn-on-visual-line-mode)
-      )
+  (use-package org
+    :config
+    (setq org-format-latex-options
+          (plist-put org-format-latex-options
+                     :scale 1.3
+                     ))
+    (setq org-format-latex-options
+          (plist-put org-format-latex-options
+                     :html-scale 3
+                     ))
+    (setq org-startup-indented t
+          org-toggle-pretty-entities t
+          org-hide-leading-stars t
+          org-hide-emphasis-markers t)
+    (add-hook 'text-mode-hook 'turn-on-visual-line-mode))
 
-    (use-package org-superstar
-      :hook (org-mode . org-superstar-mode))
-    (use-package org-fragtog
-      :hook (org-mode . org-fragtog-mode))
-    (use-package toc-org
-      :hook (org-mode . toc-org-mode))
-    (use-package org-appear
-      :hook (org-mode . org-appear-mode))
-    (use-package yasnippet
-      :diminish yas-minor-mode
-      :hook (org-mode . yas-minor-mode))
-    (use-package yasnippet-snippets)
+  (use-package org-superstar
+    :hook (org-mode . org-superstar-mode))
+  (use-package org-fragtog
+    :hook (org-mode . org-fragtog-mode))
+  (use-package toc-org
+    :hook (org-mode . toc-org-mode))
+  (use-package org-appear
+    :hook (org-mode . org-appear-mode))
+  (use-package yasnippet
+    :diminish yas-minor-mode
+    :hook (org-mode . yas-minor-mode)
+    :config
+    (yas-load-directory "~/.emacs.d/snippets/"))
+  (use-package yasnippet-snippets)
 
   (use-package valign
     :hook (org-mode . valign-mode))
 
+  (use-package org-modern
+    :hook
+    (org-mode . org-modern-mode)
+    (org-agenda-finalize . org-modern-agenda)
+    :custom
+    (org-modern-table-horizontal 2)
+    (org-modern-table-vertical 1)
+    (org-modern-star nil)
+    (org-modern-hide-stars nil)
+    (org-modern-checkbox nil))
 
-    (use-package org-modern
-      :hook
-      (org-mode . org-modern-mode)
-      (org-agenda-finalize . org-modern-agenda)
-      :custom
-      (org-modern-table-horizontal 2)
-      (org-modern-table-vertical 1)
-      (org-modern-star nil)
-      (org-modern-hide-stars nil)
-      (org-modern-checkbox nil)
-      )
-
-    (unless (file-directory-p "~/.emacs.d/site-lisp/org-modern-indent")
-      (shell-command "git clone https://github.com/jdtsmith/org-modern-indent.git ~/.emacs.d/site-lisp/org-modern-indent/"))
-    (use-package org-modern-indent
-      :load-path "~/.emacs.d/site-lisp/org-modern-indent"
-      :hook (org-mode . org-modern-indent-mode))
-
+  (unless (file-directory-p "~/.emacs.d/site-lisp/org-modern-indent")
+    (async-shell-command "git clone https://github.com/jdtsmith/org-modern-indent.git://github.com/jdtsmith/org-modern-indent.git ~/.emacs.d/site-lisp/org-modern-indent/"))
+  (use-package org-modern-indent
+    :load-path "~/.emacs.d/site-lisp/org-modern-indent"
+    :hook (org-mode . org-modern-indent-mode))
  #+END_SRC
 
 ** Lisp
-Emacs is an amazing environment for writing in various lisp dialects, with wonderful support out-of-the-box. However, there are various different packages designed to improve this experience in general or in slight, specific ways. Paredit is 
+
+Emacs is an amazing environment for writing in various lisp dialects, with wonderful support out-of-the-box. However, there are various different packages designed to improve this experience in general or in slight, specific ways. ~lispy~ is a transformational package for editing S-expressions in a structural way. ~Sly~ is a fork of the popular ~SLIME~ package for an integrated common lisp REPL among other things. It is superior to ~SLIME~ because it has ASCII-art cats.
+
 #+BEGIN_SRC elisp
-  (use-package paredit
-    :hook (
-           (lisp-mode . paredit-mode)
-           (emacs-lisp-mode . paredit-mode)
-           (scheme-mode . paredit-mode)
-           (slime-mode . paredit-mode)
-           )
-    :config
-    (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
+  (use-package lispy
+    :hook
+    (lisp-mode . lispy-mode)
+    (emacs-lisp-mode . paredit-mode)
+    (scheme-mode . lispy-mode)
+    (slime-mode . lispy-mode))
 
-    (defun override-slime-del-key ()
-      (define-key slime-repl-mode-map
-                  (read-kbd-macro paredit-backward-delete-key) nil))
-    (add-hook 'slime-repl-mode-hook 'override-slime-del-key)
-    )
-
-  (use-package slime
+  (use-package sly
     :config
     (setq inferior-lisp-program "sbcl"))
-
-  (use-package rainbow-delimiters
-    :config
-    (setq rainbow-delimiters-mode t))
 
   (setq show-paren-delay 0)
   (show-paren-mode)
 #+END_SRC
 
-** Dired
-Dired is emacs' built in text-based file manager. Its however pretty rough around its edges, such as it opening each directory in a separete buffer making navigation a hassle. However certain tweaks can make it a formidable tool accessible directly within emacs. Take that n³ and midnight commander!
+*** Scheme
+
+Due to Kudu's deep integration with the GNU Guix system, it is only natural to improve the systems used to interact with guile and scheme specifically. For this the ~guix.el~ and the wonderful ~geiser~ packages are used, where ~guix.el~ is a magit-inspired Emacs frontend and ~geiser~ is a package aiming to improve the scheme experience in emacs, with ~geiser-guile~ providing special support for working the /GNU Ubiquitous Intelligent Language for Extensions/.
+
+#+BEGIN_SRC elisp
+  (use-package guix)
+
+  (use-package geiser-guile)
+#+END_SRC
+
+*** Parens pairing
+
+Most of the time when writing parentheses, brackets, and quotes we want to pair them. This significantly improves comfort since you no longer need to stretch for modifier keys to finish of the pair. And even if you do, ~electric-pair-mode~ will detect it and move the point past as if you had just entered the character. This is of course not just useful for lisp, but in any context when writing pairs of brackets or parentheses.
+
+#+BEGIN_SRC elisp
+  (setq electric-pair-pairs '(
+                              (?\{ . ?\})
+                              (?\( . ?\))
+                              (?\[ . ?\])
+                              (?\" . ?\")))
+  (electric-pair-mode t)
+#+END_SRC
+
+** File management
+
+Dired is emacs' built in text-based file manager. It's however pretty rough around its edges, such as it opening each directory in a separate buffer making navigation a hassle. However certain tweaks can make it a formidable tool accessible directly within emacs. Take that n³ and midnight commander!
 
 #+BEGIN_SRC elisp
     (use-package openwith
@@ -389,35 +617,30 @@ Dired is emacs' built in text-based file manager. Its however pretty rough aroun
                                    (list (openwith-make-extension-regexp
                                           '("png" "jpg" "jpeg")) "eog" '(file))
                                    (list (openwith-make-extension-regexp
-                                          '("mkv" "mp4" "avi")) "mpv" '(file))
-                                   )))
-    (setf dired-kill-when-opening-new-dired-buffer t)
-    (setq dired-listing-switches "-aBhl  --group-directories-first")
-    (defalias 'eaf-open-in-file-manager #'dired)
+                                          '("mkv" "mp4" "avi")) "mpv" '(file)))))
+
+  (setf dired-kill-when-opening-new-dired-buffer t)
+  (setq dired-listing-switches "-aBhl  --group-directories-first")
+  (defalias 'eaf-open-in-file-manager #'dired)
 
   (add-hook 'dired-mode-hook 'toggle-truncate-lines)
+#+END_SRC
 
+** PDF-tools
+
+The default "docview" mode of viewing pdfs is quite bad, and is improved immensely by the pdf-tools package. For some this may not be enough, and it is possible to replace it with an external pdf viewer (like evince or zathura) using the above ~openwith~ package. 
+
+#+BEGIN_SRC elisp
   (use-package pdf-tools
     :init
     (pdf-loader-install)
-    )
-
+    (add-hook  'pdf-view-mode-hook (lambda () (display-line-numbers-mode -1))))
   #+END_SRC
-** Parens pairing
-Most of the time when writing parentheses, brackets, and quotes we want to pair them. This significantly improves comfort since you no longer need to stretch for modifier keys to finish of the pair. And even if you do, ~electric-pair-mode~ will detect it and move the point past as if you had just entered the character.
-
-#+BEGIN_SRC elisp
-  (setq electric-pair-pairs '(
-                              (?\{ . ?\})
-                              (?\( . ?\))
-                              (?\[ . ?\])
-                              (?\" . ?\")
-                              (?\$ . ?\$)
-                              ))
-  (electric-pair-mode t)
-#+END_SRC
+  
 ** Magit
+
 Magit is wonderful, and one of the killer apps that makes emacs a system than other editors or IDEs. However it is not installed by default, so it is defined here.
+
 #+BEGIN_SRC elisp
   (use-package magit)
 
@@ -430,52 +653,86 @@ Magit is wonderful, and one of the killer apps that makes emacs a system than ot
     :config (magit-delta-mode t))
 #+END_SRC
 
+** Tooling
+
+Emacs has a wonderful undo-system, but it can be hard to get an idea of how it works intuitively. ~undo-tree~ helps with this by creating a wonderful visualization for your branching undo, well, tree.
+
+#+BEGIN_SRC elisp
+  (use-package undo-tree
+    :init
+    (global-undo-tree-mode +1))
+#+END_SRC
+
 ** Functions
-The sudo function raises the privelage of the current buffer to root permissions without having to close and open it again through TRAMP.
+
+The sudo function raises the privilege of the current buffer to root permissions without having to close and open it again through ~TRAMP~.
+
 #+BEGIN_SRC elisp
   (defun sudo ()
+    "Opens the current buffer at point with root privelages using TRAMP"
     (interactive)
     (let ((position (point)))
       (find-alternate-file (concat "/sudo::"
                                    (buffer-file-name (current-buffer))))
       (goto-char position)))
+#+END_SRC
 
+Magit can sometimes create a lot of buffers for different processes that are annoying to close one by one, this function closes all buffers whose name contains "magit".
+
+#+BEGIN_SRC elisp
   (defun kill-magit-buffers ()
     (interactive)
     (mapc (lambda (buffer) 
-            (when (eq 'magit-mode (buffer-local-value 'major-mode buffer)) 
+            (if (buffer-match-p ".*magit.*" buffer) 
               (kill-buffer buffer))) 
           (buffer-list)))
 #+END_SRC
 
-** Emacs Application Framework
+Emacs does not have a nice easy to use elisp  function for calculating the factorial of a value, this adds it. This works out particularly nicely since the standard notation for the factorial of a value uses prefix notation.
+
 #+BEGIN_SRC elisp
+  (defun ! (n)
+    "An emacs function to calculate the factorial of n using the calc library"
+    (string-to-number (calc-eval (format "%s!" n))))
+#+END_SRC
+
+Function for calculation the number of possible permutations and combinations respectively.
+
+#+BEGIN_SRC elisp
+  (defun nPr (n k)
+    "A function for calculating the number of permutations in combinatorics"
+    (/
+     (! n)
+     (! (- n k))))
+
+  (defun nCr (n k)
+    "A function for calculating the number of combinations in combinatorics"
+    (/
+     (! n)
+     (* (! k) (! (- n k)))))
+#+END_SRC
+
+** Emacs Application Framework
+
+The /Emacs Application Framework/ (EAF) provides a multitude of programs, most notably a browser, that more tigtly integrate with the Emacs than Icecat or other browsers allow for when used in conjunction with EXWM. While they mostly are usable with a REPL-style lisp interaction, they are nevertheless incredibly useful. 
+
+#+BEGIN_SRC elisp
+    (unless (file-directory-p "~/.emacs.d/site-lisp/emacs-application-framework/")
+      (shell-command "git clone --depth=1 -b master https://github.com/emacs-eaf/emacs-application-framework.git ~/.emacs.d/site-lisp/emacs-application-framework/"))
+  (if (get-buffer "*Shell Command Output*") (kill-buffer "*Shell Command Output*"))
+
+  (add-to-list 'load-path "~/.emacs.d/site-lisp/emacs-application-framework/")
+
   (use-package eaf
     :load-path "~/.emacs.d/site-lisp/emacs-application-framework"
     :config
-    (eaf-browser-continue-where-left-off t)
-    (eaf-browser-enable-adblocker t)
-    (browse-url-browser-function 'eaf-open-browser)
-    (defalias 'browse-web #'eaf-open-browser)
-    (setq eaf-browser-default-search-engine "duckduckgo")
-    (setq eaf-browse-blank-page-url "https://duckduckgo.com")
-    (eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
-    (eaf-bind-key scroll_down "C-p" eaf-pdf-viewer-keybinding)
-    (eaf-bind-key take_photo "p" eaf-camera-keybinding)
-    (eaf-bind-key nil "M-q" eaf-browser-keybinding)
-
-    (require 'eaf-browser)
-    (require 'eaf-map)
-    (require 'eaf-music-player)
-    )
+    (if (display-graphic-p)
+        (require 'eaf-browser)
+      (require 'eaf-map)
+      (defalias 'browse-web #'eaf-open-browser)
+      (setq eaf-browser-default-search-engine "duckduckgo")
+      (setq eaf-browse-blank-page-url "https://duckduckgo.com")
+      (eaf-bind-key nil "M-q" eaf-browser-keybinding)
+      (setq eaf-byte-compile-apps t)))
 #+END_SRC
 
-** Server
-Launch the Emacs server after init.
-#+BEGIN_SRC elisp
-;  (add-hook 'after-init-hook '(unless (and
-;                                       (fboundp 'server-running-p)
-;                                       (server-running-p)
-;                                       )
-;                                (server-start)))
-#+END_SRC

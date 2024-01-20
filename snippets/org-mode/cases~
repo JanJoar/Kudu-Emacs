@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: LaTeX case
+# key: cases
+# --
+\begin{cases}
+{${1:}}
+\end{cases}
