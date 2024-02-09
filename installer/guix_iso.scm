@@ -15,7 +15,7 @@
 		(theme
 			(grub-theme
 				(resolution '(1920 . 1080))
-				(image (local-file "/etc/Kudu_grub_image.svg")))))
+				(image (local-file "/mnt/etc/Kudu_grub_image.svg")))))
 
 	(kernel-arguments (list "console=ttyS0,115200"))
 	(file-systems (cons* 

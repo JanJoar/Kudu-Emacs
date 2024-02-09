@@ -93,6 +93,8 @@ function guixInit() {
 	scm=$(substitute_variables "$scheme_template" DISK HOSTNAME USERNAME SWAP_UUID ROOT_UUID TIMEZONE KEYMAP)
 
 	mkdir /mnt/etc
+	cp ../Logos/Kudu_grub_image.svg /mnt/etc/Kudu_grub_image.svg
+
 	echo "$scm" > /mnt/etc/config.scm
 	guix pull
  	guix package -u

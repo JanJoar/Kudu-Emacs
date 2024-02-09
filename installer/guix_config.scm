@@ -73,7 +73,7 @@
 	      (theme
 		(grub-theme
 		  (resolution '(1920 . 1080))
-		  (image (local-file "/etc/Kudu_grub_image.svg")))))
+		  (image (local-file "/mnt/etc/Kudu_grub_image.svg")))))
  
  (swap-devices (list (swap-space
                       (target (uuid
