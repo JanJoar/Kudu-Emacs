@@ -113,7 +113,7 @@ However, Emacs can still be used without constituting the entire system. Therefo
                   (exwm-workspace-rename-buffer exwm-class-name)))
 
       ;; Creates 3 different workspaces, from 0 to 2.
-      (setq exwm-workspace-number 3)
+      (setq exwm-workspace-number (/ (length (exwm-monitors-format)) 2))
 
       ;; These  keys will always be sent to EXWM rather than to the X window.
       (setq exwm-input-prefix-keys
@@ -135,7 +135,7 @@ However, Emacs can still be used without constituting the entire system. Therefo
               ([?\s-w] . exwm-workspace-switch)
               ([?\C-q] . exwm-input-send-next-key)
               ([?\s-a] . (lambda (command)
-                           (interactive (list (read-shell-command "$ ")))
+                           (interactive (list (read-shell-command " λ ")))
                            (start-process-shell-command command nil command)))
               ([?\s-w] . exwm-workspace-switch)
               ([?\s-u] . (lambda ()
@@ -664,7 +664,7 @@ Emacs has a wonderful undo-system, but it can be hard to get an idea of how it w
     (setq undo-tree-auto-save-history t)
     (unless (file-exists-p "~/.emacs.d/undo-tree") 
       (make-directory "~/.emacs.d/undo-tree"))
-    (setq undo-tree-history-directory-alist '(("." . (expand-file-name "~/.emacs.d/undo-tree"))))
+    (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo-tree")))
     (global-undo-tree-mode +1))
 
 #+END_SRC
