@@ -114,17 +114,13 @@ However, Emacs can still be used without constituting the entire system. Therefo
                 (lambda ()
                   (exwm-workspace-rename-buffer exwm-class-name)))
 
-<<<<<<< HEAD
       ;; Configure monitors
       (require 'exwm-randr)
       (setq exwm-randr-workspace-monitor-plist (exwm-monitors-format))
       (setq exwm-workspace-number (length (xrandr-find-monitor-names)))
       (shell-command "bash ~/.screenlayout/desktop.sh")
+      (setq exwm-workspace-number (/ (length (exwm-monitors-format)) 2))      
       (exwm-randr-enable)
-=======
-      ;; Creates 3 different workspaces, from 0 to 2.
-      (setq exwm-workspace-number (/ (length (exwm-monitors-format)) 2))
->>>>>>> origin/devel
 
       ;; These  keys will always be sent to EXWM rather than to the X window.
       (setq exwm-input-prefix-keys
