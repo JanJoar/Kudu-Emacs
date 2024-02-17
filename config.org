@@ -114,12 +114,17 @@ However, Emacs can still be used without constituting the entire system. Therefo
                 (lambda ()
                   (exwm-workspace-rename-buffer exwm-class-name)))
 
+<<<<<<< HEAD
       ;; Configure monitors
       (require 'exwm-randr)
       (setq exwm-randr-workspace-monitor-plist (exwm-monitors-format))
       (setq exwm-workspace-number (length (xrandr-find-monitor-names)))
       (shell-command "bash ~/.screenlayout/desktop.sh")
       (exwm-randr-enable)
+=======
+      ;; Creates 3 different workspaces, from 0 to 2.
+      (setq exwm-workspace-number (/ (length (exwm-monitors-format)) 2))
+>>>>>>> origin/devel
 
       ;; These  keys will always be sent to EXWM rather than to the X window.
       (setq exwm-input-prefix-keys
@@ -667,7 +672,13 @@ Emacs has a wonderful undo-system, but it can be hard to get an idea of how it w
 #+BEGIN_SRC elisp
   (use-package undo-tree
     :init
+    (setq undo-tree-visualizer-timestamps t)
+    (setq undo-tree-auto-save-history t)
+    (unless (file-exists-p "~/.emacs.d/undo-tree") 
+      (make-directory "~/.emacs.d/undo-tree"))
+    (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo-tree")))
     (global-undo-tree-mode +1))
+
 #+END_SRC
 
 ** Functions
@@ -700,7 +711,9 @@ Emacs does not have a nice easy to use elisp  function for calculating the facto
 #+BEGIN_SRC elisp
   (defun ! (n)
     "An emacs function to calculate the factorial of n using the calc library"
-    (string-to-number (calc-eval (format "%s!" n))))
+    (let ((output (string-to-number (calc-eval (format "%s!" n)))))
+      (kill-buffer "*Calculator*")
+      output))
 #+END_SRC
 
 Function for calculation the number of possible permutations and combinations respectively.
