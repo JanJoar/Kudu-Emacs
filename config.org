@@ -97,11 +97,13 @@ However, Emacs can still be used without constituting the entire system. Therefo
         (nreverse return-value)))
 
     (setq switch-to-buffer-obey-display-actions t)
+    (defvar exwm-is-running nil)
     (shell-command "wmctrl -m ; echo $status" "*window-manager*" "*window-manager-error*")
 
     (when (and
            (get-buffer "*window-manager-error*") ;; The shell command has to both encounter an error and a running in an X environment.
            (eq window-system 'x))
+      (setq exwm-is-running t)
 
       (display-battery-mode 1)
       (setq display-time-day-and-date t)
@@ -112,8 +114,12 @@ However, Emacs can still be used without constituting the entire system. Therefo
                 (lambda ()
                   (exwm-workspace-rename-buffer exwm-class-name)))
 
-      ;; Creates 3 different workspaces, from 0 to 2.
-      (setq exwm-workspace-number 3)
+      ;; Configure monitors
+      (require 'exwm-randr)
+      (setq exwm-randr-workspace-monitor-plist (exwm-monitors-format))
+      (setq exwm-workspace-number (length (xrandr-find-monitor-names)))
+      (shell-command "bash ~/.screenlayout/desktop.sh")
+      (exwm-randr-enable)
 
       ;; These  keys will always be sent to EXWM rather than to the X window.
       (setq exwm-input-prefix-keys
@@ -135,7 +141,7 @@ However, Emacs can still be used without constituting the entire system. Therefo
               ([?\s-w] . exwm-workspace-switch)
               ([?\C-q] . exwm-input-send-next-key)
               ([?\s-a] . (lambda (command)
-                           (interactive (list (read-shell-command "$ ")))
+                           (interactive (list (read-shell-command " λ ")))
                            (start-process-shell-command command nil command)))
               ([?\s-w] . exwm-workspace-switch)
               ([?\s-u] . (lambda ()
@@ -162,15 +168,6 @@ Visible bell changes the otherwise quite jarring bell sound into a visual flash 
         global-prettify-symbols-mode 1
         pixel-scroll-precision-mode t)
     (global-display-line-numbers-mode)
-#+END_SRC
-
-The beacon package shows off the location the point whenever you move to a window or scroll a buffer so that you don't lose it.
-
-#+BEGIN_SRC elisp
-    (use-package beacon
-    :diminish beacon-mode
-    :init
-    (beacon-mode 1))
 #+END_SRC
 
 Solaire-mode makes it easy to distinguish between warnings, popups and messages by tinting the background of those buffers slightly darker, as long as the current theme supports it.
@@ -253,7 +250,7 @@ When editing just one window, left-aligned text is awkwardly too far to the left
     (perfect-margin-visible-width 128)
     :init
     ;; enable perfect-mode
-    (perfect-margin-mode t)
+    (unless exwm-is-running (perfect-margin-mode t))
     ;; auto-center minibuffer windows
     (setq perfect-margin-ignore-filters nil)
     ;; auto-center special windows
@@ -288,6 +285,16 @@ Adds little icons for completion frameworks.
     :init (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)
     (unless (display-graphic-p)
       (setq kind-icon-use-icons nil)))
+#+END_SRC
+
+Emacs is a wonderful alternative to a terminal, encompassing [[https://www.masteringemacs.org/article/running-shells-in-emacs-overview][many of the features]] seen in modern terminals. For a cleaner look, this hides the mode-line in windows used to interact with shells.
+
+#+BEGIN_SRC elisp
+  (use-package hide-mode-line
+    :hook
+    (eat-mode . hide-mode-line-mode)
+    (term-mode . hide-mode-line-mode)
+    (eshell-mode . hide-mode-line-mode))
 #+END_SRC
 
 ** Dashboard
@@ -567,12 +574,12 @@ Configures Org-mode to make it more attractive and usable.
 Emacs is an amazing environment for writing in various lisp dialects, with wonderful support out-of-the-box. However, there are various different packages designed to improve this experience in general or in slight, specific ways. ~lispy~ is a transformational package for editing S-expressions in a structural way. ~Sly~ is a fork of the popular ~SLIME~ package for an integrated common lisp REPL among other things. It is superior to ~SLIME~ because it has ASCII-art cats.
 
 #+BEGIN_SRC elisp
-  (use-package lispy
+  (use-package paredit
     :hook
-    (lisp-mode . lispy-mode)
+    (lisp-mode . paredit-mode)
     (emacs-lisp-mode . paredit-mode)
-    (scheme-mode . lispy-mode)
-    (slime-mode . lispy-mode))
+    (scheme-mode . paredit-mode)
+    (slime-mode . paredit-mode))
 
   (use-package sly
     :config
