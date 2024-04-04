@@ -295,7 +295,8 @@ Emacs is a wonderful alternative to a terminal, encompassing [[https://www.maste
     :hook
     (eat-mode . hide-mode-line-mode)
     (term-mode . hide-mode-line-mode)
-    (eshell-mode . hide-mode-line-mode))
+    (eshell-mode . hide-mode-line-mode)
+    (dashboard-mode . hide-mode-line-mode))
 #+END_SRC
 
 ** Dashboard
