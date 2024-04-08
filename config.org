@@ -296,7 +296,8 @@ Emacs is a wonderful alternative to a terminal, encompassing [[https://www.maste
     (eat-mode . hide-mode-line-mode)
     (term-mode . hide-mode-line-mode)
     (eshell-mode . hide-mode-line-mode)
-    (dashboard-mode . hide-mode-line-mode))
+    (dashboard-mode . hide-mode-line-mode)
+    (pdf-view-mode . hide-mode-line-mode))
 #+END_SRC
 
 ** Dashboard
@@ -675,8 +676,18 @@ Emacs has a wonderful undo-system, but it can be hard to get an idea of how it w
       (make-directory "~/.emacs.d/undo-tree"))
     (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo-tree")))
     (global-undo-tree-mode +1))
-
 #+END_SRC
+
+Uses the ~ace-window~ package for switching windows instead of the default ~other-window~.
+
+#+BEGIN_SRC elisp
+  (use-package ace-window
+    :init
+    (global-set-key (kbd "C-x o") 'ace-window)
+    (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+    (setq aw-ignore-current t))
+#+END_SRC
+
 
 ** Functions
 
