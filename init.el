@@ -33,8 +33,9 @@
 
 (package-initialize)
 
-(org-babel-load-file (expand-file-name "~/.emacs.d/secret.org")) ;; User-unique information (like E-mail address and full name) that you might not want to share openly. Empty by default. Since the file is not included in the Kudu repo it has to be created using touch in order to be loaded.
 (org-babel-load-file (expand-file-name "~/.emacs.d/config.org")) ;; The main configuration file, running commands, setting keybinds, and configuring packages.
+(org-babel-load-file (expand-file-name "~/.emacs.d/secret.org")) ;; User-unique information (like E-mail address and full name) that you might not want to share openly. Empty by default. Since the file is not included in the Kudu repo it has to be created using touch in order to be loaded.
+
 
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
