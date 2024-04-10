@@ -669,6 +669,15 @@ Emacs has a wonderful undo-system, but it can be hard to get an idea of how it w
 
 #+END_SRC
 
+Emacs is better than any terminal emulator, and being able to run emacs lisp code in a terminal through ~eshell~ is increadibly powerful. But ~eshell~ has trouble running full-screen terminal programs, and so the ~eat~ (Emulate A Terminal) package is used for those programs that need it.
+
+#+BEGIN_SRC elisp
+  (use-package eat
+    :hook
+    (eshell-load-hook . eat-eshell-mode))
+#+END_SRC
+
+
 ** Functions
 
 The sudo function raises the privilege of the current buffer to root permissions without having to close and open it again through ~TRAMP~.
