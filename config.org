@@ -678,25 +678,34 @@ Emacs has a wonderful undo-system, but it can be hard to get an idea of how it w
     (global-undo-tree-mode +1))
 #+END_SRC
 
-<<<<<<< HEAD
+Emacs is better than any terminal emulator, and being able to run emacs lisp code in a terminal through ~eshell~ is increadibly powerful. But ~eshell~ has trouble running full-screen terminal programs, and so the ~eat~ (Emulate A Terminal) package is used for those programs that need it.
+
+#+BEGIN_SRC elisp
+      (use-package eat
+        :hook
+        (eshell-load-hook . eat-eshell-mode))
+
+#+END_SRC
+
+
+  Uses the ~ace-window~ package for switching windows instead of the default ~other-window~.
+  
+#+BEGIN_SRC elisp
+      (use-package ace-window
+        :init
+        (global-set-key (kbd "C-x o") 'ace-window)
+        (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+        (setq aw-ignore-current t))
+#+END_SRC
+
+
 Emacs is better than any terminal emulator, and being able to run emacs lisp code in a terminal through ~eshell~ is increadibly powerful. But ~eshell~ has trouble running full-screen terminal programs, and so the ~eat~ (Emulate A Terminal) package is used for those programs that need it.
 
 #+BEGIN_SRC elisp
   (use-package eat
     :hook
     (eshell-load-hook . eat-eshell-mode))
-=======
-Uses the ~ace-window~ package for switching windows instead of the default ~other-window~.
-
-#+BEGIN_SRC elisp
-  (use-package ace-window
-    :init
-    (global-set-key (kbd "C-x o") 'ace-window)
-    (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
-    (setq aw-ignore-current t))
->>>>>>> origin/devel
 #+END_SRC
-
 
 ** Functions
 
