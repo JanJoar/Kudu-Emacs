@@ -699,12 +699,21 @@ Emacs is better than any terminal emulator, and being able to run emacs lisp cod
 #+END_SRC
 
 
-Emacs is better than any terminal emulator, and being able to run emacs lisp code in a terminal through ~eshell~ is increadibly powerful. But ~eshell~ has trouble running full-screen terminal programs, and so the ~eat~ (Emulate A Terminal) package is used for those programs that need it.
+Emacs is better than any terminal emulator, and being able to run emacs lisp code in a terminal through ~eshell~ is increadibly powerful. But ~eshell~ has trouble running full-screen terminal programs, and so the ~eat~ (Emulate A Terminal) package is used for those programs that need it. For better completion, the ~fish-completion~ package is used, with ~bash-completion~ as a fallback. For prompting the completions in ~eshell~, we employ the ~esh-autosuggest~ package.
 
 #+BEGIN_SRC elisp
   (use-package eat
     :hook
     (eshell-load-hook . eat-eshell-mode))
+
+  (use-package fish-completion
+    :init (when (executable-find "fish")
+            (add-hook 'eshell-load-hook (fish-completion-mode)))
+    :config
+    (use-package bash-completion))
+
+  (use-package esh-autosuggest
+    :hook (eshell-mode . esh-autosuggest-mode))
 #+END_SRC
 
 ** Functions
