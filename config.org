@@ -105,8 +105,12 @@ However, Emacs can still be used without constituting the entire system. Therefo
            (eq window-system 'x))
       (setq exwm-is-running t)
 
-      (display-battery-mode 1)
+
+      (setq battery-mode-line-format "⟨%b%p%%⟩ ")
+      (unless (equal "Power N/A, battery unknown (N/A% load, remaining time N/A)" (battery))
+        (display-battery-mode 1))
       (setq display-time-day-and-date t)
+      
       (display-time-mode 1)
 
       ;; Changes the name of EXWM-buffers to the corresponding window-name rather than *EXWM*<N>.
