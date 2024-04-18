@@ -663,6 +663,18 @@ Magit is wonderful, and one of the killer apps that makes emacs a system than ot
     :config (magit-delta-mode t))
 #+END_SRC
 
+For displaying who is responsible (and when) for changes to files, the ~blamer~ package is used, displaying a small piece of text to the left of the buffer content.
+
+#+BEGIN_SRC elisp
+  (use-package blamer
+    :bind (("C-," . blamer-show-commit-info))
+    :defer 10
+    :custom
+    (blamer-idle-time 3.0)
+    (blamer-min-offset 70)
+    :config (global-blamer-mode))
+#+END_SRC
+
 ** Tooling
 
 Emacs has a wonderful undo-system, but it can be hard to get an idea of how it works intuitively. ~undo-tree~ helps with this by creating a wonderful visualization for your branching undo, well, tree.
@@ -714,6 +726,17 @@ Emacs is better than any terminal emulator, and being able to run emacs lisp cod
 
   (use-package esh-autosuggest
     :hook (eshell-mode . esh-autosuggest-mode))
+#+END_SRC
+
+One of the things that make Emacs so extensible is the easy access to documentation of functions and variables through the ~C-h~ series of keybinds. The ~helpful~ package continues this by improving the default help buffers with more information and better formatting.
+
+#+BEGIN_SRC elisp
+  (use-package helpful
+    :bind (("C-c C-d" . helpful-at-point)
+           ("C-h v" . helpful-variable)
+           ("C-h f" . helpful-callable)
+           ("C-h x" . helpful-command)
+           ("C-h k" . helpful-key)))
 #+END_SRC
 
 ** Functions
