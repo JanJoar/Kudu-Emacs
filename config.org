@@ -670,9 +670,13 @@ For displaying who is responsible (and when) for changes to files, the ~blamer~ 
     :bind (("C-," . blamer-show-commit-info))
     :defer 10
     :custom
-    (blamer-idle-time 3.0)
+    (setq blamer-idle-time 2.0)
     (blamer-min-offset 70)
-    :config (global-blamer-mode))
+    :config
+    (setq blamer-author-formatter " ⏵ %s ")
+    (setq blamer-datetime-formatter "⟨%s⟩")
+    (setq blamer-commit-formatter " ☨ %s")
+    (global-blamer-mode))
 #+END_SRC
 
 ** Tooling
