@@ -661,7 +661,7 @@ The default "docview" mode of viewing pdfs is quite bad, and is improved immense
     (add-hook  'pdf-view-mode-hook (lambda () (display-line-numbers-mode -1))))
   #+END_SRC
   
-** Magit
+** Version Control
 
 Magit is wonderful, and one of the killer apps that makes emacs a system than other editors or IDEs. However it is not installed by default, so it is defined here.
 
@@ -675,6 +675,10 @@ Magit is wonderful, and one of the killer apps that makes emacs a system than ot
   (use-package magit-delta
     :after magit
     :config (magit-delta-mode t))
+
+  (use-package forge
+    :after magit
+    :config (forge-pull))
 #+END_SRC
 
 For displaying who is responsible (and when) for changes to files, the ~blamer~ package is used, displaying a small piece of text to the left of the buffer content.
