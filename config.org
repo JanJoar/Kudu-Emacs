@@ -225,7 +225,7 @@ The default Emacs mode-line is a bit busy and certain elements of it are difficu
                     (let* ((read-only (and buffer-read-only (buffer-file-name)))
                            (modified (buffer-modified-p)))
                       (propertize
-                       (if read-only "  " (if modified " !" "  "))))))
+                       (if read-only "  " (if modified " 🖬" "  "))))))
                 " "
                 (:eval (propertize (format "%s" (buffer-name)) 'face 'bold))
                 " "
@@ -398,6 +398,9 @@ By default ~corfu~ only works in a GUI environment, but the ~corfu-terminal~ pac
      (vertico-mouse-mode))
 
    (use-package marginalia
+     :config
+     (setq marginalia-separator " | ")
+     (setq marginalia-align 'center)
      :init (marginalia-mode 1))
 
    (use-package orderless
