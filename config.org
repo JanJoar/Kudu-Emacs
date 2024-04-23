@@ -66,7 +66,7 @@ Emacs usually stores backups in the same directory as the files themselves, clut
 #+END_SRC
 
 ** EXWM
-The Emacs X Window Manager allows you to use your entire desktop within emacs. Other windows are managed like traditional emacs buffers, and different workspaces are implemented using separate emacs frames. This is arguably the largest change to using traditional window managers and desktop environments, and it transforms emacs from simply a program that can do everything to /the/ way to interact with one's computer.
+The Emacs X Window Manager allows you to use your entire desktop within emacs. Other windows are managed like traditional emacs buffers, and different workspace are implemented using separate emacs frames. This is arguably the largest change to using traditional window managers and desktop environments, and it transforms emacs from simply a program that can do everything to /the/ way to interact with one's computer.
 
 However, Emacs can still be used without constituting the entire system. Therefore EXWM should only be loaded if no other window manager is running. That way startup time isn't wasted whenever the user wants to run Emacs in the terminal, on a computer using a desktop environment, or another window manager.
 
@@ -524,6 +524,11 @@ Configures Org-mode to make it more attractive and usable.
 #+BEGIN_SRC elisp
   (setq completion-cycle-threshold 2)
   (setq tab-always-indent 'complete)
+  (setq ispell-program-name "hunspell")
+
+  (use-package auto-dictionary
+    :hook
+    (flyspell-mode . auto-dictionary-mode))
 
   (use-package org
     :config
@@ -572,6 +577,7 @@ Configures Org-mode to make it more attractive and usable.
 
   (unless (file-directory-p "~/.emacs.d/site-lisp/org-modern-indent")
     (async-shell-command "git clone https://github.com/jdtsmith/org-modern-indent.git://github.com/jdtsmith/org-modern-indent.git ~/.emacs.d/site-lisp/org-modern-indent/"))
+  
   (use-package org-modern-indent
     :load-path "~/.emacs.d/site-lisp/org-modern-indent"
     :hook (org-mode . org-modern-indent-mode))
