@@ -84,6 +84,7 @@ However, Emacs can still be used without constituting the entire system. Therefo
         (setq xrandr-contents (buffer-string))
         (kill-buffer "*xrandr-output*")
         (setq xrandr-contents (replace-regexp-in-string "\\(.* connected\\).*\n\\|.*\n" "\\1" xrandr-contents))
+        ;; Find the string only of the monitors that are connected according to xrandr and remove all other text.
         (remove "" (split-string xrandr-contents " connected"))))
 
     (defun exwm-monitors-format ()
@@ -110,7 +111,7 @@ However, Emacs can still be used without constituting the entire system. Therefo
       (unless (equal "Power N/A, battery unknown (N/A% load, remaining time N/A)" (battery))
         (display-battery-mode 1))
       (setq display-time-day-and-date t)
-      
+
       (display-time-mode 1)
 
       ;; Changes the name of EXWM-buffers to the corresponding window-name rather than *EXWM*<N>.
@@ -213,6 +214,7 @@ The default Emacs mode-line is a bit busy and certain elements of it are difficu
 
 #+BEGIN_SRC elisp
   (defun mode-line-padding ()
+    "Sets the spacing between left and right aligned things in the mode line."
     (let ((r-length (length (format-mode-line mode-line-end-spaces))))
       (propertize " "
                   'display `(space :align-to (- right ,r-length)))))
@@ -769,7 +771,7 @@ The sudo function raises the privilege of the current buffer to root permissions
 
 #+BEGIN_SRC elisp
   (defun sudo ()
-    "Opens the current buffer at point with root privelages using TRAMP"
+    "Opens the current buffer at point with root privelages using TRAMP."
     (interactive)
     (let ((position (point)))
       (find-alternate-file (concat "/sudo::"
@@ -781,6 +783,7 @@ Magit can sometimes create a lot of buffers for different processes that are ann
 
 #+BEGIN_SRC elisp
   (defun kill-magit-buffers ()
+    "Kills all buffers whose name begins with magit."
     (interactive)
     (mapc (lambda (buffer) 
             (if (buffer-match-p ".*magit.*" buffer) 
@@ -792,7 +795,7 @@ Emacs does not have a nice easy to use elisp  function for calculating the facto
 
 #+BEGIN_SRC elisp
   (defun ! (n)
-    "An emacs function to calculate the factorial of n using the calc library"
+    "An emacs function to calculate the factorial of n using the calc library."
     (let ((output (string-to-number (calc-eval (format "%s!" n)))))
       (kill-buffer "*Calculator*")
       output))
@@ -802,13 +805,13 @@ Function for calculation the number of possible permutations and combinations re
 
 #+BEGIN_SRC elisp
   (defun nPr (n k)
-    "A function for calculating the number of permutations in combinatorics"
+    "A function for calculating the number of permutations in combinatorics."
     (/
      (! n)
      (! (- n k))))
 
   (defun nCr (n k)
-    "A function for calculating the number of combinations in combinatorics"
+    "A function for calculating the number of combinations in combinatorics."
     (/
      (! n)
      (* (! k) (! (- n k)))))
