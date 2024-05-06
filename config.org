@@ -313,6 +313,8 @@ Configures the all-important emacs dashboard that shows up on startup.
 
 #+BEGIN_SRC elisp
   (use-package dashboard
+    :hook
+    (dashboard-mode . (lambda () (solaire-mode -1)))
     :init
     (dashboard-setup-startup-hook)
     (setq dashboard-icon-type 'all-the-icons)
