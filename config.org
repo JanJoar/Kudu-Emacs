@@ -234,12 +234,6 @@ The default Emacs mode-line is a bit busy and certain elements of it are difficu
                 (:eval (mode-line-padding))
                 (:eval (setq mode-line-end-spaces mode-line-misc-info))
                 ))
-  (setq-default header-line-format
-                '(
-                  "  "
-                  (:eval (propertize (format "%s" mode-name) 'face 'bold))
-                  " "
-                  ))
 #+END_SRC
 
 Adds as nicely formated clock in all cases, even when not running in EXWM.
