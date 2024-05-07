@@ -745,9 +745,6 @@ Emacs is better than any terminal emulator, and being able to run emacs lisp cod
             (add-hook 'eshell-load-hook (fish-completion-mode)))
     :config
     (use-package bash-completion))
-
-  (use-package esh-autosuggest
-    :hook (eshell-mode . esh-autosuggest-mode))
 #+END_SRC
 
 One of the things that make Emacs so extensible is the easy access to documentation of functions and variables through the ~C-h~ series of keybinds. The ~helpful~ package continues this by improving the default help buffers with more information and better formatting.
