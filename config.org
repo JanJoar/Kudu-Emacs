@@ -642,7 +642,7 @@ Dired is emacs' built in text-based file manager. It's however pretty rough arou
                                           '("mkv" "mp4" "avi")) "mpv" '(file)))))
 
   (setf dired-kill-when-opening-new-dired-buffer t)
-  (setq dired-listing-switches "-aBhl  --group-directories-first")
+  (setq dired-listing-switches "-BhlD  --group-directories-first")
   (defalias 'eaf-open-in-file-manager #'dired)
 
   (add-hook 'dired-mode-hook 'toggle-truncate-lines)
@@ -689,10 +689,10 @@ For displaying who is responsible (and when) for changes to files, the ~blamer~ 
     (setq blamer-idle-time 2.0)
     (blamer-min-offset 70)
     :config
+    (add-hook 'prog-mode-hook 'blamer-mode)
     (setq blamer-author-formatter " ⏵ %s ")
     (setq blamer-datetime-formatter "⟨%s⟩")
-    (setq blamer-commit-formatter " ☨ %s")
-    (global-blamer-mode))
+    (setq blamer-commit-formatter " ☨ %s"))
 #+END_SRC
 
 ** Tooling
