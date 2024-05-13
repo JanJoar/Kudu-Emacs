@@ -1,3 +1,5 @@
+
+
 #    Kudu --- A fully functioning Gnu Emacs system
 #    Copyright (C) 2023  Joar von Arndt
 #
@@ -562,8 +564,9 @@ Configures Org-mode to make it more attractive and usable.
     (yas-load-directory "~/.emacs.d/snippets/"))
   (use-package yasnippet-snippets)
 
-  (use-package valign
-    :hook (org-mode . valign-mode))
+  (if (display-graphic-p)
+      (use-package valign
+        :hook (org-mode . valign-mode)))
 
   (use-package org-modern
     :hook
@@ -578,7 +581,7 @@ Configures Org-mode to make it more attractive and usable.
 
   (unless (file-directory-p "~/.emacs.d/site-lisp/org-modern-indent")
     (async-shell-command "git clone https://github.com/jdtsmith/org-modern-indent.git ~/.emacs.d/site-lisp/org-modern-indent/"))
-  
+
   (use-package org-modern-indent
     :load-path "~/.emacs.d/site-lisp/org-modern-indent"
     :hook (org-mode . org-modern-indent-mode))
@@ -646,6 +649,10 @@ Dired is emacs' built in text-based file manager. It's however pretty rough arou
   (defalias 'eaf-open-in-file-manager #'dired)
 
   (add-hook 'dired-mode-hook 'toggle-truncate-lines)
+
+  (use-package lin
+    :config
+    (lin-global-mode))
 #+END_SRC
 
 ** PDF-tools
