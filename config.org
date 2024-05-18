@@ -1,3 +1,5 @@
+
+
 #    Kudu --- A fully functioning Gnu Emacs system
 #    Copyright (C) 2023  Joar von Arndt
 #
@@ -66,7 +68,7 @@ Emacs usually stores backups in the same directory as the files themselves, clut
 #+END_SRC
 
 ** EXWM
-The Emacs X Window Manager allows you to use your entire desktop within emacs. Other windows are managed like traditional emacs buffers, and different workspaces are implemented using separate emacs frames. This is arguably the largest change to using traditional window managers and desktop environments, and it transforms emacs from simply a program that can do everything to /the/ way to interact with one's computer.
+The Emacs X Window Manager allows you to use your entire desktop within emacs. Other windows are managed like traditional emacs buffers, and different workspace are implemented using separate emacs frames. This is arguably the largest change to using traditional window managers and desktop environments, and it transforms emacs from simply a program that can do everything to /the/ way to interact with one's computer.
 
 However, Emacs can still be used without constituting the entire system. Therefore EXWM should only be loaded if no other window manager is running. That way startup time isn't wasted whenever the user wants to run Emacs in the terminal, on a computer using a desktop environment, or another window manager.
 
@@ -84,6 +86,7 @@ However, Emacs can still be used without constituting the entire system. Therefo
         (setq xrandr-contents (buffer-string))
         (kill-buffer "*xrandr-output*")
         (setq xrandr-contents (replace-regexp-in-string "\\(.* connected\\).*\n\\|.*\n" "\\1" xrandr-contents))
+        ;; Find the string only of the monitors that are connected according to xrandr and remove all other text.
         (remove "" (split-string xrandr-contents " connected"))))
 
     (defun exwm-monitors-format ()
@@ -97,14 +100,20 @@ However, Emacs can still be used without constituting the entire system. Therefo
         (nreverse return-value)))
 
     (setq switch-to-buffer-obey-display-actions t)
+    (defvar exwm-is-running nil)
     (shell-command "wmctrl -m ; echo $status" "*window-manager*" "*window-manager-error*")
 
     (when (and
            (get-buffer "*window-manager-error*") ;; The shell command has to both encounter an error and a running in an X environment.
            (eq window-system 'x))
+      (setq exwm-is-running t)
 
-      (display-battery-mode 1)
+
+      (setq battery-mode-line-format "⟨%b%p%%⟩ ")
+      (unless (equal "Power N/A, battery unknown (N/A% load, remaining time N/A)" (battery))
+        (display-battery-mode 1))
       (setq display-time-day-and-date t)
+
       (display-time-mode 1)
 
       ;; Changes the name of EXWM-buffers to the corresponding window-name rather than *EXWM*<N>.
@@ -112,8 +121,13 @@ However, Emacs can still be used without constituting the entire system. Therefo
                 (lambda ()
                   (exwm-workspace-rename-buffer exwm-class-name)))
 
-      ;; Creates 3 different workspaces, from 0 to 2.
-      (setq exwm-workspace-number 3)
+      ;; Configure monitors
+      (require 'exwm-randr)
+      (setq exwm-randr-workspace-monitor-plist (exwm-monitors-format))
+      (setq exwm-workspace-number (length (xrandr-find-monitor-names)))
+      (shell-command "bash ~/.screenlayout/desktop.sh")
+      (setq exwm-workspace-number (/ (length (exwm-monitors-format)) 2))      
+      (exwm-randr-enable)
 
       ;; These  keys will always be sent to EXWM rather than to the X window.
       (setq exwm-input-prefix-keys
@@ -135,7 +149,7 @@ However, Emacs can still be used without constituting the entire system. Therefo
               ([?\s-w] . exwm-workspace-switch)
               ([?\C-q] . exwm-input-send-next-key)
               ([?\s-a] . (lambda (command)
-                           (interactive (list (read-shell-command "$ ")))
+                           (interactive (list (read-shell-command " λ ")))
                            (start-process-shell-command command nil command)))
               ([?\s-w] . exwm-workspace-switch)
               ([?\s-u] . (lambda ()
@@ -161,16 +175,8 @@ Visible bell changes the otherwise quite jarring bell sound into a visual flash 
   (setq visible-bell t
         global-prettify-symbols-mode 1
         pixel-scroll-precision-mode t)
-    (global-display-line-numbers-mode)
-#+END_SRC
 
-The beacon package shows off the location the point whenever you move to a window or scroll a buffer so that you don't lose it.
-
-#+BEGIN_SRC elisp
-    (use-package beacon
-    :diminish beacon-mode
-    :init
-    (beacon-mode 1))
+  (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 #+END_SRC
 
 Solaire-mode makes it easy to distinguish between warnings, popups and messages by tinting the background of those buffers slightly darker, as long as the current theme supports it.
@@ -210,6 +216,7 @@ The default Emacs mode-line is a bit busy and certain elements of it are difficu
 
 #+BEGIN_SRC elisp
   (defun mode-line-padding ()
+    "Sets the spacing between left and right aligned things in the mode line."
     (let ((r-length (length (format-mode-line mode-line-end-spaces))))
       (propertize " "
                   'display `(space :align-to (- right ,r-length)))))
@@ -222,19 +229,13 @@ The default Emacs mode-line is a bit busy and certain elements of it are difficu
                     (let* ((read-only (and buffer-read-only (buffer-file-name)))
                            (modified (buffer-modified-p)))
                       (propertize
-                       (if read-only "  " (if modified " !" "  "))))))
+                       (if read-only "  " (if modified " 🖬" "  "))))))
                 " "
                 (:eval (propertize (format "%s" (buffer-name)) 'face 'bold))
                 " "
                 (:eval (mode-line-padding))
                 (:eval (setq mode-line-end-spaces mode-line-misc-info))
                 ))
-  (setq-default header-line-format
-                '(
-                  "  "
-                  (:eval (propertize (format "%s" mode-name) 'face 'bold))
-                  " "
-                  ))
 #+END_SRC
 
 Adds as nicely formated clock in all cases, even when not running in EXWM.
@@ -253,7 +254,7 @@ When editing just one window, left-aligned text is awkwardly too far to the left
     (perfect-margin-visible-width 128)
     :init
     ;; enable perfect-mode
-    (perfect-margin-mode t)
+    (unless exwm-is-running (perfect-margin-mode t))
     ;; auto-center minibuffer windows
     (setq perfect-margin-ignore-filters nil)
     ;; auto-center special windows
@@ -290,12 +291,26 @@ Adds little icons for completion frameworks.
       (setq kind-icon-use-icons nil)))
 #+END_SRC
 
+Emacs is a wonderful alternative to a terminal, encompassing [[https://www.masteringemacs.org/article/running-shells-in-emacs-overview][many of the features]] seen in modern terminals. For a cleaner look, this hides the mode-line in windows used to interact with shells.
+
+#+BEGIN_SRC elisp
+  (use-package hide-mode-line
+    :hook
+    (eat-mode . hide-mode-line-mode)
+    (term-mode . hide-mode-line-mode)
+    (eshell-mode . hide-mode-line-mode)
+    (dashboard-mode . hide-mode-line-mode)
+    (pdf-view-mode . hide-mode-line-mode))
+#+END_SRC
+
 ** Dashboard
 
 Configures the all-important emacs dashboard that shows up on startup.
 
 #+BEGIN_SRC elisp
   (use-package dashboard
+    :hook
+    (dashboard-mode . (lambda () (solaire-mode -1)))
     :init
     (dashboard-setup-startup-hook)
     (setq dashboard-icon-type 'all-the-icons)
@@ -374,21 +389,24 @@ By default ~corfu~ only works in a GUI environment, but the ~corfu-terminal~ pac
  Uses ~vertico~ to show minibuffer completion, and ~marginalia~ and ~orderless~ to format it.
  
  #+BEGIN_SRC elisp
-     (use-package vertico
-       :init
-       (vertico-mode)
-       :config
-       (setq vertico-count 10)
-       (vertico-indexed-mode)
-       (vertico-mouse-mode))
+   (use-package vertico
+     :init
+     (vertico-mode)
+     :config
+     (setq vertico-count 10)
+     (vertico-indexed-mode)
+     (vertico-mouse-mode))
 
-     (use-package marginalia
-       :hook (vertico-mode . marginalia-mode))
+   (use-package marginalia
+     :config
+     (setq marginalia-separator " | ")
+     (setq marginalia-align 'center)
+     :init (marginalia-mode 1))
 
-     (use-package orderless
-     :custom
-     (completion-styles '(orderless basic prescient))
-     (completion-category-overrides '((file (styles basic partial-completion)))))
+   (use-package orderless
+   :custom
+   (completion-styles '(orderless basic prescient))
+   (completion-category-overrides '((file (styles basic partial-completion)))))
 #+END_SRC
 
 *** Prescient
@@ -509,6 +527,11 @@ Configures Org-mode to make it more attractive and usable.
 #+BEGIN_SRC elisp
   (setq completion-cycle-threshold 2)
   (setq tab-always-indent 'complete)
+  (setq ispell-program-name "hunspell")
+
+  (use-package auto-dictionary
+    :hook
+    (flyspell-mode . auto-dictionary-mode))
 
   (use-package org
     :config
@@ -541,8 +564,9 @@ Configures Org-mode to make it more attractive and usable.
     (yas-load-directory "~/.emacs.d/snippets/"))
   (use-package yasnippet-snippets)
 
-  (use-package valign
-    :hook (org-mode . valign-mode))
+  (if (display-graphic-p)
+      (use-package valign
+        :hook (org-mode . valign-mode)))
 
   (use-package org-modern
     :hook
@@ -556,7 +580,8 @@ Configures Org-mode to make it more attractive and usable.
     (org-modern-checkbox nil))
 
   (unless (file-directory-p "~/.emacs.d/site-lisp/org-modern-indent")
-    (async-shell-command "git clone https://github.com/jdtsmith/org-modern-indent.git://github.com/jdtsmith/org-modern-indent.git ~/.emacs.d/site-lisp/org-modern-indent/"))
+    (async-shell-command "git clone https://github.com/jdtsmith/org-modern-indent.git ~/.emacs.d/site-lisp/org-modern-indent/"))
+
   (use-package org-modern-indent
     :load-path "~/.emacs.d/site-lisp/org-modern-indent"
     :hook (org-mode . org-modern-indent-mode))
@@ -567,12 +592,12 @@ Configures Org-mode to make it more attractive and usable.
 Emacs is an amazing environment for writing in various lisp dialects, with wonderful support out-of-the-box. However, there are various different packages designed to improve this experience in general or in slight, specific ways. ~lispy~ is a transformational package for editing S-expressions in a structural way. ~Sly~ is a fork of the popular ~SLIME~ package for an integrated common lisp REPL among other things. It is superior to ~SLIME~ because it has ASCII-art cats.
 
 #+BEGIN_SRC elisp
-  (use-package lispy
+  (use-package paredit
     :hook
-    (lisp-mode . lispy-mode)
+    (lisp-mode . paredit-mode)
     (emacs-lisp-mode . paredit-mode)
-    (scheme-mode . lispy-mode)
-    (slime-mode . lispy-mode))
+    (scheme-mode . paredit-mode)
+    (slime-mode . paredit-mode))
 
   (use-package sly
     :config
@@ -620,10 +645,14 @@ Dired is emacs' built in text-based file manager. It's however pretty rough arou
                                           '("mkv" "mp4" "avi")) "mpv" '(file)))))
 
   (setf dired-kill-when-opening-new-dired-buffer t)
-  (setq dired-listing-switches "-aBhl  --group-directories-first")
+  (setq dired-listing-switches "-BhlD  --group-directories-first")
   (defalias 'eaf-open-in-file-manager #'dired)
 
   (add-hook 'dired-mode-hook 'toggle-truncate-lines)
+
+  (use-package lin
+    :config
+    (lin-global-mode))
 #+END_SRC
 
 ** PDF-tools
@@ -637,7 +666,7 @@ The default "docview" mode of viewing pdfs is quite bad, and is improved immense
     (add-hook  'pdf-view-mode-hook (lambda () (display-line-numbers-mode -1))))
   #+END_SRC
   
-** Magit
+** Version Control
 
 Magit is wonderful, and one of the killer apps that makes emacs a system than other editors or IDEs. However it is not installed by default, so it is defined here.
 
@@ -651,6 +680,26 @@ Magit is wonderful, and one of the killer apps that makes emacs a system than ot
   (use-package magit-delta
     :after magit
     :config (magit-delta-mode t))
+
+  (use-package forge
+    :after magit
+    :config (forge-pull))
+#+END_SRC
+
+For displaying who is responsible (and when) for changes to files, the ~blamer~ package is used, displaying a small piece of text to the left of the buffer content.
+
+#+BEGIN_SRC elisp
+  (use-package blamer
+    :bind (("C-," . blamer-show-commit-info))
+    :defer 10
+    :custom
+    (setq blamer-idle-time 20.0)
+    (blamer-min-offset 70)
+    :config
+    (add-hook 'prog-mode-hook 'blamer-mode)
+    (setq blamer-author-formatter " ⏵ %s ")
+    (setq blamer-datetime-formatter "⟨%s⟩")
+    (setq blamer-commit-formatter " ☨ %s"))
 #+END_SRC
 
 ** Tooling
@@ -660,7 +709,60 @@ Emacs has a wonderful undo-system, but it can be hard to get an idea of how it w
 #+BEGIN_SRC elisp
   (use-package undo-tree
     :init
+    (setq undo-tree-visualizer-timestamps t)
+    (setq undo-tree-auto-save-history t)
+    (unless (file-exists-p "~/.emacs.d/undo-tree") 
+      (make-directory "~/.emacs.d/undo-tree"))
+    (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo-tree")))
     (global-undo-tree-mode +1))
+#+END_SRC
+
+Emacs is better than any terminal emulator, and being able to run emacs lisp code in a terminal through ~eshell~ is increadibly powerful. But ~eshell~ has trouble running full-screen terminal programs, and so the ~eat~ (Emulate A Terminal) package is used for those programs that need it.
+
+#+BEGIN_SRC elisp
+  (use-package eat
+    :hook
+    (eshell-load-hook . eat-eshell-mode)
+    :config
+    (setq eat-kill-buffer-on-exit t))
+
+#+END_SRC
+
+
+  Uses the ~ace-window~ package for switching windows instead of the default ~other-window~.
+  
+#+BEGIN_SRC elisp
+      (use-package ace-window
+        :init
+        (global-set-key (kbd "C-x o") 'ace-window)
+        (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+        (setq aw-ignore-current t))
+#+END_SRC
+
+
+Emacs is better than any terminal emulator, and being able to run emacs lisp code in a terminal through ~eshell~ is increadibly powerful. But ~eshell~ has trouble running full-screen terminal programs, and so the ~eat~ (Emulate A Terminal) package is used for those programs that need it. For better completion, the ~fish-completion~ package is used, with ~bash-completion~ as a fallback. For prompting the completions in ~eshell~, we employ the ~esh-autosuggest~ package.
+
+#+BEGIN_SRC elisp
+  (use-package eat
+    :hook
+    (eshell-load-hook . eat-eshell-mode))
+
+  (use-package fish-completion
+    :init (when (executable-find "fish")
+            (add-hook 'eshell-load-hook (fish-completion-mode)))
+    :config
+    (use-package bash-completion))
+#+END_SRC
+
+One of the things that make Emacs so extensible is the easy access to documentation of functions and variables through the ~C-h~ series of keybinds. The ~helpful~ package continues this by improving the default help buffers with more information and better formatting.
+
+#+BEGIN_SRC elisp
+  (use-package helpful
+    :bind (("C-c C-d" . helpful-at-point)
+           ("C-h v" . helpful-variable)
+           ("C-h f" . helpful-callable)
+           ("C-h x" . helpful-command)
+           ("C-h k" . helpful-key)))
 #+END_SRC
 
 ** Functions
@@ -669,7 +771,7 @@ The sudo function raises the privilege of the current buffer to root permissions
 
 #+BEGIN_SRC elisp
   (defun sudo ()
-    "Opens the current buffer at point with root privelages using TRAMP"
+    "Opens the current buffer at point with root privelages using TRAMP."
     (interactive)
     (let ((position (point)))
       (find-alternate-file (concat "/sudo::"
@@ -681,6 +783,7 @@ Magit can sometimes create a lot of buffers for different processes that are ann
 
 #+BEGIN_SRC elisp
   (defun kill-magit-buffers ()
+    "Kills all buffers whose name begins with magit."
     (interactive)
     (mapc (lambda (buffer) 
             (if (buffer-match-p ".*magit.*" buffer) 
@@ -692,21 +795,23 @@ Emacs does not have a nice easy to use elisp  function for calculating the facto
 
 #+BEGIN_SRC elisp
   (defun ! (n)
-    "An emacs function to calculate the factorial of n using the calc library"
-    (string-to-number (calc-eval (format "%s!" n))))
+    "An emacs function to calculate the factorial of n using the calc library."
+    (let ((output (string-to-number (calc-eval (format "%s!" n)))))
+      (kill-buffer "*Calculator*")
+      output))
 #+END_SRC
 
 Function for calculation the number of possible permutations and combinations respectively.
 
 #+BEGIN_SRC elisp
   (defun nPr (n k)
-    "A function for calculating the number of permutations in combinatorics"
+    "A function for calculating the number of permutations in combinatorics."
     (/
      (! n)
      (! (- n k))))
 
   (defun nCr (n k)
-    "A function for calculating the number of combinations in combinatorics"
+    "A function for calculating the number of combinations in combinatorics."
     (/
      (! n)
      (* (! k) (! (- n k)))))
