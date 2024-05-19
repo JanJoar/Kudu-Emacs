@@ -573,8 +573,7 @@ Configures Org-mode to make it more attractive and usable.
     (org-mode . org-modern-mode)
     (org-agenda-finalize . org-modern-agenda)
     :custom
-    (org-modern-table-horizontal 2)
-    (org-modern-table-vertical 1)
+    (setq org-modern-table nil)
     (org-modern-star nil)
     (org-modern-hide-stars nil)
     (org-modern-checkbox nil))
