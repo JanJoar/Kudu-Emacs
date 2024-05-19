@@ -534,6 +534,7 @@ Configures Org-mode to make it more attractive and usable.
     (flyspell-mode . auto-dictionary-mode))
 
   (use-package org
+    :defer 18
     :config
     (setq org-format-latex-options
           (plist-put org-format-latex-options
