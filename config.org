@@ -717,18 +717,6 @@ Emacs has a wonderful undo-system, but it can be hard to get an idea of how it w
     (global-undo-tree-mode +1))
 #+END_SRC
 
-Emacs is better than any terminal emulator, and being able to run emacs lisp code in a terminal through ~eshell~ is increadibly powerful. But ~eshell~ has trouble running full-screen terminal programs, and so the ~eat~ (Emulate A Terminal) package is used for those programs that need it.
-
-#+BEGIN_SRC elisp
-  (use-package eat
-    :hook
-    (eshell-load-hook . eat-eshell-mode)
-    :config
-    (setq eat-kill-buffer-on-exit t))
-
-#+END_SRC
-
-
   Uses the ~ace-window~ package for switching windows instead of the default ~other-window~.
   
 #+BEGIN_SRC elisp
@@ -745,13 +733,21 @@ Emacs is better than any terminal emulator, and being able to run emacs lisp cod
 #+BEGIN_SRC elisp
   (use-package eat
     :hook
-    (eshell-load-hook . eat-eshell-mode))
+    (eshell-load-hook . eat-eshell-mode)
+    :config
+    (setq eat-kill-buffer-on-exit t))
 
   (use-package fish-completion
     :init (when (executable-find "fish")
             (add-hook 'eshell-load-hook (fish-completion-mode)))
     :config
     (use-package bash-completion))
+
+  (use-package eshell
+    :config
+    (setq eshell-prompt-function
+      (lambda ()
+        (concat (abbreviate-file-name (eshell/pwd)) " λ "))))
 #+END_SRC
 
 One of the things that make Emacs so extensible is the easy access to documentation of functions and variables through the ~C-h~ series of keybinds. The ~helpful~ package continues this by improving the default help buffers with more information and better formatting.
