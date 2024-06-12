@@ -328,7 +328,9 @@ Configures the all-important emacs dashboard that shows up on startup.
     (setq dashboard-set-footer nil)
     (dashboard-setup-startup-hook)
 
-    (add-hook  'dashboard-mode-hook (lambda () (display-line-numbers-mode -1))))
+    (add-hook  'dashboard-mode-hook (lambda ()
+                                      (display-line-numbers-mode -1)
+                                      (setq cursor-type nil))))
 #+END_SRC
 
 ** Completion
