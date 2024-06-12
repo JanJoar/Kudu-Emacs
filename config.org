@@ -303,6 +303,22 @@ Emacs is a wonderful alternative to a terminal, encompassing [[https://www.maste
     (pdf-view-mode . hide-mode-line-mode))
 #+END_SRC
 
+Together with the wonderful ~modus-themes~ and ~denote~ packages, which are not provided by Kudu, Protesilaos Savrou has written the beautiful ~spacious-padding~ package.
+
+#+BEGIN_SRC elisp
+  (use-package spacious-padding
+    :config (setq spacious-padding-widths
+                  '( :internal-border-width 10
+                     :header-line-width 4
+                     :mode-line-width 4
+                     :tab-width 4
+                     :right-divider-width 15
+                     :scroll-bar-width 8))
+    
+    :init (spacious-padding-mode 1))
+
+#+END_SRC
+
 ** Dashboard
 
 Configures the all-important emacs dashboard that shows up on startup.
