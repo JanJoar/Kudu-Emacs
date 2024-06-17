@@ -627,12 +627,21 @@ Emacs is an amazing environment for writing in various lisp dialects, with wonde
 
 *** Scheme
 
-Due to Kudu's deep integration with the GNU Guix system, it is only natural to improve the systems used to interact with guile and scheme specifically. For this the ~guix.el~ and the wonderful ~geiser~ packages are used, where ~guix.el~ is a magit-inspired Emacs frontend and ~geiser~ is a package aiming to improve the scheme experience in emacs, with ~geiser-guile~ providing special support for working the /GNU Ubiquitous Intelligent Language for Extensions/.
+Due to Kudu's deep integration with the GNU Guix system, it is only natural to improve the systems used to interact with guile and scheme specifically. For this the ~guix.el~ and the wonderful ~geiser~ packages are used, where ~guix.el~ is a magit-inspired Emacs frontend and ~geiser~ is a package aiming to improve the scheme experience in emacs, with ~geiser-x~ providing special support for working the relevant flavour of scheme.
 
 #+BEGIN_SRC elisp
   (use-package guix)
 
   (use-package geiser-guile)
+  (use-package geiser-chez)
+  (use-package geiser-mit)
+  (use-package geiser-chicken)
+  (use-package geiser-racket)
+  (use-package geiser-chibi)
+  (use-package geiser-kawa)
+  (use-package geiser-gambit)
+  (use-package geiser-stklos)
+  (use-package geiser-gauche)
 #+END_SRC
 
 *** Parens pairing
