@@ -840,6 +840,70 @@ Function for calculation the number of possible permutations and combinations re
      (* (! k) (! (- n k)))))
 #+END_SRC
 
+** Mail
+
+Emacs provides many different mail utilities, but one of the most popular is ~mu4e~ (Mail Utilities for Emacs). Using this requires an IMAP server to something similar to store mail the in ~HOME/mail/~ directory and a local SMTP server to send the mail. 
+
+#+BEGIN_SRC elisp
+  (use-package mu4e
+    :defer 10
+    :config
+
+    (defalias 'email #'mu4e "Defines an email command to run mu4e.")
+
+    (setq mu4e-change-filenames-when-moving t ; avoid sync conflicts
+          mu4e-update-interval (* 10 60) ; check mail 10 minutes
+          mu4e-compose-format-flowed t ; re-flow mail so it's not hard wrapped
+          mu4e-get-mail-command "mbsync -a"
+          mu4e-maildir "/mail")
+
+    (setq mail-user-agent 'mu4e-user-agent)
+
+    (setq mu4e-drafts-folder "/mail/Drafts"
+          mu4e-sent-folder   "/mail/Sent"
+          mu4e-refile-folder "/mail/All Mail"
+          mu4e-trash-folder  "/mail/Trash")
+
+    (setq mu4e-maildir-shortcuts
+          '(("/mail/inbox"     . ?i)
+            ("/mail/Sent"      . ?s)
+            ("/mail/Trash"     . ?t)
+            ("/mail/Drafts"    . ?d)
+            ("/mail/All Mail"  . ?a)))
+
+    (setq message-send-mail-function 'smtpmail-send-it
+          auth-sources '("~/.authinfo")
+          smtpmail-smtp-server "127.0.0.1"
+          smtpmail-smtp-service 1025
+          smtpmail-stream-type  'ssl))
+#+END_SRC
+
+Allows notify-send to inform you of new emails when not using Emacs, and adds a nice mode-line decoration to remind you.
+
+#+BEGIN_SRC elisp
+    (use-package mu4e-alert
+      :after mu4e
+      (mu4e-alert-set-default-style 'libnotify)
+      (add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
+      (add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display))
+#+END_SRC
+
+Allows you to write nicely formatted HTML emails using org-mode to fit in with the rest of society.
+
+#+BEGIN_SRC elisp
+  (use-package org-msg
+    :after mu4e
+    :config
+    (setq mail-user-agent 'mu4e-user-agent)
+    (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t"
+          org-msg-startup "hidestars indent inlineimages"
+          org-msg-default-alternatives '((new		. (text html))
+                                         (reply-to-html	. (text html))
+                                         (reply-to-text	. (text)))
+          org-msg-convert-citation t)
+    (org-msg-mode))
+#+END_SRC
+
 ** Emacs Application Framework
 
 The /Emacs Application Framework/ (EAF) provides a multitude of programs, most notably a browser, that more tigtly integrate with the Emacs than Icecat or other browsers allow for when used in conjunction with EXWM. While they mostly are usable with a REPL-style lisp interaction, they are nevertheless incredibly useful. 
