@@ -546,6 +546,9 @@ Configures Org-mode to make it more attractive and usable.
   (setq completion-cycle-threshold 2)
   (setq tab-always-indent 'complete)
   (setq ispell-program-name "hunspell")
+  (setq ispell-local-dictionary-alist
+      '(("english" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_GB") nil utf-8)
+        ("svenska" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "sv_SE") nil utf-8)))
 
   (use-package auto-dictionary
     :hook
