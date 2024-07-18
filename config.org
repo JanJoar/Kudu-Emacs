@@ -662,14 +662,17 @@ Most of the time when writing parentheses, brackets, and quotes we want to pair 
 Dired is emacs' built in text-based file manager. It's however pretty rough around its edges, such as it opening each directory in a separate buffer making navigation a hassle. However certain tweaks can make it a formidable tool accessible directly within emacs. Take that n³ and midnight commander!
 
 #+BEGIN_SRC elisp
-    (use-package openwith
-      :hook (dired-mode . openwith-mode)
-      :config
-      (setq openwith-associations (list
-                                   (list (openwith-make-extension-regexp
-                                          '("png" "jpg" "jpeg")) "eog" '(file))
-                                   (list (openwith-make-extension-regexp
-                                          '("mkv" "mp4" "avi")) "mpv" '(file)))))
+  (use-package openwith
+    :hook (dired-mode . openwith-mode)
+    :config
+    (setq openwith-associations (list
+                                 (list (openwith-make-extension-regexp
+                                        '("png" "jpg" "jpeg")) "eog" '(file))
+                                 (list (openwith-make-extension-regexp
+                                        '("mkv" "mp4" "avi")) "mpv" '(file))
+                                 (list (openwith-make-extension-regexp
+                                        '("pdf")) "zathura" '(file))))
+    (add-to-list  'mm-inhibit-file-name-handlers 'openwith-file-handler))
 
   (setf dired-kill-when-opening-new-dired-buffer t)
   (setq dired-listing-switches "-BhlD  --group-directories-first")
