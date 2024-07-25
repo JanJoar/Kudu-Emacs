@@ -20,7 +20,7 @@
 
 (setq load-prefer-newer t) ;; Loads the newer file if one exists. This means emacs will prioritise files with newer changes. 
 
-(defvar Kudu-gui-logo "~/.emacs.d/Logos/KuduLogo_white.svg")
+(defvar Kudu-gui-logo "~/.emacs.d/Logos/KuduLogo_red.svg")
 (shell-command "touch ~/.emacs.d/secret.org && touch ~/.emacs.d/secret.el && touch ~/.emacs.d/custom.el")
 (kill-buffer "*Shell Command Output*")
 
@@ -37,7 +37,7 @@
 
 (if (file-exists-p "~/.emacs.d/secrets/secret.org")
     (org-babel-load-file (expand-file-name "~/.emacs.d/secrets/secret.org"))
-  (dired-do-touch "~/.emacs.d/secrets/secret.org"))
+  (shell-command "touch ~/.emacs.d/secrets/secret.org"))
 
 
 ;; User-unique information (like E-mail address and full name) that you might not want to share openly. Empty by default. Since the file is not included in the Kudu repo it has to be created using touch in order to be loaded.

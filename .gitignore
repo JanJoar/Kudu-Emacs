@@ -2,3 +2,6 @@ secret.*
 custom.*
 /site-lisp
 modern-indent
+/.cache
+%backup%~
+/auto-save-list

@@ -319,6 +319,18 @@ Together with the wonderful ~modus-themes~ and ~denote~ packages, which are not 
 
 #+END_SRC
 
+~Rainbow-mode~ makes colour codes into the colours that they represent.
+
+#+begin_src elisp
+  (use-package rainbow-mode
+    :config
+    (setq rainbow-html-colors 'auto)
+    (setq rainbow-latex-colors 'auto)
+    (setq rainbow-ansi-colors 'auto)
+    (setq rainbow-r-colors 'auto)
+    :hook (prog-mode . rainbow-mode))
+#+end_src
+
 ** Dashboard
 
 Configures the all-important emacs dashboard that shows up on startup.
