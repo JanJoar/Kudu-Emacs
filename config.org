@@ -815,7 +815,7 @@ Emacs is better than any terminal emulator, and being able to run emacs lisp cod
         (concat (abbreviate-file-name (eshell/pwd)) " λ "))))
 #+END_SRC
 
-One of the things that make Emacs so extensible is the easy access to documentation of functions and variables through the ~C-h~ series of keybinds. The ~helpful~ package continues this by improving the default help buffers with more information and better formatting.
+One of the things that make Emacs so extensible is the easy access to documentation of functions and variables through the ~C-h~ series of keybinds. The ~helpful~ package continues this by improving the default help buffers with more information and better formatting. ~Eldoc-box~ instead shows Eldoc documentation in a pretty and modern-looking format inside of your buffer, rather than down at the minibuffer.
 
 #+BEGIN_SRC elisp
   (use-package helpful
@@ -824,6 +824,19 @@ One of the things that make Emacs so extensible is the easy access to documentat
            ("C-h f" . helpful-callable)
            ("C-h x" . helpful-command)
            ("C-h k" . helpful-key)))
+
+  (use-package eldoc-box
+    :init
+
+    (defun kudu-eldoc-box ()
+        "Runs eldoc-box-hover-mode or hover-at-point-mode depending on perfect-margin-mode"
+      (if perfect-margin-mode
+          (setq eldoc-box-hover-mode t)
+        (setq eldoc-box-hover-at-point-mode t)))
+
+    :hook (prog-mode . kudu-eldoc-box)
+    :config
+    (add-hook 'perfect-margin-hook 'kudu-eldoc-box))
 #+END_SRC
 
 ** Functions
