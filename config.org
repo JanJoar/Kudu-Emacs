@@ -885,6 +885,7 @@ Emacs provides many different mail utilities, but one of the most popular is ~mu
 #+BEGIN_SRC elisp
   (use-package mu4e
     :defer 10
+    :ensure nil
     :config
 
     (defalias 'email #'mu4e "Defines an email command to run mu4e.")
