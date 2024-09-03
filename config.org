@@ -447,8 +447,10 @@ Shows those completion results that are hopefully most useful, both in the minib
     (setq prescient-persist-mode t)
     (setq prescient-history-length 5)
     (setq prescient-sort-full-matches-first t))
+
   (use-package corfu-prescient
     :init (corfu-prescient-mode +1))
+  
   (use-package vertico-prescient
     :init (vertico-prescient-mode +1))
 #+END_SRC
@@ -545,7 +547,7 @@ Tangentially related is flycheck, providing in-buffer syntax checking.
 
 #+BEGIN_SRC elisp
   (use-package flycheck
-    :config (global-flycheck-mode +1))
+    :hook (prog-mode . flycheck-mode))
 #+END_SRC
 
 ** Org-mode
@@ -826,25 +828,26 @@ Emacs is better than any terminal emulator, and being able to run emacs lisp cod
 One of the things that make Emacs so extensible is the easy access to documentation of functions and variables through the ~C-h~ series of keybinds. The ~helpful~ package continues this by improving the default help buffers with more information and better formatting. ~Eldoc-box~ instead shows Eldoc documentation in a pretty and modern-looking format inside of your buffer, rather than down at the minibuffer.
 
 #+BEGIN_SRC elisp
-  (use-package helpful
-    :bind (("C-c C-d" . helpful-at-point)
-           ("C-h v" . helpful-variable)
-           ("C-h f" . helpful-callable)
-           ("C-h x" . helpful-command)
-           ("C-h k" . helpful-key)))
+    (use-package helpful
+      :bind (("C-c C-d" . helpful-at-point)
+             ("C-h v" . helpful-variable)
+             ("C-h f" . helpful-callable)
+             ("C-h x" . helpful-command)
+             ("C-h k" . helpful-key)))
 
-  (use-package eldoc-box
-    :init
+    (use-package eldoc-box
+      :init
 
-    (defun kudu-eldoc-box ()
-        "Runs eldoc-box-hover-mode or hover-at-point-mode depending on perfect-margin-mode"
-      (if perfect-margin-mode
-          (setq eldoc-box-hover-mode t)
-        (setq eldoc-box-hover-at-point-mode t)))
+      (defun kudu-eldoc-box ()
+          "Runs eldoc-box-hover-mode or hover-at-point-mode depending on perfect-margin-mode"
+        (if perfect-margin-mode
+            (setq eldoc-box-hover-mode t)
+          (setq eldoc-box-hover-at-point-mode t)))
 
-    :hook (prog-mode . kudu-eldoc-box)
-    :config
-    (add-hook 'perfect-margin-hook 'kudu-eldoc-box))
+      :hook (prog-mode . kudu-eldoc-box)
+      :config
+      (add-hook 'perfect-margin-hook 'kudu-eldoc-box)
+      (setq eldoc-box-only-multi-line t))
 #+END_SRC
 
 ** Functions
