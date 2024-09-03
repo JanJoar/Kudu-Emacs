@@ -229,13 +229,12 @@ The default Emacs mode-line is a bit busy and certain elements of it are difficu
                     (let* ((read-only (and buffer-read-only (buffer-file-name)))
                            (modified (buffer-modified-p)))
                       (propertize
-                       (if read-only "  " (if modified " 🖬" "  "))))))
+                       (if read-only "  " (if modified " ☦" "  "))))))
                 " "
                 (:eval (propertize (format "%s" (buffer-name)) 'face 'bold))
                 " "
                 (:eval (mode-line-padding))
-                (:eval (setq mode-line-end-spaces mode-line-misc-info))
-                ))
+                (:eval (setq mode-line-end-spaces mode-line-misc-info))))
 #+END_SRC
 
 Adds as nicely formated clock in all cases, even when not running in EXWM.
@@ -316,7 +315,6 @@ Together with the wonderful ~modus-themes~ and ~denote~ packages, which are not 
                      :scroll-bar-width 8))
     
     :init (spacious-padding-mode 1))
-
 #+END_SRC
 
 ~Rainbow-mode~ makes colour codes into the colours that they represent.
@@ -792,7 +790,7 @@ Emacs has a wonderful undo-system, but it can be hard to get an idea of how it w
 #+END_SRC
 
 
-Emacs is better than any terminal emulator, and being able to run emacs lisp code in a terminal through ~eshell~ is increadibly powerful. But ~eshell~ has trouble running full-screen terminal programs, and so the ~eat~ (Emulate A Terminal) package is used for those programs that need it. For better completion, the ~fish-completion~ package is used, with ~bash-completion~ as a fallback. For prompting the completions in ~eshell~, we employ the ~esh-autosuggest~ package.
+Emacs is better than any terminal emulator, and being able to run emacs lisp code in a terminal through ~eshell~ is increadibly powerful. But ~eshell~ has trouble running full-screen terminal programs, and so the ~eat~ (Emulate A Terminal) package is used for those programs that need it.
 
 #+BEGIN_SRC elisp
   (use-package eat
@@ -810,9 +808,19 @@ Emacs is better than any terminal emulator, and being able to run emacs lisp cod
 
   (use-package eshell
     :config
+    ;; Create a new lambda-themed prompt.
     (setq eshell-prompt-function
       (lambda ()
-        (concat (abbreviate-file-name (eshell/pwd)) " λ "))))
+        (concat (abbreviate-file-name (eshell/pwd)) " λ ")))
+    (setq eshell-prompt-regexp "^[^λ]* λ")
+
+    (setq eshell-scroll-to-bottom-on-input t)
+    (setq-local tab-always-indent 'complete)
+    (setq eshell-history-size 10000)
+    (setq eshell-save-history-on-exit t)
+    (setq eshell-hist-ignoredups t)
+
+    (defalias 'eshell/clear 'eshell/clear-scrollback))
 #+END_SRC
 
 One of the things that make Emacs so extensible is the easy access to documentation of functions and variables through the ~C-h~ series of keybinds. The ~helpful~ package continues this by improving the default help buffers with more information and better formatting. ~Eldoc-box~ instead shows Eldoc documentation in a pretty and modern-looking format inside of your buffer, rather than down at the minibuffer.
