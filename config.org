@@ -182,10 +182,11 @@ Visible bell changes the otherwise quite jarring bell sound into a visual flash 
 Solaire-mode makes it easy to distinguish between warnings, popups and messages by tinting the background of those buffers slightly darker, as long as the current theme supports it.
 
 #+BEGIN_SRC elisp
-        (use-package solaire-mode
-          :init
-          (solaire-global-mode))
-        (setq pixel-scroll-precision-mode t)
+  (use-package solaire-mode
+    :init
+    (solaire-global-mode))
+  
+  (setq pixel-scroll-precision-mode t)
 #+END_SRC
 
 Formats tabs to Linux-kernel standards and keeps them so using the ~aggressive-indent~ package.
@@ -215,26 +216,30 @@ Without this setting emacs sometimes asks for confirmation via a "Yes or no" pro
 The default Emacs mode-line is a bit busy and certain elements of it are difficult to intuitively understand. This simplifies it considerably to make it more readable and also adds a header line.
 
 #+BEGIN_SRC elisp
-  (defun mode-line-padding ()
-    "Sets the spacing between left and right aligned things in the mode line."
-    (let ((r-length (length (format-mode-line mode-line-end-spaces))))
-      (propertize " "
-                  'display `(space :align-to (- right ,r-length)))))
 
-  (setq-default mode-line-format
+(defun mode-line-padding ()
+  "Sets the spacing between left and right aligned things in the mode line."
+  (let ((r-length (length (format-mode-line mode-line-end-spaces))))
+    (propertize " "
+                'display `(space :align-to (- right ,r-length)))))
+
+(setq-default mode-line-format
               '(
                 "|"
                 "%e"
+                (:eval (unless (string-match-p "-" mode-line-remote)
+                         mode-line-remote))
                 (:eval (unless (string-match-p "\\*.*\\*" (buffer-name))
-                    (let* ((read-only (and buffer-read-only (buffer-file-name)))
-                           (modified (buffer-modified-p)))
-                      (propertize
-                       (if read-only "  " (if modified " ☦" "  "))))))
+                         (let* ((read-only (and buffer-read-only (buffer-file-name)))
+                                (modified (buffer-modified-p)))
+                           (propertize
+                            (if read-only "  " (if modified " ☦" "  "))))))
+                (vc-mode vc-mode)
                 " "
                 (:eval (propertize (format "%s" (buffer-name)) 'face 'bold))
                 " "
                 (:eval (mode-line-padding))
-                (:eval (setq mode-line-end-spaces mode-line-misc-info))))
+                (:eval (setq mode-line-end-spaces mode-line-misc-info)))) 
 #+END_SRC
 
 Adds as nicely formated clock in all cases, even when not running in EXWM.
@@ -901,6 +906,17 @@ Function for calculation the number of possible permutations and combinations re
      (! n)
      (* (! k) (! (- n k)))))
 #+END_SRC
+
+Allows you to save a flyspell word at point to your personal dictionary.
+
+#+begin_src elisp
+  (defun flyspell-save-word ()
+  (interactive)
+  (let ((current-location (point))
+         (word (flyspell-get-word)))
+    (when (consp word)    
+      (flyspell-do-correct 'save nil (car word) current-location (cadr word) (caddr word) current-location))))
+#+end_src
 
 ** Mail
 
