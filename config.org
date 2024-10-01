@@ -918,6 +918,12 @@ Allows you to save a flyspell word at point to your personal dictionary.
       (flyspell-do-correct 'save nil (car word) current-location (cadr word) (caddr word) current-location))))
 #+end_src
 
+#+begin_src emacs-lisp :tangle yes
+  (defun load-emacs-secret-file ()
+    "Load the .emacs.d/secrets/ file"
+    (interactive)
+    (org-babel-load-file (expand-file-name "~/.emacs.d/secrets/secret.org")))
+#+end_src
 ** Mail
 
 Emacs provides many different mail utilities, but one of the most popular is ~mu4e~ (Mail Utilities for Emacs). Using this requires an IMAP server to something similar to store mail the in ~HOME/mail/~ directory and a local SMTP server to send the mail. 
