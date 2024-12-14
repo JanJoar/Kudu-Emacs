@@ -5,3 +5,4 @@ modern-indent
 /.cache
 %backup%~
 /auto-save-list
+/site-lisp/*

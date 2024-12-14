@@ -17,8 +17,11 @@
 
 ;;; Commentary: This file simply serves to load other Emacs lisp files in order to neatly separate different concepts
 
+;;; Code:
 
-(setq load-prefer-newer t) ;; Loads the newer file if one exists. This means emacs will prioritise files with newer changes. 
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/")
+
+(setq load-prefer-newer t) ;; Loads the newer file if one exists. This means emacs will prioritise files with newer changes.
 
 (defvar Kudu-gui-logo "~/.emacs.d/Logos/KuduLogo_red.svg")
 (shell-command "touch ~/.emacs.d/custom.el")
