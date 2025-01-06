@@ -728,7 +728,10 @@ Dired is emacs' built in text-based file manager. It's however pretty rough arou
   (add-hook 'dired-mode-hook 'toggle-truncate-lines)
   (add-hook 'dired-mode-hook 'display-line-numbers-mode)
 
-
+  (use-package all-the-icons-dired
+    :hook (dired-mode . all-the-icons-dired-mode)
+    :config (setq all-the-icons-dired-monochrome nil))
+  
   (use-package lin
     :config
     (lin-global-mode))
