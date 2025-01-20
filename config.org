@@ -225,19 +225,22 @@ The default Emacs mode-line is a bit busy and certain elements of it are difficu
 
   (setq-default mode-line-format
                 '(
-                  "|"
                   "%e"
-                  (:eval (unless (string-match-p "-" mode-line-remote)
-                           mode-line-remote))
                   (:eval (unless (string-match-p "\\*.*\\*" (buffer-name))
                            (let* ((read-only (and buffer-read-only (buffer-file-name)))
                                   (modified (buffer-modified-p)))
                              (propertize
-                              (if read-only "  " (if modified " ☦" "  "))))))
+                              (if buffer-read-only "|  |"
+                                (if modified "| ☦ |"
+                                  "|   |"))))))
+                  "  "
+                  mode-name
+                  " "
+                  mode-line-buffer-identification
+                  " "
+                  (if vc-mode
+                      "| ")
                   (vc-mode vc-mode)
-                  " "
-                  (:eval (propertize (format "%s" (buffer-name)) 'face 'bold))
-                  " "
                   (:eval (mode-line-padding))
                   (:eval (setq mode-line-end-spaces mode-line-misc-info))))
 #+end_src
