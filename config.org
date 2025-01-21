@@ -230,16 +230,13 @@ The default Emacs mode-line is a bit busy and certain elements of it are difficu
                            (let* ((read-only (and buffer-read-only (buffer-file-name)))
                                   (modified (buffer-modified-p)))
                              (propertize
-                              (if buffer-read-only "|  |"
+                              (if buffer-read-only "|    |"
                                 (if modified "| ☦ |"
-                                  "|   |"))))))
+                                  "|    |"))))))
                   "  "
                   mode-name
                   " "
                   mode-line-buffer-identification
-                  " "
-                  (if vc-mode
-                      "| ")
                   (vc-mode vc-mode)
                   (:eval (mode-line-padding))
                   (:eval (setq mode-line-end-spaces mode-line-misc-info))))
@@ -412,10 +409,12 @@ By default ~corfu~ only works in a GUI environment, but the ~corfu-terminal~ pac
              ("C-c p &" . cape-sgml)
              ("C-c p r" . cape-rfc1345))
       :init
+      (setq cape-dict-file (list "/home/jovo/Documents/Papers/english-dict" "/home/jovo/Documents/Papers/swedish-dict"))
       (add-to-list 'completion-at-point-functions #'cape-abbrev)
       (add-to-list 'completion-at-point-functions #'cape-file)
       (add-to-list 'completion-at-point-functions #'cape-dabbrev)
       (add-to-list 'completion-at-point-functions #'cape-dict)
+      (add-to-list 'completion-at-point-functions #'cape-abbrev)
       (add-to-list 'completion-at-point-functions #'cape-history)
       (add-to-list 'completion-at-point-functions #'cape-elisp-block)
       (add-to-list 'completion-at-point-functions #'cape-keyword)
