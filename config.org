@@ -242,7 +242,7 @@ The default Emacs mode-line is a bit busy and certain elements of it are difficu
                   (:eval (setq mode-line-end-spaces mode-line-misc-info))))
 #+end_src
 
-Adds as nicely formated clock in all cases, even when not running in EXWM.
+Adds as nicely formatted clock in all cases, even when not running in EXWM.
 
 #+begin_src emacs-lisp :tangle yes
   (setq display-time-default-load-average nil)
@@ -250,19 +250,15 @@ Adds as nicely formated clock in all cases, even when not running in EXWM.
   (display-time-mode 1)
 #+end_src
 
-When editing just one window, left-aligned text is awkwardly too far to the left. The ~perfect-margin~ package fixes this by centering the contents of the window when only one is present.
+When prose for publication the traditional centered appearance of WYSISWYG is quite comfortable. The ~olivetti~ package does this by centering the contents of the windows where this type of content is displayed.
 
 #+begin_src emacs-lisp :tangle yes
-  (use-package perfect-margin
-    :custom
-    (perfect-margin-visible-width 128)
-    :init
-    ;; enable perfect-margin-mode
-    (perfect-margin-mode +1)
-    ;; auto-center minibuffer windows
-    (setq perfect-margin-ignore-filters nil)
-    ;; auto-center special windows
-    (setq perfect-margin-ignore-regexps nil))
+  (use-package olivetti
+      :hook
+      (org-mode . olivetti-mode)
+      (markdown-mode . olivetti-mode)
+      :config
+      (setq olivetti-body-width 100))
 #+end_src
 
 ~rainbow-delimiters~ differentiates layers of parentheses using different colours so that they can be identified at a glance.
@@ -305,21 +301,6 @@ Emacs is a wonderful alternative to a terminal, encompassing [[https://www.maste
     (eshell-mode . hide-mode-line-mode)
     (dashboard-mode . hide-mode-line-mode)
     (pdf-view-mode . hide-mode-line-mode))
-#+end_src
-
-Together with the wonderful ~modus-themes~ and ~denote~ packages, which are not provided by Kudu, Protesilaos Savrou has written the beautiful ~spacious-padding~ package.
-
-#+begin_src emacs-lisp :tangle yes
-  (use-package spacious-padding
-    :config (setq spacious-padding-widths
-                  '( :internal-border-width 10
-                     :header-line-width 4
-                     :mode-line-width 4
-                     :tab-width 4
-                     :right-divider-width 15
-                     :scroll-bar-width 8))
-    
-    :init (spacious-padding-mode 1))
 #+end_src
 
 ~Rainbow-mode~ makes colour codes into the colours that they represent.
@@ -656,16 +637,9 @@ Configures Org-mode to make it more attractive and usable.
 
 ** Lisp
 
-Emacs is an amazing environment for writing in various lisp dialects, with wonderful support out-of-the-box. However, there are various different packages designed to improve this experience in general or in slight, specific ways. ~lispy~ is a transformational package for editing S-expressions in a structural way. ~Sly~ is a fork of the popular ~SLIME~ package for an integrated common lisp REPL among other things. It is superior to ~SLIME~ because it has ASCII-art cats.
+Emacs is an amazing environment for writing in various lisp dialects, with wonderful support out-of-the-box. However, there are various different packages designed to improve this experience in general or in slight, specific ways. ~Sly~ is a fork of the popular ~SLIME~ package for an integrated common lisp REPL among other things. It is superior to ~SLIME~ because it has ASCII-art cats.
 
 #+begin_src emacs-lisp :tangle yes
-  (use-package paredit
-    :hook
-    (lisp-mode . paredit-mode)
-    (emacs-lisp-mode . paredit-mode)
-    (scheme-mode . paredit-mode)
-    (slime-mode . paredit-mode))
-
   (use-package sly
     :config
     (setq inferior-lisp-program "sbcl"))
@@ -698,8 +672,7 @@ Due to Kudu's deep integration with the GNU Guix system, it is only natural to i
 Most of the time when writing parentheses, brackets, and quotes we want to pair them. This significantly improves comfort since you no longer need to stretch for modifier keys to finish of the pair. And even if you do, ~electric-pair-mode~ will detect it and move the point past as if you had just entered the character. This is of course not just useful for lisp, but in any context when writing pairs of brackets or parentheses.
 
 #+begin_src emacs-lisp :tangle yes
-  (setq electric-pair-pairs '(
-                              (?\{ . ?\})
+  (setq electric-pair-pairs '((?\{ . ?\})
                               (?\( . ?\))
                               (?\[ . ?\])
                               (?\" . ?\")))
