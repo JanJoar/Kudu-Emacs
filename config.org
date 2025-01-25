@@ -257,8 +257,8 @@ When prose for publication the traditional centered appearance of WYSISWYG is qu
       :hook
       (org-mode . olivetti-mode)
       (markdown-mode . olivetti-mode)
-      :config
-      (setq olivetti-body-width 100))
+      :init
+      (setq-default olivetti-body-width 108))
 #+end_src
 
 ~rainbow-delimiters~ differentiates layers of parentheses using different colours so that they can be identified at a glance.
