@@ -954,6 +954,7 @@ Emacs provides many different mail utilities, but one of the most popular is ~mu
           mu4e-maildir "/mail")
 
     (setq mail-user-agent 'mu4e-user-agent)
+    (setq message-kill-buffer-on-exit t)
 
     (setq mu4e-drafts-folder "/mail/Drafts"
           mu4e-sent-folder   "/mail/Sent"
