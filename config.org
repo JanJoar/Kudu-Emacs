@@ -358,6 +358,7 @@ By default ~corfu~ only works in a GUI environment, but the ~corfu-terminal~ pac
     (setq corfu-auto t)
     :init
     (global-corfu-mode)
+    (corfu-history-mode)
     (setq corfu-popupinfo-delay 0.5)
     (corfu-popupinfo-mode +1))
 
@@ -391,10 +392,10 @@ By default ~corfu~ only works in a GUI environment, but the ~corfu-terminal~ pac
              ("C-c p r" . cape-rfc1345))
       :init
       (setq cape-dict-file (list "/home/jovo/Documents/Papers/english-dict" "/home/jovo/Documents/Papers/swedish-dict"))
+      (add-to-list 'completion-at-point-functions #'cape-dict)
       (add-to-list 'completion-at-point-functions #'cape-abbrev)
       (add-to-list 'completion-at-point-functions #'cape-file)
       (add-to-list 'completion-at-point-functions #'cape-dabbrev)
-      (add-to-list 'completion-at-point-functions #'cape-dict)
       (add-to-list 'completion-at-point-functions #'cape-abbrev)
       (add-to-list 'completion-at-point-functions #'cape-history)
       (add-to-list 'completion-at-point-functions #'cape-elisp-block)
@@ -684,38 +685,38 @@ Most of the time when writing parentheses, brackets, and quotes we want to pair 
 Dired is emacs' built in text-based file manager. It's however pretty rough around its edges, such as it opening each directory in a separate buffer making navigation a hassle. However certain tweaks can make it a formidable tool accessible directly within emacs. Take that n³ and midnight commander!
 
 #+begin_src emacs-lisp :tangle yes
-(defun dired-open-with-find-file (orig-fun &optional other-window)
-  "Run dired-open-with if the file is a PDF, image, or video."
-  (let ((file (dired-get-filename)))
-    (if (and file
-             (or (string-match "\\.pdf\\'" file)
-                 (string-match "\\.png\\'" file)
-                 (string-match "\\.jpg\\'" file)
-                 (string-match "\\.jpeg\\'" file)
-                 (string-match "\\.mkv\\'" file)
-                 (string-match "\\.mp4\\'" file)
-                 (string-match "\\.avi\\'" file)))
-        (dired-open-with)
-      (funcall orig-fun))))  ;; Call the original function for other file types.
+  (defun dired-open-with-find-file (orig-fun &optional other-window)
+    "Run dired-open-with if the file is a PDF, image, or video."
+    (let ((file (dired-get-filename)))
+      (if (and file
+               (or (string-match "\\.pdf\\'" file)
+                   (string-match "\\.png\\'" file)
+                   (string-match "\\.jpg\\'" file)
+                   (string-match "\\.jpeg\\'" file)
+                   (string-match "\\.mkv\\'" file)
+                   (string-match "\\.mp4\\'" file)
+                   (string-match "\\.avi\\'" file)))
+          (dired-open-with)
+        (funcall orig-fun))))  ;; Call the original function for other file types.
 
-(use-package dired-open-with
-  :config
-  (advice-add 'dired-find-file :around 'dired-open-with-find-file))
+  (use-package dired-open-with
+    :config
+    (advice-add 'dired-find-file :around 'dired-open-with-find-file))
 
-(setf dired-kill-when-opening-new-dired-buffer t)
-(setq dired-listing-switches "-BhlD  --group-directories-first")
-(defalias 'eaf-open-in-file-manager #'dired)
+  (setf dired-kill-when-opening-new-dired-buffer t)
+  (setq dired-listing-switches "-BhlD  --group-directories-first")
+  (defalias 'eaf-open-in-file-manager #'dired)
 
-(add-hook 'dired-mode-hook 'toggle-truncate-lines)
-(add-hook 'dired-mode-hook 'display-line-numbers-mode)
+  (add-hook 'dired-mode-hook 'toggle-truncate-lines)
+  (add-hook 'dired-mode-hook 'display-line-numbers-mode)
 
-(use-package all-the-icons-dired
-  :hook (dired-mode . all-the-icons-dired-mode)
-  :config (setq all-the-icons-dired-monochrome nil))
+  (use-package all-the-icons-dired
+    :hook (dired-mode . all-the-icons-dired-mode)
+    :config (setq all-the-icons-dired-monochrome nil))
 
-(use-package lin
-  :config
-  (lin-global-mode))
+  (use-package lin
+    :config
+    (lin-global-mode))
 #+end_src
 
 ** PDF-tools
@@ -815,7 +816,7 @@ Emacs is better than any terminal emulator, and being able to run emacs lisp cod
         (concat (abbreviate-file-name (eshell/pwd)) " λ ")))
     (setq eshell-prompt-regexp "^[^λ]* λ")
 
-    (setq eshell-scroll-to-bottom-on-input t)
+    (setq eshell-scroll-to-bottom-on-input 'all)
     (setq-local tab-always-indent 'complete)
     (setq eshell-history-size 10000)
     (setq eshell-save-history-on-exit t)
@@ -847,6 +848,12 @@ One of the things that make Emacs so extensible is the easy access to documentat
       :config
       (add-hook 'perfect-margin-hook 'kudu-eldoc-box)
       (setq eldoc-box-only-multi-line t))
+#+end_src
+
+Automatically compresses and decompresses files.
+
+#+begin_src emacs-lisp :tangle yes
+(auto-compression-mode)
 #+end_src
 
 ** Functions
