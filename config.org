@@ -748,7 +748,7 @@ Magit is wonderful, and one of the killer apps that makes emacs a system than ot
 
   (use-package forge
     :after magit
-    :config (forge-pull))
+    :hook (magit-status-mode-hook . forge-pull))
 #+end_src
 
 For displaying who is responsible (and when) for changes to files, the ~blamer~ package is used, displaying a small piece of text to the left of the buffer content.
