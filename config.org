@@ -785,11 +785,15 @@ Emacs has a wonderful undo-system, but it can be hard to get an idea of how it w
   Uses the ~ace-window~ package for switching windows instead of the default ~other-window~.
   
 #+begin_src emacs-lisp :tangle yes
-      (use-package ace-window
-        :init
-        (global-set-key (kbd "C-x o") 'ace-window)
-        (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
-        (setq aw-ignore-current t))
+  (use-package ace-window
+    :init
+    (global-set-key (kbd "C-x o") 'ace-window)
+    (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+    (setq aw-ignore-current t))
+
+  (use-package avy
+    :init
+    (bind-key "C-<tab>" 'avy-goto-char-timer))
 #+end_src
 
 
