@@ -177,6 +177,7 @@ Visible bell changes the otherwise quite jarring bell sound into a visual flash 
         pixel-scroll-precision-mode t)
 
   (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+  (add-hook 'prog-mode-hook '(lambda () (toggle-truncate-lines 1)))
 #+end_src
 
 Solaire-mode makes it easy to distinguish between warnings, popups and messages by tinting the background of those buffers slightly darker, as long as the current theme supports it.
