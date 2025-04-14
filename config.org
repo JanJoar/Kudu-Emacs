@@ -752,21 +752,6 @@ Magit is wonderful, and one of the killer apps that makes emacs a system than ot
     :hook (magit-status-mode-hook . forge-pull))
 #+end_src
 
-For displaying who is responsible (and when) for changes to files, the ~blamer~ package is used, displaying a small piece of text to the left of the buffer content.
-
-#+begin_src emacs-lisp :tangle yes
-  (use-package blamer
-    :bind (("C-," . blamer-show-commit-info))
-    :defer 10
-    :custom
-    (setq blamer-idle-time 20.0)
-    (blamer-min-offset 70)
-    :config
-    (add-hook 'prog-mode-hook 'blamer-mode)
-    (setq blamer-author-formatter " ⏵ %s ")
-    (setq blamer-datetime-formatter "⟨%s⟩")
-    (setq blamer-commit-formatter " ☨ %s"))
-#+end_src
 
 ** Tooling
 
