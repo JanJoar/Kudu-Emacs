@@ -645,7 +645,7 @@ Emacs is an amazing environment for writing in various lisp dialects, with wonde
 #+begin_src emacs-lisp :tangle yes
   (use-package sly
     :config
-    (setq inferior-lisp-program "sbcl"))
+    (setq inferior-lisp-program "sbcl --dynamic-space-size 4Gb"))
 
   (setq show-paren-delay 0)
   (show-paren-mode)
