@@ -860,6 +860,12 @@ Automatically compresses and decompresses files.
 (auto-compression-mode)
 #+end_src
 
+Saves your completion history between sessions.
+
+#+begin_src emacs-lisp :tangle yes
+(setq savehist-mode 1)
+#+end_src
+
 ** Functions
 
 The sudo function raises the privilege of the current buffer to root permissions without having to close and open it again through ~TRAMP~.
