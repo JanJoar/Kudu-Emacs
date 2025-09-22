@@ -636,6 +636,10 @@ Configures Org-mode to make it more attractive and usable.
       org-roam-ui-follow t
       org-roam-ui-update-on-save t
       org-roam-ui-open-on-start t))
+
+  (defun get-roam-node-count ()
+    (interactive)
+    (message "Number of nodes: %s" (length (org-roam-db-query [:select [id] :from nodes]))))
 #+end_src
 
 ** Lisp
