@@ -942,22 +942,22 @@ Emacs provides many different mail utilities, but one of the most popular is ~mu
           mu4e-update-interval (* 10 60) ; check mail 10 minutes
           mu4e-compose-format-flowed t ; re-flow mail so it's not hard wrapped
           mu4e-get-mail-command "mbsync -a"
-          mu4e-maildir "/mail")
+          mu4e-maildir "/mail/Inbox")
 
     (setq mail-user-agent 'mu4e-user-agent)
     (setq message-kill-buffer-on-exit t)
 
-    (setq mu4e-drafts-folder "/mail/Drafts"
-          mu4e-sent-folder   "/mail/Sent"
-          mu4e-refile-folder "/mail/All Mail"
-          mu4e-trash-folder  "/mail/Trash")
+    (setq mu4e-drafts-folder "/Drafts"
+          mu4e-sent-folder   "/Sent"
+          mu4e-refile-folder "/All Mail"
+          mu4e-trash-folder  "/Trash")
 
     (setq mu4e-maildir-shortcuts
-          '(("/mail/inbox"     . ?i)
-            ("/mail/Sent"      . ?s)
-            ("/mail/Trash"     . ?t)
-            ("/mail/Drafts"    . ?d)
-            ("/mail/All Mail"  . ?a)))
+          '(("/inbox"     . ?i)
+            ("/Sent"      . ?s)
+            ("/Trash"     . ?t)
+            ("/Drafts"    . ?d)
+            ("/All Mail"  . ?a)))
 
     (setq message-send-mail-function 'smtpmail-send-it
           auth-sources '("~/.authinfo")
