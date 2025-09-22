@@ -854,6 +854,13 @@ One of the things that make Emacs so extensible is the easy access to documentat
       (setq eldoc-box-only-multi-line t))
 #+end_src
 
+When using ~vertico~ and the minibuffer windows will sometimes jarringly move up to show point if it is far down. ~stillness-mode~ changes this so that the windows stay still and show the same content as the did before, except that covered by that minibuffer.
+
+#+begin_src emacs-lisp :tangle yes
+(use-package stillness-mode
+  :init (setq stillness-mode t))
+#+end_src
+
 Automatically compresses and decompresses files.
 
 #+begin_src emacs-lisp :tangle yes
