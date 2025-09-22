@@ -982,7 +982,18 @@ Emacs provides many different mail utilities, but one of the most popular is ~mu
           auth-sources '("~/.authinfo")
           smtpmail-smtp-server "127.0.0.1"
           smtpmail-smtp-service 1025
-          smtpmail-stream-type  'ssl))
+          smtpmail-stream-type  'ssl)
+
+    (setq mu4e-split-view 'vertical)
+
+    (setq mu4e-headers-visible-columns 100)
+
+    (add-to-list 'display-buffer-alist
+                 `(,(regexp-quote mu4e-main-buffer-name)
+                   display-buffer-same-window)))
+
+
+
 #+end_src
 
 Allows notify-send to inform you of new emails when not using Emacs, and adds a nice mode-line decoration to remind you.
