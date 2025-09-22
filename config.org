@@ -752,6 +752,15 @@ Magit is wonderful, and one of the killer apps that makes emacs a system than ot
     :hook (magit-status-mode-hook . forge-pull))
 #+end_src
 
+** LLMs
+
+Artificial intelligence tools based on Large Language Models (LLMs) are quite popular these days. There's no reason to pop out to a web browser or terminal (running something like Claude code) to use LLMs in your workflow if you're using Emacs. There are a multitude of LLM packages, but one of the most polished ones is ~gptel~. Remember to set ~gptel-api-key~ and ~gptel-model~ in ~$HOME/.emacs.d/secrets/secret.org~ if you want to use this functionality.
+
+#+begin_src emacs-lisp :tangle yes
+(use-package gptel
+  :config
+  (setq gptel-default-mode 'org-mode))
+#+end_src
 
 ** Tooling
 
