@@ -34,7 +34,7 @@ Probably one of the most useful packages, even if not very prominent when using 
 
 The ~diminish~ package hides certain minor modes from being shown in the mode-line and is not installed by default. For this reason its used to check if Kudu has been run before, and therefore if it needs to update its package repos. Feel free to perform this check on any other package, or remove it entirely, but beware that ~(package-refresh-contents)~ must be run before the other ~use-package~ declarations for ~package.el~ to install all the other packages needed.
 
-#+begin_src emacs-lisp tangle: yes
+#+begin_src emacs-lisp :tangle yes
 (setq use-package-always-defer t
         use-package-always-ensure t
         use-package-verbose t)
@@ -43,13 +43,13 @@ The ~diminish~ package hides certain minor modes from being shown in the mode-li
       (package-refresh-contents)
       (package-install 'use-package)
       (package-install 'diminish))
-#+END_SRC
+#+end_src
 
 ** Auto-compile
 
 Compiles elisp files to improve the speed and responsiveness of Emacs at the cost of first-time startup time. The settings in ~init.el~ makes sure that updated elisp files take priority over older, compiled files.
 
-#+begin_src emacs-lisp tangle: yes
+#+begin_src emacs-lisp :tangle yes
   (use-package auto-compile 
 	:ensure t
 	:init
@@ -63,8 +63,8 @@ Compiles elisp files to improve the speed and responsiveness of Emacs at the cos
 
 Emacs usually stores backups in the same directory as the files themselves, cluttering up your nice and tidy system. This moves them to a dedicated directory within ~.emacs.d~.
 
-#+begin_src emacs-lisp tangle: yes
-  (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
+#+begin_src emacs-lisp :tangle yes
+  (setq backup-directory-alist '((".*" . "~/.emacs.d/backups")))
 #+END_SRC
 
 ** EXWM
@@ -72,7 +72,7 @@ The Emacs X Window Manager allows you to use your entire desktop within emacs. O
 
 However, Emacs can still be used without constituting the entire system. Therefore EXWM should only be loaded if no other window manager is running. That way startup time isn't wasted whenever the user wants to run Emacs in the terminal, on a computer using a desktop environment, or another window manager.
 
-#+begin_src emacs-lisp tangle: yes
+#+begin_src emacs-lisp :tangle yes
   (use-package exwm
     :init
 
@@ -307,7 +307,7 @@ Emacs is a wonderful alternative to a terminal, encompassing [[https://www.maste
 
 ~Rainbow-mode~ makes colour codes into the colours that they represent.
 
-#+begin_src elisp
+#+begin_src emacs-lisp :tangle yes
   (use-package rainbow-mode
     :config
     (setq rainbow-html-colors 'auto)
@@ -841,14 +841,6 @@ One of the things that make Emacs so extensible is the easy access to documentat
 
     (use-package eldoc-box
       :init
-
-      (defun kudu-eldoc-box ()
-          "Runs eldoc-box-hover-mode or hover-at-point-mode depending on perfect-margin-mode"
-        (if perfect-margin-mode
-            (setq eldoc-box-hover-mode t)
-          (setq eldoc-box-hover-at-point-mode t)))
-
-      :hook (prog-mode . kudu-eldoc-box)
       :config
       (add-hook 'perfect-margin-hook 'kudu-eldoc-box)
       (setq eldoc-box-only-multi-line t))
