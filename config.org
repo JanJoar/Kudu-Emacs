@@ -978,7 +978,7 @@ Emacs provides many different mail utilities, but one of the most popular is ~mu
             ("/All Mail"  . ?a)))
 
     (setq message-send-mail-function 'smtpmail-send-it
-          auth-sources '("~/.authinfo")
+          auth-sources '("~/.authinfo.gpg")
           smtpmail-smtp-server "127.0.0.1"
           smtpmail-smtp-service 1025
           smtpmail-stream-type  'ssl)
