@@ -193,13 +193,39 @@ Formats tabs to Linux-kernel standards and keeps them so using the ~aggressive-i
     :init (global-aggressive-indent-mode))
 #+end_src
 
+Creates ample spacing around elements such as between buffers, around
+the mode line, and the edges of the screen.
+
+#+begin_src emacs-lisp :tangle yes
+  (use-package spacious-padding
+    :diminish spacious-padding-mode
+    :init
+    (add-hook
+     'spacious-padding-mode-hook
+     (lambda ()
+       (if spacious-padding-mode
+           (progn
+             (set-face-attribute 'mode-line-active nil
+                                 :background (face-background 'default)
+                                 :foreground (face-foreground 'mode-line)
+                                 :overline t
+                                 :box `(:line-width 6 :color ,(face-background 'default)))
+
+             (set-face-attribute 'mode-line-inactive nil
+                                 :background (face-background 'default)
+                                 :foreground (face-foreground 'mode-line-inactive)
+                                 :box `(:line-width 6 :color ,(face-background 'default))))
+         )))
+    (spacious-padding-mode 1))
+#+end_src
+
 Enable mouse use when running Emacs in a terminal emulator.
 
 #+begin_src emacs-lisp :tangle yes
   (xterm-mouse-mode)
 #+end_src
 
-Without this setting emacs sometimes asks for confirmation via a "Yes or no" prompt, and sometimes "y or n". This is generally difficult to predict, and so this setting forces the message to always send "y or n" forms, like most programs run in a terminal.
+Without this setting emacs sometimes asks for confirmation via a "Yes or no" prompt, and sometimes "y or n". This is generally difficult to predict, and so this setting forces the message to always send "y or n" forms; like most programs run in a terminal.
 
 #+begin_src emacs-lisp :tangle yes
   (defalias 'yes-or-no-p 'y-or-n-p)
@@ -701,7 +727,7 @@ Dired is emacs' built in text-based file manager. It's however pretty rough arou
         (funcall orig-fun))))  ;; Call the original function for other file types.
 
   (use-package dired-open-with
-    :config
+    :init
     (advice-add 'dired-find-file :around 'dired-open-with-find-file))
 
   (setf dired-kill-when-opening-new-dired-buffer t)
