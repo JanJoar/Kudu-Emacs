@@ -255,12 +255,16 @@ When prose for publication the traditional centered appearance of WYSISWYG is qu
 
 #+begin_src emacs-lisp :tangle yes
   (use-package olivetti
-      :hook
-      (org-mode . olivetti-mode)
-      (markdown-mode . olivetti-mode)
-      (eww-mode . olivetti-mode)
-      :init
-      (setq-default olivetti-body-width 108))
+    :hook
+    (org-mode . olivetti-mode)
+    (markdown-mode . olivetti-mode)
+    (eww-mode . olivetti-mode)
+    :init
+    (setq-default olivetti-body-width 108)
+    (add-hook 'olivetti-mode-hook
+              (lambda () (set-face-attribute
+                'olivetti-fringe nil
+                :background (face-background 'default)))))
 #+end_src
 
 ~rainbow-delimiters~ differentiates layers of parentheses using different colours so that they can be identified at a glance.
