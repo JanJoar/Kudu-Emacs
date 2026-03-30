@@ -6,3 +6,4 @@ modern-indent
 %backup%~
 /auto-save-list
 /site-lisp/*
+/.agent-shell/
