@@ -762,7 +762,10 @@ The default "docview" mode of viewing pdfs is quite bad, and is improved immense
 Magit is wonderful, and one of the killer apps that makes emacs a system than other editors or IDEs. However it is not installed by default, so it is defined here.
 
 #+begin_src emacs-lisp :tangle yes
-  (use-package magit)
+  (use-package magit
+    :config
+    (setq magit-process-find-password-functions
+          '(magit-process-password-auth-source)))
 
   (use-package magit-todos
     :after magit
