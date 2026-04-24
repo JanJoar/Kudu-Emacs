@@ -632,6 +632,7 @@ Configures Org-mode to make it more attractive and usable.
   (setq org-export-with-smart-quotes t)
   (setq org-export-with-section-numbers nil)
   (setq org-export-with-statistics-cookies nil)
+  (setq org-export-with-broken-links t)
 
   (unless (file-directory-p "~/.emacs.d/site-lisp/org-modern-indent")
     (async-shell-command "git clone https://github.com/jdtsmith/org-modern-indent.git ~/.emacs.d/site-lisp/org-modern-indent/"))
