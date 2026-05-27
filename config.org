@@ -856,7 +856,7 @@ Automatically compresses and decompresses files.
 Saves your completion history between sessions.
 
 #+begin_src emacs-lisp :tangle yes
-(setq savehist-mode 1)
+(savehist-mode)
 #+end_src
 
 ** Functions
