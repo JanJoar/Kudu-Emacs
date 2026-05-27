@@ -763,8 +763,12 @@ Artificial intelligence tools based on Large Language Models (LLMs) are quite po
 
 #+begin_src emacs-lisp :tangle yes
 (use-package gptel
+  :bind (("C-c C-m" . gptel-menu))
   :config
-  (setq gptel-default-mode 'org-mode))
+  (setq gptel-default-mode 'org-mode)
+  (setq gptel-api-key 'gptel-api-key-from-auth-source))
+
+(use-package gptel-agent)
 #+end_src
 
 ** Tooling
