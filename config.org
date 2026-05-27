@@ -616,6 +616,9 @@ Configures Org-mode to make it more attractive and usable.
   (use-package org-modern-indent
     :load-path "~/.emacs.d/site-lisp/org-modern-indent"
     :hook (org-mode . org-modern-indent-mode))
+
+  (add-to-list 'org-latex-packages-alist
+             '("AUTO" "babel" t ("pdflatex" "xelatex" "lualatex")))
  #+end_src
 
 *** Org-roam
