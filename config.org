@@ -551,8 +551,6 @@ Shows those completion results that are hopefully most useful, both in the minib
      consult-theme :preview-key '(:debounce 0.2 any)
      consult-ripgrep consult-git-grep consult-grep
      consult-bookmark consult-recent-file consult-xref
-     consult--source-bookmark consult--source-file-register
-     consult--source-recent-file consult--source-project-recent-file
      ;; :preview-key "M-."
      :preview-key '(:debounce 0.4 any)))
 #+end_src
@@ -640,6 +638,9 @@ Configures Org-mode to make it more attractive and usable.
   (use-package org-modern-indent
     :load-path "~/.emacs.d/site-lisp/org-modern-indent"
     :hook (org-mode . org-modern-indent-mode))
+
+  (add-to-list 'org-latex-packages-alist
+             '("AUTO" "babel" t ("pdflatex" "xelatex" "lualatex")))
  #+end_src
 
 *** Org-roam
@@ -787,8 +788,12 @@ Artificial intelligence tools based on Large Language Models (LLMs) are quite po
 
 #+begin_src emacs-lisp :tangle yes
 (use-package gptel
+  :bind (("C-c C-m" . gptel-menu))
   :config
-  (setq gptel-default-mode 'org-mode))
+  (setq gptel-default-mode 'org-mode)
+  (setq gptel-api-key 'gptel-api-key-from-auth-source))
+
+(use-package gptel-agent)
 #+end_src
 
 ** Tooling
@@ -887,7 +892,7 @@ Automatically compresses and decompresses files.
 Saves your completion history between sessions.
 
 #+begin_src emacs-lisp :tangle yes
-(setq savehist-mode 1)
+(savehist-mode)
 #+end_src
 
 ** Functions
@@ -974,50 +979,128 @@ Emacs provides many different mail utilities, but one of the most popular is ~mu
 
 #+begin_src emacs-lisp :tangle yes
 
-  (use-package mu4e
-    :defer 10
-    :ensure nil
-    :config
+(use-package mu4e
+  :defer 10
+  :ensure nil
+  :config
 
-    (defalias 'email #'mu4e "Defines an email command to run mu4e.")
+  (defalias 'email #'mu4e "Defines an email command to run mu4e.")
 
-    (setq mu4e-change-filenames-when-moving t ; avoid sync conflicts
-          mu4e-update-interval (* 10 60) ; check mail 10 minutes
-          mu4e-compose-format-flowed t ; re-flow mail so it's not hard wrapped
-          mu4e-get-mail-command "mbsync -a"
-          mu4e-maildir "/mail/Inbox")
+  (setq mu4e-change-filenames-when-moving t ; avoid sync conflicts
+        mu4e-update-interval (* 10 60) ; check mail 10 minutes
+        mu4e-compose-format-flowed t ; re-flow mail so it's not hard wrapped
+        mu4e-get-mail-command "mbsync -a"
+        mu4e-maildir "/mail/Inbox")
 
-    (setq mail-user-agent 'mu4e-user-agent)
-    (setq message-kill-buffer-on-exit t)
+  (setq mail-user-agent 'mu4e-user-agent)
+  (setq message-kill-buffer-on-exit t)
 
-    (setq mu4e-drafts-folder "/Drafts"
-          mu4e-sent-folder   "/Sent"
-          mu4e-refile-folder "/All Mail"
-          mu4e-trash-folder  "/Trash")
+  (defun extract-email-username (email)
+    (and (string-match "^\\([^@]+\\)@" email)
+         (match-string 1 email)))
+  
+  (setq mu4e-drafts-folder (concat "/"
+                            (extract-email-username user-mail-address)
+                            "/Drafts")
+        mu4e-sent-folder   (concat "/"
+                            (extract-email-username user-mail-address)
+                            "/Sent")
+        mu4e-refile-folder (concat "/"
+                            (extract-email-username user-mail-address)
+                            "/All Mail")
+        mu4e-trash-folder  (concat "/"
+                            (extract-email-username user-mail-address)
+                            "/Trash"))
 
-    (setq mu4e-maildir-shortcuts
-          '(("/inbox"     . ?i)
-            ("/Sent"      . ?s)
-            ("/Trash"     . ?t)
-            ("/Drafts"    . ?d)
-            ("/All Mail"  . ?a)))
+  (setq mu4e-maildir-shortcuts
+        '(("/inbox"     . ?i)
+          ("/Sent"      . ?s)
+          ("/Trash"     . ?t)
+          ("/Drafts"    . ?d)
+          ("/All Mail"  . ?a)))
 
-    (setq message-send-mail-function 'smtpmail-send-it
-          auth-sources '("~/.authinfo.gpg")
-          smtpmail-smtp-server "127.0.0.1"
-          smtpmail-smtp-service 1025
-          smtpmail-stream-type  'ssl)
+  (setq message-send-mail-function 'smtpmail-send-it
+        auth-sources '("~/.authinfo.gpg")
+        smtpmail-smtp-server "127.0.0.1"
+        smtpmail-smtp-service 1025
+        smtpmail-stream-type  'ssl)
 
-    (setq mu4e-split-view 'vertical)
+  (setq mu4e-split-view 'vertical)
 
-    (setq mu4e-headers-visible-columns 100)
+  (setq mu4e-headers-visible-columns 100)
 
-    (add-to-list 'display-buffer-alist
-                 `(,(regexp-quote mu4e-main-buffer-name)
-                   display-buffer-same-window)))
+  (add-to-list 'display-buffer-alist
+               `(,(regexp-quote mu4e-main-buffer-name)
+                 display-buffer-same-window))
 
 
+  (defun set-mu4e-context (context-name full-name mail-address signature)
+    "Return a mu4e context named CONTEXT-NAME with :match-func matching
+    folder name CONTEXT-NAME in Maildir. The context's `user-mail-address',
+    `user-full-name' and `mu4e-compose-signature'`smtpmail-smpt-server' is set to MAIL-ADDRESS
+    FULL-NAME SIGNATURE and SERVER respectively.
+    Special folders are set to context specific folders."
+    (let ((dir-name (concat "/" context-name)))
+      (make-mu4e-context
+       :name context-name
+       ;; we match based on the maildir of the message
+       :match-func
+       `(lambda (msg)
+          (when msg
+            (string-match-p
+             ,(concat "^" dir-name)
+             (mu4e-message-field msg :maildir))))
+       :vars
+       `((user-mail-address    . ,mail-address)
+         (user-full-name       . ,full-name)
+         (mu4e-sent-folder     . ,(concat dir-name "/Sent"))
+         (mu4e-drafts-folder   . ,(concat dir-name "/Drafts"))
+         (mu4e-trash-folder    . ,(concat dir-name "/Trash"))
+         (mu4e-trash-folder    . ,(concat dir-name "/Starred"))
+         (mu4e-refile-folder   . ,(concat dir-name "/Archive"))
+         (mu4e-compose-signature . ,signature)))))
 
+  ;;Fixing duplicate UID errors when using mbsync and mu4e
+  (setf mu4e-change-filenames-when-moving t)
+
+  (setf mu4e-maildir-shortcuts
+        '(("/joarxpablo/Inbox" . ?f)
+          ("/Drafts" . ?d)
+          ("/Sent" . ?s)
+          ("/maskin/Inbox" . ?g)))
+
+  (setf mu4e-contexts
+        (list
+         (make-mu4e-context
+          :name "joarxpablo"
+          :match-func
+          (lambda (msg)
+            (when msg
+              (string-prefix-p "/joarxpablo" (mu4e-message-field msg :maildir))))
+          :vars '((user-mail-address . "joarxpablo@vonarndt.se")
+                  (user-full-name    . "Joar von Arndt")
+                  (smtpmail-smtp-server . "smtp.purelymail.com")
+                  (smtpmail-smtp-service . "465")
+                  (smtpmail-stream-type . ssl)
+                  (mu4e-drafts-folder  . "/joarxpablo/Drafts")
+                  (mu4e-sent-folder  . "/joarxpablo/Sent")
+                  (mu4e-refile-folder  . "/joarxpablo/Archive")
+                  (mu4e-trash-folder  . "/joarxpablo/Trash")))
+         (make-mu4e-context
+          :name "maskin"
+          :match-func
+          (lambda (msg)
+            (when msg
+              (string-prefix-p "/maskin" (mu4e-message-field msg :maildir))))
+          :vars '((user-mail-address . "maskin@vonarndt.se")
+                  (user-full-name    . "Joar von Arndt")
+                  (smtpmail-smtp-server . "smtp.purelymail.com")
+                  (smtpmail-smtp-service . "465")
+                  (smtpmail-stream-type . ssl)))))
+
+  (setf message-send-mail-function 'smtpmail-send-it
+        mu4e-compose-signature ""
+        mu4e-compose-context-policy 'ask))
 #+end_src
 
 Allows notify-send to inform you of new emails when not using Emacs, and adds a nice mode-line decoration to remind you.
