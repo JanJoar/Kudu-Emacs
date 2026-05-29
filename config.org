@@ -895,7 +895,7 @@ Saves your completion history between sessions.
 (savehist-mode)
 #+end_src
 
-A function for translating to-and from chinese using gptel:
+A function for translating to-and from chinese using ~gptel~:
 
 #+begin_src emacs-lisp :tangle yes
 (defun zhongwen-translate ()
