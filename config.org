@@ -913,8 +913,8 @@ A function for translating to-and from chinese using gptel:
         :callback (lambda (response info)
                     (message "%s" response)))))
 
-(bind-key "C-x z" 'zhong-translate)
-(bind-key "C-x C-z" 'zhong-translate)
+(bind-key "C-x z" 'zhongwen-translate)
+(bind-key "C-x C-z" 'zhongwen-translate)
 #+end_src
 
 ** Functions
