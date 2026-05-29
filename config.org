@@ -895,6 +895,28 @@ Saves your completion history between sessions.
 (savehist-mode)
 #+end_src
 
+A function for translating to-and from chinese using gptel:
+
+#+begin_src emacs-lisp :tangle yes
+(defun zhongwen-translate ()
+    (interactive)
+    (let ((contents (if (use-region-p)
+                        (buffer-substring-no-properties (region-beginning) (region-end))
+                      (thing-at-point 'word))))
+      (gptel-request contents
+        :system "Write the character in pinyin and give a very short translation it into English.
+   If it is an English word, give a Chinese translation instead.
+   Give a structured output that looks like this:
+  Character: X
+  Pinyin:    X
+  Meaning:   X"
+        :callback (lambda (response info)
+                    (message "%s" response)))))
+
+(bind-key "C-x z" 'zhong-translate)
+(bind-key "C-x C-z" 'zhong-translate)
+#+end_src
+
 ** Functions
 
 The sudo function raises the privilege of the current buffer to root permissions without having to close and open it again through ~TRAMP~.
