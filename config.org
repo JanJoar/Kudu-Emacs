@@ -791,7 +791,8 @@ Artificial intelligence tools based on Large Language Models (LLMs) are quite po
   :bind (("C-c C-m" . gptel-menu))
   :config
   (setq gptel-default-mode 'org-mode)
-  (setq gptel-api-key 'gptel-api-key-from-auth-source))
+  (setq gptel-api-key 'gptel-api-key-from-auth-source)
+  (setq gptel-track-media t))
 
 (use-package gptel-agent)
 #+end_src
