@@ -1050,6 +1050,8 @@ Emacs provides many different mail utilities, but one of the most popular is ~mu
         smtpmail-smtp-service 1025
         smtpmail-stream-type  'ssl)
 
+  (setq epg-pinentry-mode 'loopback)
+  
   (setq mu4e-split-view 'vertical)
 
   (setq mu4e-headers-visible-columns 100)
