@@ -918,6 +918,33 @@ A function for translating to-and from chinese using ~gptel~:
 (bind-key "C-x C-z" 'zhongwen-translate)
 #+end_src
 
+* Web browsing
+
+This custom function means that images rendered in Emacs' /Emacs Web
+Wowser/ (~eww~) will retain the same width as ~fill-column~, and thus not
+extend outside the ~eww~ window.
+
+#+begin_src emacs-lisp :tangle yes
+(defun eww-limit-images-to-fill-column ()
+  (let* ((window (get-buffer-window (current-buffer) t))
+         (col-px (* fill-column
+                    (if window
+                        (window-font-width window)
+                      (frame-char-width)))))
+    (save-excursion
+      (goto-char (point-min))
+      (while-let ((match (text-property-search-forward
+                          'display nil (lambda (_ v) (imagep v)))))
+        (let* ((img (prop-match-value match))
+               (size (image-size img t))
+               (w (car size)))
+          (when (and w (> w col-px))
+            (setf (image-property img :scale)
+                  (/ (float col-px) w)))))))
+
+(add-hook 'eww-after-render-hook #'eww-limit-images-to-fill-column)
+#+end_src
+
 ** Functions
 
 The sudo function raises the privilege of the current buffer to root permissions without having to close and open it again through ~TRAMP~.
