@@ -936,7 +936,7 @@ extend outside the ~eww~ window.
                (w (car size)))
           (when (and w (> w col-px))
             (setf (image-property img :scale)
-                  (/ (float col-px) w)))))))
+                  (/ (float col-px) w))))))))
 
 (add-hook 'eww-after-render-hook #'eww-limit-images-to-fill-column)
 #+end_src
