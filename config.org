@@ -509,7 +509,7 @@ Shows those completion results that are hopefully most useful, both in the minib
            ("M-g i" . consult-imenu)
            ("M-g I" . consult-imenu-multi)
            ;; M-s bindings in `search-map'
-           ("M-s d" . consult-find)                  ;; Alternative: consult-fd
+           ("M-s d" . consult-fd)
            ("M-s c" . consult-locate)
            ("M-s g" . consult-grep)
            ("M-s G" . consult-git-grep)
@@ -540,13 +540,9 @@ Shows those completion results that are hopefully most useful, both in the minib
           xref-show-definitions-function #'consult-xref)
 
     :config
-    ;; Optionally configure preview. The default value
-    ;; is 'any, such that any key triggers the preview.
-    ;; (setq consult-preview-key 'any)
-    ;; (setq consult-preview-key "M-.")
-    ;; (setq consult-preview-key '("S-<down>" "S-<up>"))
-    ;; For some commands and buffer sources it is useful to configure the
-    ;; :preview-key on a per-command basis using the `consult-customize' macro.
+    (setq consult-async-refresh-delay 0
+      consult-async-input-throttle 0
+      consult-async-input-debounce 0)
     (consult-customize
      consult-theme :preview-key '(:debounce 0.2 any)
      consult-ripgrep consult-git-grep consult-grep
