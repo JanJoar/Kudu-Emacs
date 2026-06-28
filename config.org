@@ -276,6 +276,8 @@ When prose for publication the traditional centered appearance of WYSISWYG is qu
     (org-mode . olivetti-mode)
     (markdown-mode . olivetti-mode)
     (eww-mode . olivetti-mode)
+    (message-mode . olivetti-mode)
+    (elfeed-show . olivetti-mode)
     :init
     (setq-default olivetti-body-width 108)
     (add-hook 'olivetti-mode-hook
