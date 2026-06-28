@@ -839,10 +839,13 @@ Emacs is better than any terminal emulator, and being able to run emacs lisp cod
     (keymap-set eat-mode-map "M-w" 'kill-ring-save))
 
   (use-package fish-completion
-    :init (when (executable-find "fish")
-            (add-hook 'eshell-load-hook (fish-completion-mode)))
+    :hook
+    (eshell-load-hook . load-fish-completion)
     :config
-    (use-package bash-completion))
+    (use-package bash-completion)
+    (defun load-fish-completion ()
+      (when (executable-find "fish")
+            (add-hook 'eshell-load-hook (fish-completion-mode)))))
 
   (use-package eshell
     :config
