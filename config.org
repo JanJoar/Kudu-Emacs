@@ -349,7 +349,6 @@ Configures the all-important emacs dashboard that shows up on startup.
     :hook
     (dashboard-mode . (lambda () (solaire-mode -1)))
     :init
-    (dashboard-setup-startup-hook)
     (setq dashboard-icon-type 'all-the-icons)
     (setq dashboard-banner-logo-title "Welcome to Kudu Emacs!")
     (setq dashboard-center-content 'middle)
