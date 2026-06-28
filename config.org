@@ -648,6 +648,7 @@ Configures Org-mode to make it more attractive and usable.
 
 #+begin_src emacs-lisp :tangle yes
   (use-package org-roam
+    :bind (("M-o" . org-roam-node-find))
     :config
     (setq org-roam-directory "~/Documents/Notes/roam/")
     (org-roam-db-autosync-mode)
