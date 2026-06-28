@@ -511,7 +511,7 @@ Shows those completion results that are hopefully most useful, both in the minib
            ("M-g i" . consult-imenu)
            ("M-g I" . consult-imenu-multi)
            ;; M-s bindings in `search-map'
-           ("M-s d" . consult-fd)
+           ("M-s s" . consult-fd)
            ("M-s c" . consult-locate)
            ("M-s g" . consult-grep)
            ("M-s G" . consult-git-grep)
@@ -523,14 +523,17 @@ Shows those completion results that are hopefully most useful, both in the minib
            ;; Isearch integration
            ("M-s e" . consult-isearch-history)
            :map isearch-mode-map
-           ("M-e" . consult-isearch-history)         ;; orig. isearch-edit-string
+           ("C-h" . consult-isearch-history)         ;; orig. isearch-edit-string
            ("M-s e" . consult-isearch-history)       ;; orig. isearch-edit-string
            ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
            ("M-s L" . consult-line-multi)            ;; needed by consult-line to detect isearch
+           ("C-m" . consult-imenu)
            ;; Minibuffer history
            :map minibuffer-local-map
            ("M-s" . consult-history)                 ;; orig. next-matching-history-element
-           ("M-r" . consult-history))                ;; orig. previous-matching-history-element
+           ("M-r" . consult-history)
+           :map vertico-map
+           ("C-s" . consult-fd))
 
     :init
     ;; Optionally tweak the register preview window.
