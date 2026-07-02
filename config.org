@@ -1117,6 +1117,8 @@ Each recipient is in the format of `mail-extract-address-components'."
                                  (if (and output (string-match-p "imported: [1-9]" output))
                                      (message "Public key imported for %s" email))))))))
       (process-put proc 'email recipient-email))))
+
+  (add-hook 'mu4e-view-rendered-hook 'kudu/message-locate-keys)
   
   (defun kudu/message-all-epg-keys-available-p ()
     "Return non-nil if the pgp keyring has a public key for each recipient."
