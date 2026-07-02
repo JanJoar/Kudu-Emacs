@@ -1082,6 +1082,10 @@ Emacs provides many different mail utilities, but one of the most popular is ~mu
         smtpmail-smtp-service 1025
         smtpmail-stream-type  'ssl)
 
+        smtpmail-stream-type  'ssl
+        mml-secure-openpgp-sign-with-sender t
+        mml-secure-openpgp-encrypt-to-self t
+        mail-signature-file "~/Documents/Papers/signature.txt")
   (unless window-system
     (setq epg-pinentry-mode 'loopback))
   
