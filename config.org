@@ -1057,17 +1057,17 @@ Emacs provides many different mail utilities, but one of the most popular is ~mu
          (match-string 1 email)))
   
   (setq mu4e-drafts-folder (concat "/"
-                            (extract-email-username user-mail-address)
-                            "/Drafts")
+                                   (extract-email-username user-mail-address)
+                                   "/Drafts")
         mu4e-sent-folder   (concat "/"
-                            (extract-email-username user-mail-address)
-                            "/Sent")
+                                   (extract-email-username user-mail-address)
+                                   "/Sent")
         mu4e-refile-folder (concat "/"
-                            (extract-email-username user-mail-address)
-                            "/All Mail")
+                                   (extract-email-username user-mail-address)
+                                   "/Archive")
         mu4e-trash-folder  (concat "/"
-                            (extract-email-username user-mail-address)
-                            "/Trash"))
+                                   (extract-email-username user-mail-address)
+                                   "/Trash"))
 
   (setq mu4e-maildir-shortcuts
         '(("/inbox"     . ?i)
@@ -1113,12 +1113,18 @@ Emacs provides many different mail utilities, but one of the most popular is ~mu
        :vars
        `((user-mail-address    . ,mail-address)
          (user-full-name       . ,full-name)
-         (mu4e-sent-folder     . ,(concat dir-name "/Sent"))
-         (mu4e-drafts-folder   . ,(concat dir-name "/Drafts"))
-         (mu4e-trash-folder    . ,(concat dir-name "/Trash"))
-         (mu4e-trash-folder    . ,(concat dir-name "/Starred"))
-         (mu4e-refile-folder   . ,(concat dir-name "/Archive"))
-         (mu4e-compose-signature . ,signature)))))
+         (mu4e-sent-folder     . ,(concat "/"
+                                          (extract-email-username user-mail-address)
+                                          "/Sent"))
+         (mu4e-drafts-folder   . ,(concat "/"
+                                          (extract-email-username user-mail-address)
+                                          "/Drafts"))
+         (mu4e-trash-folder    . ,(concat "/"
+                                          (extract-email-username user-mail-address)
+                                          "/Trash"))
+         (mu4e-refile-folder   . ,(concat "/"
+                                          (extract-email-username user-mail-address)
+                                          "/Archive"))))))
 
   ;;Fixing duplicate UID errors when using mbsync and mu4e
   (setf mu4e-change-filenames-when-moving t)
