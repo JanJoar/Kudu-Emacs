@@ -1098,6 +1098,25 @@ Each recipient is in the format of `mail-extract-address-components'."
                  header-value
                  (mail-extract-address-components header-value t))))
             '("To" "Cc" "Bcc")))
+
+  (defun kudu/message-locate-keys ()
+  "Tries to find the public keys of 'kudu/message-recipients' via WKD through --locate-keys."
+  (dolist (recipient (string-to-list (kudu/message-recipients)))
+    (let ((recipient-email (cadr recipient))
+          (proc (make-process
+                 :name "gpg-locate-keys"
+                 :command (list epg-gpg-program "--no-tty" "--locate-keys" (cadr recipient))
+                 :connection-type 'pipe
+                 :filter (lambda (proc string)
+                           (process-put proc 'output
+                                        (concat (or (process-get proc 'output) "") string)))
+                 :sentinel (lambda (proc event)
+                             (when (eq (process-status proc) 'exit)
+                               (let ((output (process-get proc 'output))
+                                     (email (process-get proc 'email)))
+                                 (if (and output (string-match-p "imported: [1-9]" output))
+                                     (message "Public key imported for %s" email))))))))
+      (process-put proc 'email recipient-email))))
   
   (defun kudu/message-all-epg-keys-available-p ()
     "Return non-nil if the pgp keyring has a public key for each recipient."
