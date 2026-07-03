@@ -1038,7 +1038,7 @@ Emacs provides many different mail utilities, but one of the most popular is ~mu
   :ensure nil
   :bind (("C-c s" . mml-secure-sign))
   :config
-
+  
   (defalias 'email #'mu4e "Defines an email command to run mu4e.")
   (setq mu4e-compose-format-flowed t)
   (setq fill-flowed-encode-column 998)
@@ -1086,12 +1086,13 @@ Emacs provides many different mail utilities, but one of the most popular is ~mu
         mml-secure-openpgp-sign-with-sender t
         mml-secure-openpgp-encrypt-to-self t
         mail-signature-file "~/Documents/Papers/signature.txt")
+
   (unless window-system
     (setq epg-pinentry-mode 'loopback))
 
   (defun kudu/message-recipients ()
     "Return a list of all recipients in the message, looking at TO, CC and BCC.
-Each recipient is in the format of `mail-extract-address-components'."
+  Each recipient is in the format of `mail-extract-address-components'."
     (mapcan (lambda (header)
               (let ((header-value (message-fetch-field header)))
                 (and
@@ -1100,26 +1101,26 @@ Each recipient is in the format of `mail-extract-address-components'."
             '("To" "Cc" "Bcc")))
 
   (defun kudu/message-locate-keys ()
-  "Tries to find the public keys of 'kudu/message-recipients' via WKD through --locate-keys."
-  (dolist (recipient (string-to-list (kudu/message-recipients)))
-    (let ((recipient-email (cadr recipient))
-          (proc (make-process
-                 :name "gpg-locate-keys"
-                 :command (list epg-gpg-program "--no-tty" "--locate-keys" (cadr recipient))
-                 :connection-type 'pipe
-                 :filter (lambda (proc string)
-                           (process-put proc 'output
-                                        (concat (or (process-get proc 'output) "") string)))
-                 :sentinel (lambda (proc event)
-                             (when (eq (process-status proc) 'exit)
-                               (let ((output (process-get proc 'output))
-                                     (email (process-get proc 'email)))
-                                 (if (and output (string-match-p "imported: [1-9]" output))
-                                     (message "Public key imported for %s" email))))))))
-      (process-put proc 'email recipient-email))))
+    "Tries to find the public keys of 'kudu/message-recipients' via WKD through --locate-keys."
+    (dolist (recipient (string-to-list (kudu/message-recipients)))
+      (let ((recipient-email (cadr recipient))
+            (proc (make-process
+                   :name "gpg-locate-keys"
+                   :command (list epg-gpg-program "--no-tty" "--locate-keys" (cadr recipient))
+                   :connection-type 'pipe
+                   :filter (lambda (proc string)
+                             (process-put proc 'output
+                                          (concat (or (process-get proc 'output) "") string)))
+                   :sentinel (lambda (proc event)
+                               (when (eq (process-status proc) 'exit)
+                                 (let ((output (process-get proc 'output))
+                                       (email (process-get proc 'email)))
+                                   (if (and output (string-match-p "imported: [1-9]" output))
+                                       (message "Public key imported for %s" email))))))))
+        (process-put proc 'email recipient-email))))
 
   (add-hook 'mu4e-view-rendered-hook 'kudu/message-locate-keys)
-  
+
   (defun kudu/message-all-epg-keys-available-p ()
     "Return non-nil if the pgp keyring has a public key for each recipient."
     (require 'epa)
@@ -1133,7 +1134,7 @@ Each recipient is in the format of `mail-extract-address-components'."
 
   (defun kudu/message-sign-encrypt-if-all-keys-available ()
     "Add MML tag to encrypt message when there is a key for each recipient,
-sign it otherwise."
+  sign it otherwise."
     (if (kudu/message-all-epg-keys-available-p)
         (if (y-or-n-p "Encrypt? ")
             (mml-secure-message-sign-encrypt)
@@ -1141,9 +1142,9 @@ sign it otherwise."
             (mml-secure-message-sign)))
       (when (y-or-n-p "Sign? ")
         (mml-secure-message-sign))))
-  
+
   (add-hook 'message-send-hook 'kudu/message-sign-encrypt-if-all-keys-available)
-  
+
   (setq mu4e-split-view 'vertical)
 
   (setq mu4e-headers-visible-columns 100)
@@ -1152,13 +1153,13 @@ sign it otherwise."
                `(,(regexp-quote mu4e-main-buffer-name)
                  display-buffer-same-window))
 
-
   (defun set-mu4e-context (context-name full-name mail-address signature)
     "Return a mu4e context named CONTEXT-NAME with :match-func matching
-    folder name CONTEXT-NAME in Maildir. The context's `user-mail-address',
-    `user-full-name' and `mu4e-compose-signature'`smtpmail-smpt-server' is set to MAIL-ADDRESS
-    FULL-NAME SIGNATURE and SERVER respectively.
-    Special folders are set to context specific folders."
+      folder name CONTEXT-NAME in Maildir. The context's
+      `user-mail-address', `user-full-name' and
+      `mu4e-compose-signature'`smtpmail-smpt-server' is set to
+      MAIL-ADDRESS FULL-NAME SIGNATURE and SERVER respectively.  Special
+      folders are set to context specific folders."
     (let ((dir-name (concat "/" context-name)))
       (make-mu4e-context
        :name context-name
