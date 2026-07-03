@@ -1080,7 +1080,7 @@ Emacs provides many different mail utilities, but one of the most popular is ~mu
         auth-sources '("~/.authinfo.gpg")
         smtpmail-smtp-server "127.0.0.1"
         smtpmail-smtp-service 1025
-        smtpmail-stream-type  'ssl)
+        smtpmail-stream-type  'ssl
 
         smtpmail-stream-type  'ssl
         mml-secure-openpgp-sign-with-sender t
