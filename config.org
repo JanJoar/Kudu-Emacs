@@ -1155,7 +1155,7 @@ sign it otherwise."
                  display-buffer-same-window))
 
 
-  (defun set-mu4e-context (context-name full-name mail-address signature)
+  (defun set-mu4e-context (context-name full-name mail-address)
     "Return a mu4e context named CONTEXT-NAME with :match-func matching
     folder name CONTEXT-NAME in Maildir. The context's `user-mail-address',
     `user-full-name' and `mu4e-compose-signature'`smtpmail-smpt-server' is set to MAIL-ADDRESS
@@ -1203,32 +1203,12 @@ sign it otherwise."
 
   (setf mu4e-contexts
         (list
-         (make-mu4e-context
-          :name "joarxpablo"
-          :match-func
-          (lambda (msg)
-            (when msg
-              (string-prefix-p "/joarxpablo" (mu4e-message-field msg :maildir))))
-          :vars '((user-mail-address . "joarxpablo@vonarndt.se")
-                  (user-full-name    . "Joar von Arndt")
-                  (smtpmail-smtp-server . "smtp.purelymail.com")
-                  (smtpmail-smtp-service . "465")
-                  (smtpmail-stream-type . ssl)
-                  (mu4e-drafts-folder  . "/joarxpablo/Drafts")
-                  (mu4e-sent-folder  . "/joarxpablo/Sent")
-                  (mu4e-refile-folder  . "/joarxpablo/Archive")
-                  (mu4e-trash-folder  . "/joarxpablo/Trash")))
-         (make-mu4e-context
-          :name "maskin"
-          :match-func
-          (lambda (msg)
-            (when msg
-              (string-prefix-p "/maskin" (mu4e-message-field msg :maildir))))
-          :vars '((user-mail-address . "maskin@vonarndt.se")
-                  (user-full-name    . "Joar von Arndt")
-                  (smtpmail-smtp-server . "smtp.purelymail.com")
-                  (smtpmail-smtp-service . "465")
-                  (smtpmail-stream-type . ssl)))))
+         (set-mu4e-context "joarxpablo"
+                           "Joar von Arndt"
+                           "joarxpablo@vonarndt.se")
+         (set-mu4e-context "maskin"
+                           "Maskin"
+                           "maskin@vonarndt.se")))
 
   (setf message-send-mail-function 'smtpmail-send-it
         mu4e-compose-signature ""
