@@ -1036,6 +1036,10 @@ Emacs provides many different mail utilities, but one of the most popular is ~mu
 (use-package mu4e
   :defer 10
   :ensure nil
+  :hook
+  (mu4e-compose-mode-hook . olivetti-mode)
+  (mu4e-compose-mode-hook . mail-signature)
+  (mu4e-view-mode-hook . olivetti-mode)
   :bind (("C-c s" . mml-secure-sign))
   :config
 
