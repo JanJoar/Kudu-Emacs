@@ -1253,7 +1253,7 @@ Each recipient is in the format of `mail-extract-address-components'."
       (process-put proc 'email recipient-email))))
 
 (with-eval-after-load 'mu4e
-  (add-hook 'message-send-hook 'kudu/message-sign-encrypt-if-all-keys-available))
+  (add-hook 'mu4e-view-mode-hook 'kudu/message-locate-keys))
 
 (defun kudu/message-all-epg-keys-available-p ()
   "Return non-nil if the pgp keyring has a public key for each recipient."
