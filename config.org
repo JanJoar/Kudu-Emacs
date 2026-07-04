@@ -1040,12 +1040,11 @@ Emacs provides many different mail utilities, but one of the most popular is ~mu
   :config
 
   (defalias 'email #'mu4e "Defines an email command to run mu4e.")
-  (setq mu4e-compose-format-flowed t)
   (setq fill-flowed-encode-column 998)
   
   (setq mu4e-change-filenames-when-moving t ; avoid sync conflicts
-        mu4e-update-interval (* 10 60) ; check mail 10 minutes
-        mu4e-compose-format-flowed t ; re-flow mail so it's not hard wrapped
+        mu4e-update-interval (* 10 60) ; check mail every 10 minutes
+        mu4e-compose-format-flowed t ; re-flow mail so it's not hard wrapped for clients that support it
         mu4e-get-mail-command "mbsync -a"
         mu4e-maildir "/mail/Inbox")
 
@@ -1053,21 +1052,26 @@ Emacs provides many different mail utilities, but one of the most popular is ~mu
   (setq message-kill-buffer-on-exit t)
 
   (defun kudu/extract-email-username (email)
+    "Extract the 'user' part of 'user@domain.tld' from EMAIL."
     (and (string-match "^\\([^@]+\\)@" email)
          (match-string 1 email)))
   
-  (setq mu4e-drafts-folder (concat "/"
-                                   (kudu/extract-email-username user-mail-address)
-                                   "/Drafts")
-        mu4e-sent-folder   (concat "/"
-                                   (kudu/extract-email-username user-mail-address)
-                                   "/Sent")
-        mu4e-refile-folder (concat "/"
-                                   (kudu/extract-email-username user-mail-address)
-                                   "/Archive")
-        mu4e-trash-folder  (concat "/"
-                                   (kudu/extract-email-username user-mail-address)
-                                   "/Trash"))
+  (setq mu4e-drafts-folder
+        (concat "/"
+                (kudu/extract-email-username user-mail-address)
+                "/Drafts")
+        mu4e-sent-folder
+        (concat "/"
+                (kudu/extract-email-username user-mail-address)
+                "/Sent")
+        mu4e-refile-folder
+        (concat "/"
+                (kudu/extract-email-username user-mail-address)
+                "/Archive")
+        mu4e-trash-folder
+        (concat "/"
+                (kudu/extract-email-username user-mail-address)
+                "/Trash"))
 
   (setq mu4e-maildir-shortcuts
         '(("/inbox"     . ?i)
