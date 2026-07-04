@@ -922,7 +922,7 @@ A function for translating to-and from chinese using ~gptel~:
 (bind-key "C-x C-z" 'zhongwen-translate)
 #+end_src
 
-* Web browsing
+** Web browsing
 
 This custom function means that images rendered in Emacs' /Emacs Web
 Wowser/ (~eww~) will retain the same width as ~fill-column~, and thus not
