@@ -1081,7 +1081,6 @@ Emacs provides many different mail utilities, but one of the most popular is ~mu
           ("/All Mail"  . ?a)))
 
   (setq message-send-mail-function 'smtpmail-send-it
-        auth-sources '("~/.authinfo.gpg")
         smtpmail-smtp-server "127.0.0.1"
         smtpmail-smtp-service 1025
         smtpmail-stream-type  'ssl
@@ -1202,6 +1201,20 @@ a TTY, but in those cases we can use Emacs itself to enter passwords.
 (unless window-system
     (setq epg-pinentry-mode 'loopback))
 
+#+end_src
+
+Emacs uses the first file found in this list to store various
+passwords. For examples, see the earlier function
+~magit-process-password-auth-source~ or the value
+~'gptel-api-key-from-auth-source~ where magit and gptel respectievly
+searches the ~auth-sources~ file for passwords and authentication
+information. Other uses might be email, SSH, or interacting with
+Emacs' TRAMP package. If you use the encrypted ~.authinfo.gpg~ file
+Emacs will automatically ask for you to decrypt it when trying to get
+its contents.
+
+#+begin_src emacs-lisp :tangle yes
+(setq auth-sources '("~/.authinfo.gpg" "~/.authinfo" "~/.netrc"))
 #+end_src
 
 This series of functions interact with the ~mu4e~ package configured
