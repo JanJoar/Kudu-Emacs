@@ -1052,21 +1052,21 @@ Emacs provides many different mail utilities, but one of the most popular is ~mu
   (setq mail-user-agent 'mu4e-user-agent)
   (setq message-kill-buffer-on-exit t)
 
-  (defun extract-email-username (email)
+  (defun kudu/extract-email-username (email)
     (and (string-match "^\\([^@]+\\)@" email)
          (match-string 1 email)))
   
   (setq mu4e-drafts-folder (concat "/"
-                                   (extract-email-username user-mail-address)
+                                   (kudu/extract-email-username user-mail-address)
                                    "/Drafts")
         mu4e-sent-folder   (concat "/"
-                                   (extract-email-username user-mail-address)
+                                   (kudu/extract-email-username user-mail-address)
                                    "/Sent")
         mu4e-refile-folder (concat "/"
-                                   (extract-email-username user-mail-address)
+                                   (kudu/extract-email-username user-mail-address)
                                    "/Archive")
         mu4e-trash-folder  (concat "/"
-                                   (extract-email-username user-mail-address)
+                                   (kudu/extract-email-username user-mail-address)
                                    "/Trash"))
 
   (setq mu4e-maildir-shortcuts
@@ -1173,26 +1173,31 @@ sign it otherwise."
        `((user-mail-address    . ,mail-address)
          (user-full-name       . ,full-name)
          (mu4e-sent-folder     . ,(concat "/"
-                                          (extract-email-username user-mail-address)
+                                          (kudu/extract-email-username user-mail-address)
                                           "/Sent"))
          (mu4e-drafts-folder   . ,(concat "/"
-                                          (extract-email-username user-mail-address)
+                                          (kudu/extract-email-username user-mail-address)
                                           "/Drafts"))
          (mu4e-trash-folder    . ,(concat "/"
-                                          (extract-email-username user-mail-address)
+                                          (kudu/extract-email-username user-mail-address)
                                           "/Trash"))
          (mu4e-refile-folder   . ,(concat "/"
-                                          (extract-email-username user-mail-address)
+                                          (kudu/extract-email-username user-mail-address)
                                           "/Archive"))))))
 
   ;;Fixing duplicate UID errors when using mbsync and mu4e
   (setf mu4e-change-filenames-when-moving t)
 
   (setf mu4e-maildir-shortcuts
-        '(("/joarxpablo/Inbox" . ?f)
-          ("/Drafts" . ?d)
-          ("/Sent" . ?s)
-          ("/maskin/Inbox" . ?g)))
+        `((,(concat "/" (kudu/extract-email-username user-mail-address)
+                    "/Inbox")
+           . ?f)
+          (,(concat "/" (kudu/extract-email-username user-mail-address)
+                    "/Drafts")
+           . ?d)
+          (,(concat "/" (kudu/extract-email-username user-mail-address)
+                    "/Sent")
+           . ?s)))
 
   (setf mu4e-contexts
         (list
