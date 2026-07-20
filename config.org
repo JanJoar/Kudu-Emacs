@@ -397,37 +397,23 @@ By default ~corfu~ only works in a GUI environment, but the ~corfu-terminal~ pac
   ~corfu~ does not provide candidates for completion, but this is provided by ~cape~, or the Completion At Point Extensions package.
   
   #+begin_src emacs-lisp :tangle yes
-    (use-package cape
-      ;; Bind dedicated completion commands
-      ;; Alternative prefix keys: C-c p, M-p, M-+, ...
-      :bind (("C-c p p" . completion-at-point) ;; capf
-             ("C-c p t" . complete-tag)        ;; etags
-             ("C-c p d" . cape-dabbrev)        ;; or dabbrev-completion
-             ("C-c p h" . cape-history)
-             ("C-c p f" . cape-file)
-             ("C-c p k" . cape-keyword)
-             ("C-c p a" . cape-abbrev)
-             ("C-c p l" . cape-line)
-             ("C-c p w" . cape-dict)
-             ("C-c p \\" . cape-tex)
-             ("C-c p _" . cape-tex)
-             ("C-c p ^" . cape-tex)
-             ("C-c p &" . cape-sgml)
-             ("C-c p r" . cape-rfc1345))
-      :init
-      (setq cape-dict-file (list "/home/jovo/Documents/Papers/english-dict" "/home/jovo/Documents/Papers/swedish-dict"))
-      (add-to-list 'completion-at-point-functions #'cape-dict)
-      (add-to-list 'completion-at-point-functions #'cape-abbrev)
-      (add-to-list 'completion-at-point-functions #'cape-file)
-      (add-to-list 'completion-at-point-functions #'cape-dabbrev)
-      (add-to-list 'completion-at-point-functions #'cape-abbrev)
-      (add-to-list 'completion-at-point-functions #'cape-history)
-      (add-to-list 'completion-at-point-functions #'cape-elisp-block)
-      (add-to-list 'completion-at-point-functions #'cape-keyword)
-      (add-to-list 'completion-at-point-functions #'cape-elisp-symbol)
-      (add-to-list 'completion-at-point-functions #'cape-emoji)
-      (add-to-list 'completion-at-point-functions #'cape-tex))
- #+end_src
+(use-package cape
+  :init
+  (setq cape-dict-file (list "/home/jovo/Documents/Papers/english-dict" "/home/jovo/Documents/Papers/swedish-dict"))
+  (add-hook 'completion-at-point-functions #'cape-history)
+  (add-hook 'completion-at-point-functions #'cape-programming)
+  (add-hook 'completion-at-point-functions #'cape-language)
+  (add-hook 'completion-at-point-functions #'cape-file)
+  (add-hook 'completion-at-point-functions #'cape-abbrev)
+  
+  (defun cape-language ()
+    (cape-wrap-super #'cape-dabbrev #'cape-dict))
+
+  (defun cape-programming ()
+    (cape-wrap-super #'cape-keyword #'cape-elisp-symbol))
+  
+  (setopt text-mode-ispell-word-completion nil))
+#+end_src
 
 *** Minibuffer Completion
 
@@ -571,14 +557,6 @@ Configures Org-mode to make it more attractive and usable.
 #+begin_src emacs-lisp :tangle yes
   (setq completion-cycle-threshold 2)
   (setq tab-always-indent 'complete)
-  (setq ispell-program-name "hunspell")
-  (setq ispell-local-dictionary-alist
-      '(("english" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_GB") nil utf-8)
-        ("svenska" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "sv_SE") nil utf-8)))
-
-  (use-package auto-dictionary
-    :hook
-    (flyspell-mode . auto-dictionary-mode))
 
   (use-package org
     :defer 18
