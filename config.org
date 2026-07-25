@@ -540,9 +540,17 @@ Shows those completion results that are hopefully most useful, both in the minib
      :preview-key '(:debounce 0.4 any)))
 #+end_src
 
+To remember and find all these commands, we use the built-in ~which-key~ package.
+
+#+begin_src emacs-lisp :tangle yes
+(use-package which-key
+  :config
+  (setq which-key-mode t))
+#+end_src
+
 *** Flycheck
 
-Tangentially related is flycheck, providing in-buffer syntax checking.
+Tangentially related is Flycheck, providing in-buffer syntax checking.
 
 #+begin_src emacs-lisp :tangle yes
   (use-package flycheck
