@@ -324,6 +324,7 @@ Emacs is a wonderful alternative to a terminal, encompassing [[https://www.maste
     (eat-mode . hide-mode-line-mode)
     (term-mode . hide-mode-line-mode)
     (eshell-mode . hide-mode-line-mode)
+    (ghostel-mode . hide-mode-line-mode)
     (dashboard-mode . hide-mode-line-mode)
     (pdf-view-mode . hide-mode-line-mode))
 #+end_src
@@ -820,8 +821,6 @@ Emacs is better than any terminal emulator, and being able to run Emacs lisp cod
 
 #+begin_src emacs-lisp :tangle yes
 (use-package eat
-  :hook
-  (eshell-load-hook . eat-eshell-mode)
   :config
   (setq eat-kill-buffer-on-exit t)
   (keymap-set eat-mode-map "M-w" 'kill-ring-save))
