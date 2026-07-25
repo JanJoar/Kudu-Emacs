@@ -812,40 +812,44 @@ Emacs has a wonderful undo-system, but it can be hard to get an idea of how it w
     (bind-key "C-<tab>" 'avy-goto-char))
 #+end_src
 
-Emacs is better than any terminal emulator, and being able to run emacs lisp code in a terminal through ~eshell~ is increadibly powerful. But ~eshell~ has trouble running full-screen terminal programs, and so the ~eat~ (Emulate A Terminal) package is used for those programs that need it.
+Emacs is better than any terminal emulator, and being able to run Emacs lisp code in a terminal through ~eshell~ is incredibly powerful. But ~eshell~ has trouble running full-screen terminal programs, and so the ~eat~ (Emulate A Terminal) package is used for those programs that need it. For even more high-powered terminal needs, ~ghostel~ can run pretty much anything that your terminal emulator can.
 
 #+begin_src emacs-lisp :tangle yes
-  (use-package eat
-    :hook
-    (eshell-load-hook . eat-eshell-mode)
-    :config
-    (setq eat-kill-buffer-on-exit t)
-    (keymap-set eat-mode-map "M-w" 'kill-ring-save))
+(use-package eat
+  :hook
+  (eshell-load-hook . eat-eshell-mode)
+  :config
+  (setq eat-kill-buffer-on-exit t)
+  (keymap-set eat-mode-map "M-w" 'kill-ring-save))
 
-  (use-package fish-completion
-    :hook
-    (eshell-load-hook . load-fish-completion)
-    :config
-    (use-package bash-completion)
-    (defun load-fish-completion ()
-      (when (executable-find "fish")
-            (add-hook 'eshell-load-hook (fish-completion-mode)))))
+(use-package ghostel
+  :config (ghostel-eshell-visual-command-mode t))
 
-  (use-package eshell
-    :config
-    ;; Create a new lambda-themed prompt.
-    (setq eshell-prompt-function
-      (lambda ()
-        (concat (abbreviate-file-name (eshell/pwd)) " λ ")))
-    (setq eshell-prompt-regexp "^[^λ]* λ")
+(use-package fish-completion
+  :hook
+  (eshell-load-hook . load-fish-completion)
+  :config
+  (use-package bash-completion)
+  (defun load-fish-completion ()
+    (when (executable-find "fish")
+      (add-hook 'eshell-load-hook (fish-completion-mode)))))
 
-    (setq eshell-scroll-to-bottom-on-input 'all)
-    (setq-local tab-always-indent 'complete)
-    (setq eshell-history-size 10000)
-    (setq eshell-save-history-on-exit t)
-    (setq eshell-hist-ignoredups t)
+(use-package eshell
+  :bind ("C-t" . eshell)
+  :config
+  ;; Create a new lambda-themed prompt.
+  (setq eshell-prompt-function
+        (lambda ()
+          (concat (abbreviate-file-name (eshell/pwd)) " λ ")))
+  (setq eshell-prompt-regexp "^[^λ]* λ")
 
-    (defalias 'eshell/clear 'eshell/clear-scrollback))
+  (setq eshell-scroll-to-bottom-on-input 'all)
+  (setq-local tab-always-indent 'complete)
+  (setq eshell-history-size 10000)
+  (setq eshell-save-history-on-exit t)
+  (setq eshell-hist-ignoredups t)
+
+  (defalias 'eshell/clear 'eshell/clear-scrollback))
 #+end_src
 
 One of the things that make Emacs so extensible is the easy access to documentation of functions and variables through the ~C-h~ series of keybinds. The ~helpful~ package continues this by improving the default help buffers with more information and better formatting. ~Eldoc-box~ instead shows Eldoc documentation in a pretty and modern-looking format inside of your buffer, rather than down at the minibuffer.
