@@ -754,8 +754,10 @@ Magit is wonderful, and one of the killer apps that makes emacs a system than ot
   :config
   (setq magit-process-find-password-functions
         '(magit-process-password-auth-source))
-  ())
-
+  
+  (add-hook 'git-commit-setup-hook
+          (lambda ()
+            (local-set-key (kbd "TAB") #'completion-at-point))))
 
 (use-package magit-todos
   :after magit
