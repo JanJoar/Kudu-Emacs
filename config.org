@@ -1271,6 +1271,7 @@ Each recipient is in the format of `mail-extract-address-components'."
 
 (defun kudu/message-locate-keys ()
   "Tries to find the public keys of 'kudu/message-recipients' via WKD through --locate-keys."
+  (interactive)
   (dolist (recipient (string-to-list (kudu/message-recipients)))
     (let ((recipient-email (cadr recipient))
           (proc (make-process
@@ -1284,8 +1285,12 @@ Each recipient is in the format of `mail-extract-address-components'."
                              (when (eq (process-status proc) 'exit)
                                (let ((output (process-get proc 'output))
                                      (email (process-get proc 'email)))
-                                 (if (and output (string-match-p "imported: [1-9]" output))
-                                     (message "Public key imported for %s" email))))))))
+                                 (cond ((and output (string-match-p "imported: [1-9]" output))
+                                        (message "Public key imported for %s" email))
+                                       ((and output (string-match-p "pub" output))
+                                        (message "Public key available for %s" email))
+                                       (t (message "No public key found for %s" email))
+                                   )))))))
       (process-put proc 'email recipient-email))))
 
 (with-eval-after-load 'mu4e
