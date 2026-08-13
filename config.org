@@ -1254,10 +1254,16 @@ Allows you to write nicely formatted HTML emails using org-mode to fit in with t
   (setq mail-user-agent 'mu4e-user-agent)
   (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t"
         org-msg-startup "hidestars indent inlineimages"
-        org-msg-default-alternatives '((new		. (text html))
-                                       (reply-to-html	. (text html))
-                                       (reply-to-text	. (text)))
+        org-msg-greeting-fmt
+        "\n#+begin_greeting\nDear%s,\n#+end_greeting\n\n"
+        org-msg-default-alternatives
+        '((new		. (text))
+          (reply-to-html	. (text html))
+          (reply-to-text	. (text)))
         org-msg-convert-citation t)
+  (if (file-exists-p "~/Documents/email.css~")
+      (setq org-msg-enforce-css
+            (org-msg-css-file-to-list "~/Documents/email.css")))
   (org-msg-mode))
 #+end_src
 
