@@ -657,6 +657,15 @@ Configures Org-mode to make it more attractive and usable.
   :load-path "~/.emacs.d/site-lisp/org-modern-indent"
   :hook (org-mode . org-modern-indent-mode))
 
+(defun org-title-to-buffer-name ()
+  "Rename file-visiting Org buffers to their #+TITLE."
+  (interactive)
+  (when-let ((title (and buffer-file-name
+                         (org-get-title))))
+    (rename-buffer title t)))
+
+(add-hook 'org-mode-hook 'org-title-to-buffer-name)
+
 (add-to-list 'org-latex-packages-alist
              '("AUTO" "babel" t ("pdflatex" "xelatex" "lualatex")))
 #+end_src
