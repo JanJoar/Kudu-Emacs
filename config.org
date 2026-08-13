@@ -665,7 +665,6 @@ Configures Org-mode to make it more attractive and usable.
 
 #+begin_src emacs-lisp :tangle yes
 (use-package org-roam
-  :bind (("M-o" . org-roam-node-find))
   :config
   (setq org-roam-directory "~/Documents/Notes/roam/")
   (org-roam-db-autosync-mode)
@@ -680,6 +679,38 @@ Configures Org-mode to make it more attractive and usable.
 (defun get-roam-node-count ()
   (interactive)
   (message "Number of nodes: %s" (length (org-roam-db-query [:select [id] :from nodes]))))
+#+end_src
+
+*** Vulpea
+
+Vulpea is a faster (and async) alternative to org-roam that can use
+the same database and can coexist with org-roam. ~consult-vulpea~ allows
+live previews when selecting notes.
+
+#+begin_src emacs-lisp :tangle yes
+(use-package vulpea
+  :bind (("M-o" . vulpea-find)
+         ("C-c M-i" . vulpea-insert))
+  :config
+  (setq vulpea-db-sync-directories
+        '("~/Documents/Notes/roam/"
+          "~/Documents/blog/posts/"
+          "~/Documents/blog/drafts/"))
+  (setq vulpea-db-index-plain-links nil
+        vulpea-db-sync-verbose nil
+        vulpea-db-parse-method 'single-temp-buffer
+        vulpea-db-async-extraction 'full)
+
+  (vulpea-db-autosync-mode +1))
+
+(use-package consult-vulpea
+  :after vulpea
+  (setq consult-vulpea-mode t))
+
+(use-package vulpea-ui
+  :after vulpea
+  :custom
+  (vulpea-ui-fast-parse t))
 #+end_src
 
 ** Lisp
