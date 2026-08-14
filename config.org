@@ -373,7 +373,7 @@ Configures the all-important emacs dashboard that shows up on startup.
       ("Elfeed"   "e" elfeed)
       ("Dired"    "f" dired)
       ("Notes"    "n" vulpea-find)
-      ("Agent"    "p" agent-shell)
+      ("Agent"    "p" agent-shell)))
 
   (defun my-dashboard-button-action (button)
     (let ((command (button-get button 'my-dashboard-command)))
