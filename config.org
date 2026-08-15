@@ -847,7 +847,14 @@ Magit is wonderful, and one of the killer apps that makes emacs a system than ot
 
 ** LLMs
 
-Artificial intelligence tools based on Large Language Models (LLMs) are quite popular these days. There's no reason to pop out to a web browser or terminal (running something like Claude code) to use LLMs in your workflow if you're using Emacs. There are a multitude of LLM packages, but one of the most polished ones is ~gptel~. Remember to set ~gptel-api-key~ and ~gptel-model~ in ~$HOME/.emacs.d/secrets/secret.org~ if you want to use this functionality.
+Artificial intelligence tools based on Large Language Models (LLMs) are quite popular these days. There's no reason to pop out to a web browser or terminal (running something like Claude code) to use LLMs in your workflow if you're using Emacs; Emacs is naturally a perfect fit for handling the editing and generation of text.
+
+There are a multitude of LLM packages, but one of the most polished
+ones is ~gptel~. Remember to set ~gptel-api-key~ and ~gptel-model~ in
+~$HOME/.emacs.d/secrets/secret.org~ if you want to use this
+functionality. ~agent-shell~ is a good alternative for managing not just
+simple conversations, but full-blown agentetic workflows (like
+interacting with ~claude-code~ or the free-software ~pi~).
 
 #+begin_src emacs-lisp :tangle yes
 (use-package gptel
@@ -858,6 +865,26 @@ Artificial intelligence tools based on Large Language Models (LLMs) are quite po
   (setq gptel-track-media t))
 
 (use-package gptel-agent)
+#+end_src
+
+#+begin_src emacs-lisp :tangle yes
+(use-package agent-shell
+  :bind (("M-p" . agent-shell-pi-start-agent))
+  :config
+  (setq agent-shell-anthropic-claude-environment
+        (agent-shell-make-environment-variables :inherit-env t))
+
+  (setq agent-shell-pi-environment
+        (agent-shell-make-environment-variables "PATH" (concat "~/.npm-packages/bin" path-separator (getenv "PATH")))))
+
+(use-package agent-shell-notifications
+  :hook
+  (agent-shell-mode . agent-shell-notifications-mode)
+  (agent-shell-viewport-edit-mode . agent-shell-notifications-viewport-edit-mode)
+  (agent-shell-viewport-view-mode . agent-shell-notifications-viewport-view-mode)
+  :config
+  (setq agent-shell-notifications-timeout -1)
+  (setq agent-shell-notifications-idle-timeout 0))
 #+end_src
 
 ** Tooling
