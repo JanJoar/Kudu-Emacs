@@ -902,23 +902,35 @@ Emacs has a wonderful undo-system, but it can be hard to get an idea of how it w
   (global-undo-tree-mode +1))
 #+end_src
 
-Uses the ~ace-window~ package for switching windows instead of the default ~other-window~.
-  
-#+begin_src emacs-lisp :tangle yes
-(use-package ace-window
-  :init
-  (global-set-key (kbd "C-x o") 'ace-window)
-  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
-  (setq aw-ignore-current t))
+Uses ~avy~ to allow jumping to text anywhere on the screen by writing a
+few short characters.
 
+#+begin_src emacs-lisp :tangle yes
 (use-package avy
   :init
   (bind-key "C-<tab>" 'avy-goto-char-2))
 #+end_src
 
-Emacs is better than any terminal emulator, and being able to run Emacs lisp code in a terminal through ~eshell~ is incredibly powerful. But ~eshell~ has trouble running full-screen terminal programs, and so the ~eat~ (Emulate A Terminal) package is used for those programs that need it. For even more high-powered terminal needs, ~ghostel~ can run pretty much anything that your terminal emulator can.
+The ~winpulse~ package will quickly flash the window you are moving to,
+making it easy to see what window point is active in.
 
 #+begin_src emacs-lisp :tangle yes
+(use-package winpulse
+  :vc (:url "https://github.com/xenodium/winpulse")
+  :bind (("C-x o" . next-window-any-frame))
+  :config
+  (winpulse-mode +1))
+#+end_src
+
+Emacs is better than any terminal emulator, and being able to run
+Emacs lisp code in a terminal through ~eshell~ is incredibly
+powerful. But ~eshell~ has trouble running full-screen terminal
+programs, and so the ~eat~ (Emulate A Terminal) package is used for
+those programs that need it. For even more high-powered terminal
+needs, ~ghostel~ can run pretty much anything that your terminal
+emulator can.
+
+,#+begin_src emacs-lisp :tangle yes
 (use-package eat
   :config
   (setq eat-kill-buffer-on-exit t)
