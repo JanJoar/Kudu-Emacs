@@ -1045,7 +1045,18 @@ extend outside the ~eww~ window.
 #+begin_src emacs-lisp :tangle yes
 (use-package elfeed
   :bind (:map elfeed-search-mode-map
-         ("U" . elfeed-update)))
+         ("U" . elfeed-update))
+  :config
+  
+  (defun elfeed-show-rename-to-title (&rest _)
+  "Rename the elfeed-show buffer to the current entry's title."
+  (interactive)
+  (when-let ((entry (and (derived-mode-p 'elfeed-show-mode)
+                         elfeed-show-entry))
+             (title (elfeed-entry-title entry)))
+    (rename-buffer title t)))
+
+  (advice-add 'elfeed-show-entry :after #'elfeed-show-rename-to-title))
 #+end_src
 
 ** Functions
