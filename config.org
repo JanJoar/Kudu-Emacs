@@ -199,6 +199,7 @@ the mode line, and the edges of the screen.
 #+begin_src emacs-lisp :tangle yes
 (use-package spacious-padding
   :diminish spacious-padding-mode
+  :hook (after-init . spacious-padding-mode)
   :init
   (add-hook
    'spacious-padding-mode-hook
@@ -214,9 +215,7 @@ the mode line, and the edges of the screen.
            (set-face-attribute 'mode-line-inactive nil
                                :background (face-background 'default)
                                :foreground (face-foreground 'mode-line-inactive)
-                               :box `(:line-width 6 :color ,(face-background 'default))))
-       )))
-  (spacious-padding-mode 1))
+                               :box `(:line-width 6 :color ,(face-background 'default))))))))
 #+end_src
 
 Enable mouse use when running Emacs in a terminal emulator.
