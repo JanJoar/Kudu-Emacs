@@ -297,6 +297,7 @@ When prose for publication the traditional centered appearance of WYSISWYG is qu
 
 #+begin_src emacs-lisp :tangle yes
 (use-package smartparens
+  :bind (("M-DEL" . sp-backward-delete-word))
   :hook
   (prog-mode . smartparens-mode)
   (text-mode . smartparens-mode)
