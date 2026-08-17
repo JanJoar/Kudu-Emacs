@@ -487,7 +487,9 @@ Shows those completion results that are hopefully most useful, both in the minib
   :init (corfu-prescient-mode +1))
 
 (use-package vertico-prescient
-  :init (vertico-prescient-mode +1))
+  :init
+  (setq vertico-prescient-enable-filtering nil)
+  (vertico-prescient-mode +1))
 #+end_src
 
 *** Consult
