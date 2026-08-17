@@ -1027,6 +1027,7 @@ A function for translating to-and from chinese using ~gptel~:
           display-buffer-use-least-recent-window
           display-buffer-reuse-window)
          nil)))
+
 (setq display-buffer-base-action
       '((display-buffer-reuse-window
          display-buffer-use-some-window
@@ -1239,10 +1240,6 @@ Emacs provides many different mail utilities, but one of the most popular is ~mu
   (setq mu4e-split-view 'vertical)
 
   (setq mu4e-headers-visible-columns 100)
-
-  (add-to-list 'display-buffer-alist
-               `(,(regexp-quote mu4e-main-buffer-name)
-                 display-buffer-same-window))
 
   (defun set-mu4e-context (context-name full-name mail-address)
     "Return a mu4e context named CONTEXT-NAME with :match-func matching
