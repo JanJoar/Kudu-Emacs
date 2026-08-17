@@ -21,7 +21,9 @@
 
 (add-to-list 'load-path "/usr/share/emacs/site-lisp/")
 
-(setq load-prefer-newer t) ;; Loads the newer file if one exists. This means emacs will prioritise files with newer changes.
+(setq load-prefer-newer t) ;; Loads the newer file if one exists. This
+                           ;; means emacs will prioritise files with
+                           ;; newer changes.
 
 (defvar Kudu-gui-logo "~/.emacs.d/Logos/KuduLogo_text.txt")
 (shell-command "touch ~/.emacs.d/custom.el")
@@ -42,9 +44,10 @@
     (org-babel-load-file (expand-file-name "~/.emacs.d/secrets/secret.org"))
   (shell-command "touch ~/.emacs.d/secrets/secret.org"))
 
-
-;; User-unique information (like E-mail address and full name) that you might not want to share openly. Empty by default. Since the file is not included in the Kudu repo it has to be created using touch in order to be loaded.
-
+;; User-unique information (like E-mail address and full name) that
+;; you might not want to share openly. Empty by default. Since the
+;; file is not included in the Kudu repo it has to be created using
+;; touch in order to be loaded.
 
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
