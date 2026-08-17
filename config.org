@@ -909,17 +909,6 @@ few short characters.
   (bind-key "C-<tab>" 'avy-goto-char-2))
 #+end_src
 
-The ~winpulse~ package will quickly flash the window you are moving to,
-making it easy to see what window point is active in.
-
-#+begin_src emacs-lisp :tangle yes
-(use-package winpulse
-  :vc (:url "https://github.com/xenodium/winpulse")
-  :bind (("C-x o" . next-window-any-frame))
-  :config
-  (winpulse-mode +1))
-#+end_src
-
 Emacs is better than any terminal emulator, and being able to run
 Emacs lisp code in a terminal through ~eshell~ is incredibly
 powerful. But ~eshell~ has trouble running full-screen terminal
@@ -1020,6 +1009,41 @@ A function for translating to-and from chinese using ~gptel~:
 
 (bind-key "C-x z" 'zhongwen-translate)
 (bind-key "C-x C-z" 'zhongwen-translate)
+#+end_src
+
+** Window management
+
+#+begin_src emacs-lisp :tangle yes
+(setq display-buffer-alist
+      '(("magit-diff:.*"
+
+         "\\*vundo tree\\*"
+         (display-buffer-at-bottom)
+         (window-height . 10))
+        (".*"
+         (display-buffer-same-window
+          display-buffer-reuse-mode-window
+          display-buffer-use-some-window
+          display-buffer-use-least-recent-window
+          display-buffer-reuse-window)
+         nil)))
+(setq display-buffer-base-action
+      '((display-buffer-reuse-window
+         display-buffer-use-some-window
+         display-buffer-use-least-recent-window)))
+
+(setq pop-up-windows nil)
+(bind-key "C-x o" #'next-window-any-frame)
+#+end_src
+
+The ~winpulse~ package will quickly flash the window you are moving to,
+making it easy to see what window point is active in.
+
+#+begin_src emacs-lisp :tangle yes
+(use-package winpulse
+  :vc (:url "https://github.com/xenodium/winpulse")
+  :config
+  (winpulse-mode +1))
 #+end_src
 
 ** Web browsing
