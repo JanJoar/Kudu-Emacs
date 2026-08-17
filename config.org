@@ -1288,14 +1288,16 @@ Emacs provides many different mail utilities, but one of the most popular is ~mu
                     "/Sent")
            . ?s)))
 
-  (setf mu4e-contexts
-        (list
-         (set-mu4e-context "joarxpablo"
-                           "Joar von Arndt"
-                           "joarxpablo@vonarndt.se")
-         (set-mu4e-context "maskin"
-                           "Maskin"
-                           "maskin@vonarndt.se")))
+  ;; To set your email, enter the values of these
+  
+  ;; (setf mu4e-contexts
+  ;;       (list
+  ;;        (set-mu4e-context "context name"
+  ;;                          "First-name Last-name"
+  ;;                          "username1@email-provider.tld")
+  ;;        (set-mu4e-context "context name"
+  ;;                          "First-name Last-name"
+  ;;                          "username2@other-provider.tld")))
 
   (setf message-send-mail-function 'smtpmail-send-it
         mu4e-compose-signature ""
