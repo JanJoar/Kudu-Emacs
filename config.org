@@ -588,6 +588,7 @@ Tangentially related is Flycheck, providing in-buffer syntax checking.
 (use-package flycheck
   :hook (after-init . global-flycheck-mode)
   :config
+  (flycheck-disable-checker 'emacs-lisp-checkdoc)
   (global-flycheck-eglot-mode 1))
 #+end_src
 
