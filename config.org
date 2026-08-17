@@ -917,7 +917,7 @@ those programs that need it. For even more high-powered terminal
 needs, ~ghostel~ can run pretty much anything that your terminal
 emulator can.
 
-,#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp :tangle yes
 (use-package eat
   :config
   (setq eat-kill-buffer-on-exit t)
