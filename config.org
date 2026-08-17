@@ -891,17 +891,13 @@ interacting with ~claude-code~ or the free-software ~pi~).
 
 ** Tooling
 
-Emacs has a wonderful undo-system, but it can be hard to get an idea of how it works intuitively. ~undo-tree~ helps with this by creating a wonderful visualization for your branching undo, well, tree.
+Emacs has a wonderful undo-system, but it can be hard to get an idea
+of how it works intuitively. ~vundo~ helps with this by creating a
+wonderful visualization for your branching undo tree.
 
 #+begin_src emacs-lisp :tangle yes
-(use-package undo-tree
-  :init
-  (setq undo-tree-visualizer-timestamps t)
-  (setq undo-tree-auto-save-history t)
-  (unless (file-exists-p "~/.emacs.d/undo-tree") 
-    (make-directory "~/.emacs.d/undo-tree"))
-  (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo-tree")))
-  (global-undo-tree-mode +1))
+(use-package vundo
+  :bind (("C-x u" . vundo)))
 #+end_src
 
 Uses ~avy~ to allow jumping to text anywhere on the screen by writing a
