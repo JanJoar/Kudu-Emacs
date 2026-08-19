@@ -1147,6 +1147,8 @@ extend outside the ~eww~ window.
                   (/ (float col-px) w))))))))
 
 (add-hook 'eww-after-render-hook #'eww-limit-images-to-fill-column)
+
+(setq shr-max-width fill-column)
 #+end_src
 
 ~elfeed~ is a RSS-browser for emacs that integrates will with ~shr~ and
