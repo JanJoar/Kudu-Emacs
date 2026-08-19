@@ -748,7 +748,8 @@ live previews when selecting notes.
 
 (use-package consult-vulpea
   :after vulpea
-  (setq consult-vulpea-mode t))
+  :custom
+  (consult-vulpea-mode +1))
 
 (use-package vulpea-ui
   :after vulpea
