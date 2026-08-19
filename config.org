@@ -17,12 +17,12 @@
 #+title: Kudu
 #+author: Joar von Arndt
 
-#+begin_export html
+#+begin_html
 <p align="center">
   <img width="50%" src="Logos/KuduLogo_red.svg" alt="Banner">
 </p>
 <h3 align="center">Welcome to Kudu Emacs</h3>
-#+end_export
+#+end_html
 
 * What is Kudu?
 
