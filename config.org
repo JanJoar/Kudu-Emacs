@@ -881,7 +881,43 @@ interacting with ~claude-code~ or the free-software ~pi~).
   :config
   (setq gptel-default-mode 'org-mode)
   (setq gptel-api-key 'gptel-api-key-from-auth-source)
-  (setq gptel-track-media t))
+  (setq gptel-track-media t)
+
+  ;;; Gives the base gptel buffer the ability to search the web for
+  ;;; infromation and documentation using the tools from 'gptel-agent'.
+
+  (gptel-make-tool
+   :name "WebSearch"
+   :function 'gptel-agent--web-search-eww
+   :description "Search the web for the first five results to a query.  The query can be an arbitrary string.  Returns the top five results from the search engine as a list of plists.  Each object has the keys `:url` and `:excerpt` for the corresponding search result.
+
+This tool uses the Emacs web browser (eww) with its default search engine (typically DuckDuckGo) to perform searches. No API key is required.
+
+If required, consider using the url as the input to the `Read` tool to get the contents of the url.  Note that this might not work as the `Read` tool does not handle javascript-enabled pages."
+   :args '((:name "query"
+                  :type string
+                  :description "The natural language search query, can be multiple words.")
+           (:name "count"
+                  :type integer
+                  :description "Number of results to return (default 5)"
+                  :optional t))
+   :include t
+   :async t
+   :category "gptel-agent")
+
+  (gptel-make-tool
+   :function #'gptel-agent--read-url
+   :name "WebFetch"
+   :description "Fetch and read the contents of a URL.
+
+- Returns the text of the URL (not HTML) formatted for reading.
+- Request times out after 30 seconds."
+   :args '(( :name "url"
+             :type "string"
+             :description "The URL to read"))
+   :async t
+   :include t
+   :category "gptel-agent"))
 
 (use-package gptel-agent)
 #+end_src
