@@ -773,7 +773,13 @@ Emacs is an amazing environment for writing in various lisp dialects, with wonde
 
 *** Scheme
 
-Due to Kudu's deep integration with the GNU Guix system, it is only natural to improve the systems used to interact with guile and scheme specifically. For this the ~guix.el~ and the wonderful ~geiser~ packages are used, where ~guix.el~ is a magit-inspired Emacs frontend and ~geiser~ is a package aiming to improve the scheme experience in emacs, with ~geiser-x~ providing special support for working the relevant flavour of scheme.
+Due to Kudu's deep integration with the GNU Guix system, it is only
+natural to improve the systems used to interact with guile and scheme
+specifically. For this the ~guix.el~ and the wonderful ~geiser~ packages
+are used, where ~guix.el~ is a magit-inspired Emacs frontend and ~geiser~
+is a package aiming to improve the scheme experience in Emacs, with
+~geiser-x~ providing special support for working the relevant flavour of
+scheme.
 
 #+begin_src emacs-lisp :tangle yes
 (use-package guix)
@@ -792,7 +798,13 @@ Due to Kudu's deep integration with the GNU Guix system, it is only natural to i
 
 *** Parens pairing
 
-Most of the time when writing parentheses, brackets, and quotes we want to pair them. This significantly improves comfort since you no longer need to stretch for modifier keys to finish of the pair. And even if you do, ~electric-pair-mode~ will detect it and move the point past as if you had just entered the character. This is of course not just useful for lisp, but in any context when writing pairs of brackets or parentheses.
+Most of the time when writing parentheses, brackets, and quotes we
+want to pair them. This significantly improves comfort since you no
+longer need to stretch for modifier keys to finish of the pair. And
+even if you do, ~electric-pair-mode~ will detect it and move the point
+past as if you had just entered the character. This is of course not
+just useful for lisp, but in any context when writing pairs of
+brackets or parentheses.
 
 #+begin_src emacs-lisp :tangle yes
 (setq electric-pair-pairs '((?\{ . ?\})
@@ -804,7 +816,11 @@ Most of the time when writing parentheses, brackets, and quotes we want to pair 
 
 ** File management
 
-Dired is emacs' built in text-based file manager. It's however pretty rough around its edges, such as it opening each directory in a separate buffer making navigation a hassle. However certain tweaks can make it a formidable tool accessible directly within emacs. Take that n³ and midnight commander!
+Dired is Emacs' built in text-based file manager. It's however pretty
+rough around its edges, such as it opening each directory in a
+separate buffer making navigation a hassle. However certain tweaks can
+make it a formidable tool accessible directly within Emacs. Take that
+~n³~ and midnight commander!
 
 #+begin_src emacs-lisp :tangle yes
 (defun dired-open-with-find-file (orig-fun &optional other-window)
@@ -845,7 +861,10 @@ Dired is emacs' built in text-based file manager. It's however pretty rough arou
 
 ** PDF-tools
 
-The default "docview" mode of viewing pdfs is quite bad, and is improved immensely by the pdf-tools package. For some this may not be enough, and it is possible to replace it with an external pdf viewer (like evince or zathura) using the above ~openwith~ package. 
+The default ~docview~ mode of viewing PDFs is quite bad, and is improved
+immensely by the pdf-tools package. For some this may not be enough,
+and it is possible to replace it with an external pdf viewer (like
+evince or zathura) using the above ~openwith~ package.
 
 #+begin_src emacs-lisp :tangle yes
 (use-package pdf-tools
@@ -856,7 +875,9 @@ The default "docview" mode of viewing pdfs is quite bad, and is improved immense
   
 ** Version Control
 
-Magit is wonderful, and one of the killer apps that makes emacs a system than other editors or IDEs. However it is not installed by default, so it is defined here.
+Magit is wonderful, and one of the killer apps that makes Emacs a
+system than other editors or IDEs. However it is not installed by
+default, so it is defined here.
 
 #+begin_src emacs-lisp :tangle yes
 (use-package magit
@@ -884,7 +905,11 @@ Magit is wonderful, and one of the killer apps that makes emacs a system than ot
 
 ** LLMs
 
-Artificial intelligence tools based on Large Language Models (LLMs) are quite popular these days. There's no reason to pop out to a web browser or terminal (running something like Claude code) to use LLMs in your workflow if you're using Emacs; Emacs is naturally a perfect fit for handling the editing and generation of text.
+Artificial intelligence tools based on Large Language Models (LLMs)
+are quite popular these days. There's no reason to pop out to a web
+browser or terminal (running something like Claude code) to use LLMs
+in your workflow if you're using Emacs; Emacs is naturally a perfect
+fit for handling the editing and generation of text.
 
 There are a multitude of LLM packages, but one of the most polished
 ones is ~gptel~. Remember to set ~gptel-api-key~ and ~gptel-model~ in
@@ -985,12 +1010,11 @@ few short characters.
 #+end_src
 
 Emacs is better than any terminal emulator, and being able to run
-Emacs lisp code in a terminal through ~eshell~ is incredibly
-powerful. But ~eshell~ has trouble running full-screen terminal
-programs, and so the ~eat~ (Emulate A Terminal) package is used for
-those programs that need it. For even more high-powered terminal
-needs, ~ghostel~ can run pretty much anything that your terminal
-emulator can.
+Emacs lisp code in a terminal through ~eshell~ is incredibly powerful.
+But ~eshell~ has trouble running full-screen terminal programs, and so
+the ~eat~ (Emulate A Terminal) package is used for those programs that
+need it. For even more high-powered terminal needs, ~ghostel~ can run
+pretty much anything that your terminal emulator can.
 
 #+begin_src emacs-lisp :tangle yes
 (use-package eat
@@ -1045,7 +1069,10 @@ One of the things that make Emacs so extensible is the easy access to documentat
   (setq eldoc-box-only-multi-line t))
 #+end_src
 
-When using ~vertico~ and the minibuffer windows will sometimes jarringly move up to show point if it is far down. ~stillness-mode~ changes this so that the windows stay still and show the same content as the did before, except that covered by that minibuffer.
+When using ~vertico~ and the minibuffer windows will sometimes jarringly
+move up to show point if it is far down. ~stillness-mode~ changes this
+so that the windows stay still and show the same content as the did
+before, except that covered by that minibuffer.
 
 #+begin_src emacs-lisp :tangle yes
 (use-package stillness-mode
@@ -1064,7 +1091,7 @@ Saves your completion history between sessions.
 (savehist-mode)
 #+end_src
 
-A function for translating to-and from chinese using ~gptel~:
+A function for translating to-and from Chinese using ~gptel~:
 
 #+begin_src emacs-lisp :tangle yes
 (defun zhongwen-translate ()
@@ -1175,7 +1202,8 @@ extend outside the ~eww~ window.
 
 ** Functions
 
-The sudo function raises the privilege of the current buffer to root permissions without having to close and open it again through ~TRAMP~.
+The ~sudo~ function raises the privilege of the current buffer to root
+permissions without having to close and open it again through ~TRAMP~.
 
 #+begin_src emacs-lisp :tangle yes
 (defun sudo ()
@@ -1187,7 +1215,9 @@ The sudo function raises the privilege of the current buffer to root permissions
     (goto-char position)))
 #+end_src
 
-Magit can sometimes create a lot of buffers for different processes that are annoying to close one by one, this function closes all buffers whose name contains "magit".
+Magit can sometimes create a lot of buffers for different processes
+that are annoying to close one by one, this function closes all
+buffers whose name contains "magit".
 
 #+begin_src emacs-lisp :tangle yes
 
@@ -1200,7 +1230,10 @@ Magit can sometimes create a lot of buffers for different processes that are ann
         (buffer-list)))
 #+end_src
 
-Emacs does not have a nice easy to use elisp  function for calculating the factorial of a value, this adds it. This works out particularly nicely since the standard notation for the factorial of a value uses prefix notation.
+Emacs does not have a nice easy to use elisp function for calculating
+the factorial of a value, this adds it. This works out particularly
+nicely since the standard notation for the factorial of a value uses
+prefix notation.
 
 #+begin_src emacs-lisp :tangle yes
 
@@ -1253,7 +1286,10 @@ Allows you to save a flyspell word at point to your personal dictionary.
 
 ** Mail
 
-Emacs provides many different mail utilities, but one of the most popular is ~mu4e~ (Mail Utilities for Emacs). Using this requires an IMAP server to something similar to store mail the in ~HOME/mail/~ directory and a local SMTP server to send the mail. 
+Emacs provides many different mail utilities, but one of the most
+popular is ~mu4e~ (Mail Utilities for Emacs). Using this requires an
+IMAP server to something similar to store mail the in ~HOME/mail/~
+directory and a local SMTP server to send the mail.
 
 #+begin_src emacs-lisp :tangle yes
 
@@ -1400,7 +1436,8 @@ Emacs provides many different mail utilities, but one of the most popular is ~mu
   (advice-add 'mu4e--main-redraw :after #'kudu/mu4e-main-clean-version))
 #+end_src
 
-Allows notify-send to inform you of new emails when not using Emacs, and adds a nice mode-line decoration to remind you.
+Allows notify-send to inform you of new emails when not using Emacs,
+and adds a nice mode-line decoration to remind you.
 
 #+begin_src emacs-lisp :tangle yes
 
@@ -1411,7 +1448,8 @@ Allows notify-send to inform you of new emails when not using Emacs, and adds a 
   (add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display))
 #+end_src
 
-Allows you to write nicely formatted HTML emails using org-mode to fit in with the rest of society.
+Allows you to write nicely formatted HTML emails using org-mode to fit
+in with the rest of society.
 
 #+begin_src emacs-lisp :tangle yes
 
@@ -1440,10 +1478,10 @@ Emacs comes with a suite of tools to handle encrypted files and text
 through the Easy Privacy Guard (EasyPG, or simply EPG) package. We can
 use this to handle various secrets and to encrypt email messages.
 
-By default emacs uses the systems own GUI pinentry program for
-entering passwords when encrypting, decrypting, or singing
-things. This does not work when interacting with Emacs over SSH or in
-a TTY, but in those cases we can use Emacs itself to enter passwords.
+By default Emacs uses the systems own GUI pinentry program for
+entering passwords when encrypting, decrypting, or singing things.
+This does not work when interacting with Emacs over SSH or in a TTY,
+but in those cases we can use Emacs itself to enter passwords.
 
 #+begin_src emacs-lisp :tangle yes
 
@@ -1455,7 +1493,7 @@ a TTY, but in those cases we can use Emacs itself to enter passwords.
 Emacs uses the first file found in this list to store various
 passwords. For examples, see the earlier function
 ~magit-process-password-auth-source~ or the value
-~'gptel-api-key-from-auth-source~ where magit and gptel respectievly
+~'gptel-api-key-from-auth-source~ where magit and gptel respectively
 searches the ~auth-sources~ file for passwords and authentication
 information. Other uses might be email, SSH, or interacting with
 Emacs' TRAMP package. If you use the encrypted ~.authinfo.gpg~ file
