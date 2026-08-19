@@ -469,9 +469,10 @@ In a sense, spellcheck is also a form of automatic completion. For this we use t
 #+begin_src emacs-lisp :tangle yes
 
 (use-package jinx
+  :bind ("C-." . jinx-correct-nearest)
   :config
-  (bind-key "C-." 'jinx-correct-nearest)
-  (setq jinx-languages "en_GB sv_SE"))
+  (setq jinx-languages "en_GB sv_SE")
+  (setq global-jinx-mode t)
 
 #+end_src
 
