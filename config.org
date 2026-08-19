@@ -924,7 +924,7 @@ If required, consider using the url as the input to the `Read` tool to get the c
 
 #+begin_src emacs-lisp :tangle yes
 (use-package agent-shell
-  :bind (("M-p" . agent-shell-pi-start-agent))
+  :bind (("M-p" . agent-shell-opencode-start-agent))
   :config
   (setq agent-shell-anthropic-claude-environment
         (agent-shell-make-environment-variables :inherit-env t))
