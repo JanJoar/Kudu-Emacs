@@ -1072,7 +1072,9 @@ A function for translating to-and from chinese using ~gptel~:
 
 #+begin_src emacs-lisp :tangle yes
 (setq display-buffer-alist
-      '(("magit-diff:.*"
+      '(("\\*mu4e-update\\*"
+         (display-buffer-at-bottom))
+        ("magit-diff:.*"
          (display-buffer-at-bottom))
         ("\\*vundo tree\\*"
          (display-buffer-at-bottom)
