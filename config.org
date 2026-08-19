@@ -860,7 +860,8 @@ Magit is wonderful, and one of the killer apps that makes emacs a system than ot
 (use-package magit
   :config
   (setq magit-process-find-password-functions
-        '(magit-process-password-auth-source))
+        '(magit-process-password-auth-source)
+        magit-process-connection-type 'pty)
   
   (add-hook 'git-commit-setup-hook
             (lambda ()
