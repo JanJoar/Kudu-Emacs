@@ -644,7 +644,9 @@ Configures Org-mode to make it more attractive and usable.
   (setq org-startup-indented t
         org-toggle-pretty-entities t
         org-hide-leading-stars t
-        org-hide-emphasis-markers t)
+        org-hide-emphasis-markers t
+        org-src-preserve-indentation t
+        org-export-with-broken-links t)
   (add-hook 'text-mode-hook 'turn-on-visual-line-mode))
 
 (use-package org-superstar
