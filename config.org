@@ -1145,9 +1145,9 @@ A function for translating to-and from Chinese using ~gptel~:
                       (buffer-substring-no-properties (region-beginning) (region-end))
                     (thing-at-point 'word))))
     (gptel-request contents
-      :system "Write the character in pinyin and give a very short translation it into English.
-   If it is an English word, give a Chinese translation instead.
-   Give a structured output that looks like this:
+      :system "Write the character in pinyin and give a very short translation it into
+English. If it is an English word, give a traditional Chinese
+ translation instead. Give a structured output that looks like this:
   Character: X
   Pinyin:    X
   Meaning:   X"
