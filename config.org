@@ -22,10 +22,33 @@
 * What is Kudu?
 [[https://github.com/JanJoar/Kudu-Emacs/blob/main/Logos/KuduLogo_red.svg]]
 
-The complexity and extensibility of GNU Emacs, paired with its lack of integration with contemporary technical standards, has driven the development of Emacs distributions that contain packages and functionality not included by the GNU project. Kudu is a project meant to expand the scope of such distributions to every user-facing part of the operating system using dialects of the lisp programming language. This allows the user to easily and seamlessly "live in Emacs", using tools integrated directly into the program, such as the Emacs X Window Manager (EXWM), guix.el, and the Emacs Application Framework (EAF). Earlier distributions have focused on integrating Emacs within an otherwise alien system, like DOOM's and Spacemacs' focus on keybinds derived from the Vi editor, to maximize the number of workflows that the distribution could be incorporated into. Kudu does not take this approach, but rather empowers the user to construct their own system within a completely configurable system. All tools are written in lisp, the simple syntax of which allows for a seamless experience and self-sufficient system capable of performing all the daily tasks of modern life. It is hoped that this declarative and atomic system offered by GNU Guix will allow more secure and maintainable infrastructure.
+The complexity and extensibility of GNU Emacs, paired with its lack of
+integration with contemporary technical standards, has driven the
+development of Emacs distributions that contain packages and
+functionality not included by the GNU project. Kudu is a project meant
+to expand the scope of such distributions to every user-facing part of
+the operating system using dialects of the lisp programming language.
+This allows the user to easily and seamlessly "live in Emacs", using
+tools integrated directly into the program, such as the Emacs X Window
+Manager (EXWM), guix.el, and mu4e.
 
+Earlier distributions have focused on integrating Emacs within an
+otherwise alien system, like DOOM's and Spacemacs' focus on keybinds
+derived from the Vi editor, to maximize the number of workflows that
+the distribution could be incorporated into. Kudu does not take this
+approach, but rather empowers the user to construct their own system
+within a completely configurable system. All tools are written in
+lisp, the simple syntax of which allows for a seamless experience and
+self-sufficient system capable of performing all the daily tasks of
+modern life. It is hoped that this declarative and atomic system
+offered by GNU Guix will allow more secure and maintainable
+infrastructure.
 
-The origin for the name is the kudu, an antelope similar to that of the Gnu, the namesake of the GNU Project. Kudu is not part of the GNU Project, and its developers are not members of GNU or the FSF. However we share a positive opinion of free software and therefore want to contribute to its mainstream adoption. 
+The origin for the name is the kudu, an antelope similar to that of
+the Gnu, the namesake of the GNU Project. Kudu is not part of the GNU
+Project, and its developers are not members of GNU or the FSF. However
+we share a positive opinion of free software and therefore want to
+contribute to its mainstream adoption.
 * Configuration
 
 ** Use-package
