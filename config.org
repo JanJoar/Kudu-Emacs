@@ -1100,7 +1100,10 @@ pretty much anything that your terminal emulator can.
   (defalias 'eshell/clear 'eshell/clear-scrollback))
 #+end_src
 
-One of the things that make Emacs so extensible is the easy access to documentation of functions and variables through the ~C-h~ series of keybinds. The ~helpful~ package continues this by improving the default help buffers with more information and better formatting. ~Eldoc-box~ instead shows Eldoc documentation in a pretty and modern-looking format inside of your buffer, rather than down at the minibuffer.
+One of the things that make Emacs so extensible is the easy access to
+documentation of functions and variables through the ~C-h~ series of
+keybinds. The ~helpful~ package continues this by improving the default
+help buffers with more information and better formatting.
 
 #+begin_src emacs-lisp :tangle yes
 (use-package helpful
@@ -1109,12 +1112,6 @@ One of the things that make Emacs so extensible is the easy access to documentat
          ("C-h f" . helpful-callable)
          ("C-h x" . helpful-command)
          ("C-h k" . helpful-key)))
-
-(use-package eldoc-box
-  :init
-  :config
-  (add-hook 'perfect-margin-hook 'kudu-eldoc-box)
-  (setq eldoc-box-only-multi-line t))
 #+end_src
 
 When using ~vertico~ and the minibuffer windows will sometimes jarringly
