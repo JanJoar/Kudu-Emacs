@@ -462,6 +462,19 @@ By default ~corfu~ only works in a GUI environment, but the ~corfu-terminal~ pac
   (setopt text-mode-ispell-word-completion nil))
 #+end_src
 
+*** Spellcheck
+
+In a sense, spellcheck is also a form of automatic completion. For this we use the ~jinx~ package for easy multi-language spelling.
+
+#+begin_src emacs-lisp :tangle yes
+
+(use-package jinx
+  :config
+  (bind-key "C-." 'jinx-correct-nearest)
+  (setq jinx-languages "en_GB sv_SE"))
+
+#+end_src
+
 *** Minibuffer Completion
 
 Uses ~vertico~ to show minibuffer completion, and ~marginalia~ and ~orderless~ to format it.
