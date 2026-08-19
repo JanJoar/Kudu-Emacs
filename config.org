@@ -30,9 +30,22 @@ The origin for the name is the kudu, an antelope similar to that of the Gnu, the
 
 ** Use-package
 
-Probably one of the most useful packages, even if not very prominent when using emacs, is ~use-package~. It allows you to declaratively write your configuration and have the included emacs package manager download them for you, and also have configurations for packages only run when packages are loaded, similarly to ~(with-eval-after-load ...)~. The variables set here simply enable this behaviour. If the version of Emacs is older than Emacs 29, ~use-package~ won't be available by default. It is therefore installed here as well.
+Probably one of the most useful packages, even if not very prominent
+when using Emacs, is ~use-package~. It allows you to declaratively write
+your configuration and have the included Emacs package manager
+download them for you, and also have configurations for packages only
+run when packages are loaded, similarly to ~(with-eval-after-load ...)~.
+The variables set here simply enable this behaviour. If the version of
+Emacs is older than Emacs 29, ~use-package~ won't be available by
+default. It is therefore installed here as well.
 
-The ~diminish~ package hides certain minor modes from being shown in the mode-line and is not installed by default. For this reason its used to check if Kudu has been run before, and therefore if it needs to update its package repos. Feel free to perform this check on any other package, or remove it entirely, but beware that ~(package-refresh-contents)~ must be run before the other ~use-package~ declarations for ~package.el~ to install all the other packages needed.
+The ~diminish~ package hides certain minor modes from being shown in the
+mode-line and is not installed by default. For this reason its used to
+check if Kudu has been run before, and therefore if it needs to update
+its package repositories. Feel free to perform this check on any other
+package, or remove it entirely, but beware that
+~(package-refresh-contents)~ must be run before the other ~use-package~
+declarations for ~package.el~ to install all the other packages needed.
 
 #+begin_src emacs-lisp :tangle yes
 (setq use-package-always-defer t
@@ -47,7 +60,10 @@ The ~diminish~ package hides certain minor modes from being shown in the mode-li
 
 ** Auto-compile
 
-Compiles elisp files to improve the speed and responsiveness of Emacs at the cost of first-time startup time. The settings in ~init.el~ makes sure that updated elisp files take priority over older, compiled files.
+Compiles elisp files to improve the speed and responsiveness of Emacs
+at the cost of first-time startup time. The settings in ~init.el~ makes
+sure that updated elisp files take priority over older, compiled
+files.
 
 #+begin_src emacs-lisp :tangle yes
 (use-package auto-compile 
@@ -61,16 +77,28 @@ Compiles elisp files to improve the speed and responsiveness of Emacs at the cos
 
 ** Backups
 
-Emacs usually stores backups in the same directory as the files themselves, cluttering up your nice and tidy system. This moves them to a dedicated directory within ~.emacs.d~.
+Emacs usually stores backups in the same directory as the files
+themselves, cluttering up your nice and tidy system. This moves them
+to a dedicated directory within ~.emacs.d~.
 
 #+begin_src emacs-lisp :tangle yes
 (setq backup-directory-alist '((".*" . "~/.emacs.d/backups")))
 #+END_SRC
 
 ** EXWM
-The Emacs X Window Manager allows you to use your entire desktop within emacs. Other windows are managed like traditional emacs buffers, and different workspace are implemented using separate emacs frames. This is arguably the largest change to using traditional window managers and desktop environments, and it transforms emacs from simply a program that can do everything to /the/ way to interact with one's computer.
+The Emacs X Window Manager allows you to use your entire desktop
+within Emacs. Other windows are managed like traditional Emacs
+buffers, and different workspace are implemented using separate Emacs
+frames. This is arguably the largest change to using traditional
+window managers and desktop environments, and it transforms Emacs from
+simply a program that can do everything to /the/ way to interact with
+one's computer.
 
-However, Emacs can still be used without constituting the entire system. Therefore EXWM should only be loaded if no other window manager is running. That way startup time isn't wasted whenever the user wants to run Emacs in the terminal, on a computer using a desktop environment, or another window manager.
+However, Emacs can still be used without constituting the entire
+system. Therefore EXWM should only be loaded if no other window
+manager is running. That way startup time isn't wasted whenever the
+user wants to run Emacs in the terminal, on a computer using a desktop
+environment, or another window manager.
 
 #+begin_src emacs-lisp :tangle yes
 (use-package exwm
@@ -169,7 +197,13 @@ However, Emacs can still be used without constituting the entire system. Therefo
 #+end_src
 
 ** General visual elements
-Visible bell changes the otherwise quite jarring bell sound into a visual flash on it top and bottom of the emacs frame. ~prettify-symbols-mode~ allows certain major modes to change the appearance of strings, the classic example being the Greek letter lambda in lisp-modes for lambda calculus. ~pixel-scroll-precision-mode~ allows you to scroll past things like images without buffers jumping around all the time.
+Visible bell changes the otherwise quite jarring bell sound into a
+visual flash on it top and bottom of the Emacs frame.
+~prettify-symbols-mode~ allows certain major modes to change the
+appearance of strings, the classic example being the Greek letter
+lambda in lisp-modes for lambda calculus. ~pixel-scroll-precision-mode~
+allows you to scroll past things like images without buffers jumping
+around all the time.
  
 #+begin_src emacs-lisp :tangle yes
 (setq visible-bell t
@@ -181,7 +215,8 @@ Visible bell changes the otherwise quite jarring bell sound into a visual flash 
 (setq pixel-scroll-precision-mode t)
 #+end_src
 
-Formats tabs to Linux-kernel standards and keeps them so using the ~aggressive-indent~ package.
+Formats tabs to Linux-kernel standards and keeps them so using the
+~aggressive-indent~ package.
 
 #+begin_src emacs-lisp :tangle yes
 (setq-default tab-width 8)
@@ -224,13 +259,18 @@ Enable mouse use when running Emacs in a terminal emulator.
 (xterm-mouse-mode)
 #+end_src
 
-Without this setting emacs sometimes asks for confirmation via a "Yes or no" prompt, and sometimes "y or n". This is generally difficult to predict, and so this setting forces the message to always send "y or n" forms; like most programs run in a terminal.
+Without this setting Emacs sometimes asks for confirmation via a "Yes
+or no" prompt, and sometimes "y or n". This is generally difficult to
+predict, and so this setting forces the message to always send "y or
+n" forms; like most programs run in a terminal.
 
 #+begin_src emacs-lisp :tangle yes
 (defalias 'yes-or-no-p 'y-or-n-p)
 #+end_src
 
-The default Emacs mode-line is a bit busy and certain elements of it are difficult to intuitively understand. This simplifies it considerably to make it more readable and also adds a header line.
+The default Emacs mode-line is a bit busy and certain elements of it
+are difficult to intuitively understand. This simplifies it
+considerably to make it more readable and also adds a header line.
 
 #+begin_src emacs-lisp :tangle yes
 
@@ -259,7 +299,8 @@ The default Emacs mode-line is a bit busy and certain elements of it are difficu
                 (:eval (setq mode-line-end-spaces mode-line-misc-info))))
 #+end_src
 
-Adds as nicely formatted clock in all cases, even when not running in EXWM.
+Adds as nicely formatted clock in all cases, even when not running in
+EXWM.
 
 #+begin_src emacs-lisp :tangle yes
 (setq display-time-default-load-average nil)
@@ -267,7 +308,10 @@ Adds as nicely formatted clock in all cases, even when not running in EXWM.
 (display-time-mode 1)
 #+end_src
 
-When prose for publication the traditional centered appearance of WYSISWYG is quite comfortable. The ~olivetti~ package does this by centering the contents of the windows where this type of content is displayed.
+When prose for publication the traditional centred appearance of
+WYSISWYG is quite comfortable. The ~olivetti~ package does this by
+centreing the contents of the windows where this type of content is
+displayed.
 
 #+begin_src emacs-lisp :tangle yes
 (use-package olivetti
@@ -285,14 +329,16 @@ When prose for publication the traditional centered appearance of WYSISWYG is qu
                         :background (face-background 'default)))))
 #+end_src
 
-~rainbow-delimiters~ differentiates layers of parentheses using different colours so that they can be identified at a glance.
+~rainbow-delimiters~ differentiates layers of parentheses using
+different colours so that they can be identified at a glance.
 
 #+begin_src emacs-lisp :tangle yes
 (use-package rainbow-delimiters
   :init (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
 #+end_src
 
-~smartparens~ is intended to help in a similar way by highlighting the current sexp.
+~smartparens~ is intended to help in a similar way by highlighting the
+current s-expression.
 
 #+begin_src emacs-lisp :tangle yes
 (use-package smartparens
@@ -316,7 +362,9 @@ Adds little icons for completion frameworks.
     (setq kind-icon-use-icons nil)))
 #+end_src
 
-Emacs is a wonderful alternative to a terminal, encompassing [[https://www.masteringemacs.org/article/running-shells-in-emacs-overview][many of the features]] seen in modern terminals. For a cleaner look, this hides the mode-line in windows used to interact with shells.
+Emacs is a wonderful alternative to a terminal, encompassing [[https://www.masteringemacs.org/article/running-shells-in-emacs-overview][many of
+the features]] seen in modern terminals. For a cleaner look, this hides
+the mode-line in windows used to interact with shells.
 
 #+begin_src emacs-lisp :tangle yes
 (use-package hide-mode-line
@@ -343,7 +391,7 @@ Emacs is a wonderful alternative to a terminal, encompassing [[https://www.maste
 
 ** Dashboard
 
-Configures the all-important emacs dashboard that shows up on startup.
+Configures the all-important Emacs dashboard that shows up on startup.
 
 #+begin_src emacs-lisp :tangle yes
 (use-package dashboard
@@ -1076,7 +1124,7 @@ before, except that covered by that minibuffer.
 
 #+begin_src emacs-lisp :tangle yes
 (use-package stillness-mode
-  :init (setq stillness-mode t))
+  :config (setq stillness-mode t))
 #+end_src
 
 Automatically compresses and decompresses files.
