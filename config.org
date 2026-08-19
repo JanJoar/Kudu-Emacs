@@ -19,6 +19,14 @@
 #+title: Kudu
 #+author: Joar von Arndt
 #+STARTUP: overview
+
+#+begin_export html
+<p align="center">
+  <img width="256px" src="Logos/KuduLogo_red.svg" alt="Banner">
+</p>
+<h3 align="center">Welcome to Kudu Emacs</h3>
+#+end_export
+
 * What is Kudu?
 [[https://github.com/JanJoar/Kudu-Emacs/blob/main/Logos/KuduLogo_red.svg]]
 
