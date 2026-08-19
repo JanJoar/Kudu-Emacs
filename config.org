@@ -930,7 +930,11 @@ If required, consider using the url as the input to the `Read` tool to get the c
         (agent-shell-make-environment-variables :inherit-env t))
 
   (setq agent-shell-pi-environment
-        (agent-shell-make-environment-variables "PATH" (concat "~/.npm-packages/bin" path-separator (getenv "PATH")))))
+        (agent-shell-make-environment-variables "PATH" (concat "~/.npm-packages/bin" path-separator (getenv "PATH"))))
+
+  (defun shell-maker-welcome-message (config)
+  "Return a welcome message to be printed using CONFIG."
+  (format "")))
 
 (use-package agent-shell-notifications
   :hook
@@ -1354,7 +1358,24 @@ Emacs provides many different mail utilities, but one of the most popular is ~mu
 
   (setf message-send-mail-function 'smtpmail-send-it
         mu4e-compose-signature ""
-        mu4e-compose-context-policy 'ask))
+        mu4e-compose-context-policy 'ask)
+
+
+  (defun kudu/mu4e-main-clean-version ()
+    "Remove the '- mu for emacs version' text from the mu4e main view."
+    (when-let ((buf (get-buffer mu4e-main-buffer-name)))
+      (with-current-buffer buf
+        (setq buffer-read-only nil)
+        (save-excursion
+          (goto-char (point-min))
+          (when (re-search-forward
+                 "mu4e - mu for emacs version \\(.*\\)" nil t)
+            (delete-region
+             (line-beginning-position)
+             (line-end-position))))
+        (setq buffer-read-only t))))
+
+  (advice-add 'mu4e--main-redraw :after #'kudu/mu4e-main-clean-version))
 #+end_src
 
 Allows notify-send to inform you of new emails when not using Emacs, and adds a nice mode-line decoration to remind you.
