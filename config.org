@@ -520,7 +520,7 @@ In a sense, spellcheck is also a form of automatic completion. For this we use t
   :bind ("C-." . jinx-correct-nearest)
   :config
   (setq jinx-languages "en_GB sv_SE")
-  (setq global-jinx-mode t)
+  (setq global-jinx-mode t))
 
 #+end_src
 
@@ -1195,7 +1195,7 @@ making it easy to see what window point is active in.
 #+begin_src emacs-lisp :tangle yes
 (use-package winpulse
   :vc (:url "https://github.com/xenodium/winpulse")
-  :config
+  :custom
   (winpulse-mode +1))
 #+end_src
 
