@@ -438,11 +438,17 @@ By default ~corfu~ only works in a GUI environment, but the ~corfu-terminal~ pac
   (add-hook 'completion-at-point-functions #'cape-file)
   (add-hook 'completion-at-point-functions #'cape-abbrev)
   
-  (defun cape-language ()
-    (cape-wrap-super #'cape-dabbrev #'cape-dict))
+  (defun cape-language (&optional interactive)
+    (interactive (list t))
+    (if interactive
+        (cape-interactive #'cape-language)
+      (cape-wrap-super #'cape-dabbrev #'cape-dict)))
 
-  (defun cape-programming ()
-    (cape-wrap-super #'cape-keyword #'cape-elisp-symbol))
+  (defun cape-programming (&optional interactive)
+    (interactive (list t))
+    (if interactive
+        (cape-interactive #'cape-programming)
+      (cape-wrap-super #'cape-keyword #'cape-elisp-symbol)))
   
   (setopt text-mode-ispell-word-completion nil))
 #+end_src
