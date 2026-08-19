@@ -449,6 +449,14 @@ By default ~corfu~ only works in a GUI environment, but the ~corfu-terminal~ pac
     (if interactive
         (cape-interactive #'cape-programming)
       (cape-wrap-super #'cape-keyword #'cape-elisp-symbol)))
+
+  (defun kudu/exclusive-no (orig-fun)
+    "Adds :exclusive 'no to ORIG-FUN so that global
+'completion-at-point-functions' can run."
+    (when-let* ((res (funcall orig-fun)))
+      (append res (list :exclusive 'no))))
+
+  (advice-add 'elisp-completion-at-point :around #'kudu/exclusive-no)
   
   (setopt text-mode-ispell-word-completion nil))
 #+end_src
