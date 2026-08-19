@@ -19,7 +19,8 @@
 
 #+begin_html
 <p align="center">
-  <img width="50%" src="Logos/KuduLogo_red.svg" alt="Banner">
+<img src="Logos/KuduLogo_red.svg" alt="Banner"> style="max-width: 100%; 
+  padding-bottom: 3em; width: 50%;"
 </p>
 <h3 align="center">Welcome to Kudu Emacs</h3>
 #+end_html
