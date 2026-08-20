@@ -583,8 +583,7 @@ Shows those completion results that are hopefully most useful, both in the minib
   (setq prescient-sort-full-matches-first t))
 
 (use-package corfu-prescient
-  :hook
-  (global-corfu-mode . (corfu-prescient-mode)))
+  :hook global-corfu-mode)
 
 (use-package vertico-prescient
   :hook vertico-mode
