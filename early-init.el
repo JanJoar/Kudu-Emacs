@@ -34,6 +34,8 @@
 (add-hook 'minibuffer-setup-hook #'me/defer-garbage-collection-h)
 (add-hook 'minibuffer-exit-hook #'me/restore-garbage-collection-h)
 
+(setq package-quickstart t)
+
 ;; Disabling these things here prevents them from ever loading.
 (scroll-bar-mode -1)
 (tool-bar-mode -1)

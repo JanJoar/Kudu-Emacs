@@ -170,8 +170,6 @@ environment, or another window manager.
        (display-battery-mode 1))
      (setq display-time-day-and-date t)
 
-     (display-time-mode 1)
-
      ;; Changes the name of EXWM-buffers to the corresponding window-name rather than *EXWM*<N>.
      (add-hook 'exwm-update-class-hook
                (lambda ()
@@ -234,9 +232,10 @@ allows you to scroll past things like images without buffers jumping
 around all the time.
  
 #+begin_src emacs-lisp :tangle yes
-(setq visible-bell t
-      global-prettify-symbols-mode 1
-      pixel-scroll-precision-mode t)
+(setq visible-bell t)
+(add-hook 'after-init-hook
+          (lambda () (setq global-prettify-symbols-mode 1
+                           pixel-scroll-precision-mode 1)))
 
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 (add-hook 'prog-mode-hook '(lambda () (toggle-truncate-lines 1)))  
@@ -252,7 +251,7 @@ Formats tabs to Linux-kernel standards and keeps them so using the
 (setq-default indent-tabs-mode nil)
 
 (use-package aggressive-indent
-  :hook (after-init . global-aggressive-indent-mode)
+  :hook prog-mode
   :diminish aggressive-indent-mode
   :init)
 #+end_src
@@ -334,7 +333,8 @@ EXWM.
 #+begin_src emacs-lisp :tangle yes
 (setq display-time-default-load-average nil)
 (setq display-time-24hr-format t)
-(display-time-mode 1)
+
+(display-time-mode)
 #+end_src
 
 When prose for publication the traditional centred appearance of
@@ -373,9 +373,8 @@ current s-expression.
 (use-package smartparens
   :bind (("M-DEL" . sp-backward-delete-word))
   :hook
-  (prog-mode . smartparens-mode)
-  (text-mode . smartparens-mode)
-  :init
+  :hook (prog-mode text-mode markdown-mode org-mode)
+  :config
   (require 'smartparens-config))
 #+end_src
 
@@ -425,6 +424,8 @@ Configures the all-important Emacs dashboard that shows up on startup.
 #+begin_src emacs-lisp :tangle yes
 (use-package dashboard
   :init
+  (dashboard-setup-startup-hook)
+  :config
   (setq dashboard-icon-type 'all-the-icons)
   (setq dashboard-banner-logo-title "Welcome to Kudu Emacs!")
   (setq dashboard-center-content 'middle)
@@ -437,7 +438,6 @@ Configures the all-important Emacs dashboard that shows up on startup.
   (setq dashboard-set-navigator nil)
   (setq dashboard-set-init-info t)
   (setq dashboard-set-footer nil)
-  (dashboard-setup-startup-hook)
 
   (add-hook  'dashboard-mode-hook (lambda ()
                                     (display-line-numbers-mode -1)
@@ -485,9 +485,10 @@ By default ~corfu~ only works in a GUI environment, but the ~corfu-terminal~ pac
 
 #+begin_src emacs-lisp :tangle yes
 (use-package corfu
+  :hook prog-mode
   :custom
   (setq corfu-auto t)
-  :init
+  :config
   (global-corfu-mode)
   (corfu-history-mode)
   (setq corfu-popupinfo-delay 0.5)
@@ -544,9 +545,10 @@ In a sense, spellcheck is also a form of automatic completion. For this we use t
 #+begin_src emacs-lisp :tangle yes
 
 (use-package jinx
-  :hook (after-init . global-jinx-mode)
+  :hook text-mode
   :bind ("C-." . jinx-correct-nearest)
   :config
+  (global-jinx-mode)
   (setq jinx-languages "en_GB sv_SE"))
 
 #+end_src
@@ -565,10 +567,10 @@ Uses ~vertico~ to show minibuffer completion, and ~marginalia~ and ~orderless~ t
   (vertico-mouse-mode))
 
 (use-package marginalia
+  :hook (vertico-mode . marginalia-mode)
   :config
   (setq marginalia-separator " | ")
-  (setq marginalia-align 'center)
-  :init (marginalia-mode 1))
+  (setq marginalia-align 'center))
 
 (use-package orderless
   :custom
@@ -588,12 +590,13 @@ Shows those completion results that are hopefully most useful, both in the minib
   (setq prescient-sort-full-matches-first t))
 
 (use-package corfu-prescient
-  :init (corfu-prescient-mode +1))
+  :hook
+  (global-corfu-mode . (corfu-prescient-mode)))
 
 (use-package vertico-prescient
-  :init
-  (setq vertico-prescient-enable-filtering nil)
-  (vertico-prescient-mode +1))
+  :hook vertico-mode
+  :config
+  (setq vertico-prescient-enable-filtering nil))
 #+end_src
 
 *** Consult
@@ -692,11 +695,12 @@ Tangentially related is Flycheck, providing in-buffer syntax checking.
 
 #+begin_src emacs-lisp :tangle yes
 (use-package flycheck
-  :hook
-  (after-init . global-flycheck-mode)
-  (after-init . (flycheck-disable-checker 'emacs-lisp-checkdoc))
+  :init
+  (global-flycheck-mode)
   :config
-  (global-flycheck-eglot-mode 1))
+  (global-flycheck-eglot-mode 1)
+  (flycheck-disable-checker
+                        'emacs-lisp-checkdoc))
 #+end_src
 
 ** Org-mode
@@ -1149,7 +1153,9 @@ before, except that covered by that minibuffer.
 
 #+begin_src emacs-lisp :tangle yes
 (use-package stillness-mode
-  :config (setq stillness-mode t))
+  :hook vertico
+  :config
+  (stillness-mode))
 #+end_src
 
 Automatically compresses and decompresses files.
@@ -1515,10 +1521,11 @@ and adds a nice mode-line decoration to remind you.
 #+begin_src emacs-lisp :tangle yes
 
 (use-package mu4e-alert
-  :after mu4e
+  :after 'mu4e
+  :config
   (mu4e-alert-set-default-style 'libnotify)
-  (add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
-  (add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display))
+  (setq mu4e-alert-enable-notifications 1)
+  (setq mu4e-alert-enable-mode-line-display 1))
 #+end_src
 
 Allows you to write nicely formatted HTML emails using org-mode to fit
