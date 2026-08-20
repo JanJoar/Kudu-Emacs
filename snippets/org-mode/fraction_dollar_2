@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
-# name: fraction
+# name: fraction_double_dollar
 # key: $fr$
 # --
 $\frac{${1:}}{${2:}}$
