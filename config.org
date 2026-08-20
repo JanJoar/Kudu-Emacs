@@ -303,8 +303,7 @@ considerably to make it more readable and also adds a header line.
                 'display `(space :align-to (- right ,r-length)))))
 
 (setq-default mode-line-format
-              '(
-                "%e"
+              '("%e"
                 (:eval (unless (string-match-p "\\*.*\\*" (buffer-name))
                          (let* ((read-only (and buffer-read-only (buffer-file-name)))
                                 (modified (buffer-modified-p)))
@@ -433,34 +432,34 @@ Configures the all-important Emacs dashboard that shows up on startup.
                                     (display-line-numbers-mode -1)
                                     (setq cursor-type nil)))
   
-  (defvar my-dashboard-tools
+  (defvar kudu/dashboard-tools
     '(("Email"    "m" mu4e)
       ("Elfeed"   "e" elfeed)
       ("Dired"    "f" dired)
       ("Notes"    "n" vulpea-find)
       ("Agent"    "p" agent-shell)))
 
-  (defun my-dashboard-button-action (button)
-    (let ((command (button-get button 'my-dashboard-command)))
+  (defun kudu/dashboard-button-action (button)
+    (let ((command (button-get button 'kudu/dashboard-command)))
       (if (commandp command)
           (call-interactively command)
         (user-error "Invalid Dashboard command: %S" command))))
 
-  (defun my-dashboard-insert-tools (_list-size)
-    (dolist (tool my-dashboard-tools)
+  (defun kudu/dashboard-insert-tools (_list-size)
+    (dolist (tool kudu/dashboard-tools)
       (pcase-let ((`(,label ,key ,command) tool))
         (define-key dashboard-mode-map (kbd key) command)
         (insert (format "%-18s " label))
         (insert-button
          (format "[%s]" key)
-         'action #'my-dashboard-button-action
-         'my-dashboard-command command
+         'action #'kudu/dashboard-button-action
+         'kudu/dashboard-command command
          'follow-link t)
         (insert "\n"))))
 
   (add-to-list
    'dashboard-item-generators
-   '(tools . my-dashboard-insert-tools))
+   '(tools . kudu/dashboard-insert-tools))
 
   (setq dashboard-items
         '((tools . 1))))
