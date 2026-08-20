@@ -77,8 +77,7 @@ declarations for ~package.el~ to install all the other packages needed.
 
 #+begin_src emacs-lisp :tangle yes
 (setq use-package-always-defer t
-      use-package-always-ensure t
-      use-package-verbose t)
+      use-package-always-ensure t)
 
 (unless (package-installed-p 'diminish)
   (package-refresh-contents)
@@ -129,99 +128,100 @@ user wants to run Emacs in the terminal, on a computer using a desktop
 environment, or another window manager.
 
 #+begin_src emacs-lisp :tangle yes
-(use-package exwm
-  :init
+(if (display-graphic-p)
+    (use-package exwm
+   :init
 
-  ;; EXWM related functions
+   ;; EXWM related functions
 
-  (defun xrandr-find-monitor-names ()
-    "Returns a list of connected monitors"
-    (let ((xrandr-contents nil) (monitor-names nil))
-      (shell-command "xrandr" "*xrandr-output*")
-      (switch-to-buffer "*xrandr-output*")
-      (setq xrandr-contents (buffer-string))
-      (kill-buffer "*xrandr-output*")
-      (setq xrandr-contents (replace-regexp-in-string "\\(.* connected\\).*\n\\|.*\n" "\\1" xrandr-contents))
-      ;; Find the string only of the monitors that are connected according to xrandr and remove all other text.
-      (remove "" (split-string xrandr-contents " connected"))))
+   (defun xrandr-find-monitor-names ()
+     "Returns a list of connected monitors"
+     (let ((xrandr-contents nil) (monitor-names nil))
+       (shell-command "xrandr" "*xrandr-output*")
+       (switch-to-buffer "*xrandr-output*")
+       (setq xrandr-contents (buffer-string))
+       (kill-buffer "*xrandr-output*")
+       (setq xrandr-contents (replace-regexp-in-string "\\(.* connected\\).*\n\\|.*\n" "\\1" xrandr-contents))
+       ;; Find the string only of the monitors that are connected according to xrandr and remove all other text.
+       (remove "" (split-string xrandr-contents " connected"))))
 
-  (defun exwm-monitors-format ()
-    "Formats the list from xrandr-find-monitor-names to apply EXWM workspaces"
-    (let ((monitors (xrandr-find-monitor-names)) (counter 0) (return-value nil))
-      (while monitors
-        (push counter return-value)
-        (push (car monitors) return-value)
-        (setq counter (+ counter 1))
-        (setq monitors (cdr monitors)))
-      (nreverse return-value)))
+   (defun exwm-monitors-format ()
+     "Formats the list from xrandr-find-monitor-names to apply EXWM workspaces"
+     (let ((monitors (xrandr-find-monitor-names)) (counter 0) (return-value nil))
+       (while monitors
+         (push counter return-value)
+         (push (car monitors) return-value)
+         (setq counter (+ counter 1))
+         (setq monitors (cdr monitors)))
+       (nreverse return-value)))
 
-  (setq switch-to-buffer-obey-display-actions t)
-  (defvar exwm-is-running nil)
-  (shell-command "wmctrl -m ; echo $status" "*window-manager*" "*window-manager-error*")
+   (setq switch-to-buffer-obey-display-actions t)
+   (defvar exwm-is-running nil)
+   (shell-command "wmctrl -m ; echo $status" "*window-manager*" "*window-manager-error*")
 
-  (when (and
-         (get-buffer "*window-manager-error*") ;; The shell command has to both encounter an error and a running in an X environment.
-         (eq window-system 'x))
-    (setq exwm-is-running t)
+   (when (and
+          (get-buffer "*window-manager-error*") ;; The shell command has to both encounter an error and a running in an X environment.
+          (eq window-system 'x))
+     (setq exwm-is-running t)
 
 
-    (setq battery-mode-line-format "⟨%b%p%%⟩ ")
-    (unless (equal "Power N/A, battery unknown (N/A% load, remaining time N/A)" (battery))
-      (display-battery-mode 1))
-    (setq display-time-day-and-date t)
+     (setq battery-mode-line-format "⟨%b%p%%⟩ ")
+     (unless (equal "Power N/A, battery unknown (N/A% load, remaining time N/A)" (battery))
+       (display-battery-mode 1))
+     (setq display-time-day-and-date t)
 
-    (display-time-mode 1)
+     (display-time-mode 1)
 
-    ;; Changes the name of EXWM-buffers to the corresponding window-name rather than *EXWM*<N>.
-    (add-hook 'exwm-update-class-hook
-              (lambda ()
-                (exwm-workspace-rename-buffer exwm-class-name)))
+     ;; Changes the name of EXWM-buffers to the corresponding window-name rather than *EXWM*<N>.
+     (add-hook 'exwm-update-class-hook
+               (lambda ()
+                 (exwm-workspace-rename-buffer exwm-class-name)))
 
-    ;; Configure monitors
-    (require 'exwm-randr)
-    (setq exwm-randr-workspace-monitor-plist (exwm-monitors-format))
-    (setq exwm-workspace-number (length (xrandr-find-monitor-names)))
-    (shell-command "bash ~/.screenlayout/desktop.sh")
-    (setq exwm-workspace-number (/ (length (exwm-monitors-format)) 2))      
-    (exwm-randr-enable)
+     ;; Configure monitors
+     (require 'exwm-randr)
+     (setq exwm-randr-workspace-monitor-plist (exwm-monitors-format))
+     (setq exwm-workspace-number (length (xrandr-find-monitor-names)))
+     (shell-command "bash ~/.screenlayout/desktop.sh")
+     (setq exwm-workspace-number (/ (length (exwm-monitors-format)) 2))      
+     (exwm-randr-enable)
 
-    ;; These  keys will always be sent to EXWM rather than to the X window.
-    (setq exwm-input-prefix-keys
-          '(?\C-x
-            ?\C-g
-            ?\M-x
-            ?\M-z))
+     ;; These  keys will always be sent to EXWM rather than to the X window.
+     (setq exwm-input-prefix-keys
+           '(?\C-x
+             ?\C-g
+             ?\M-x
+             ?\M-z))
 
-    ;; Sends the key after C-q directly to the X window.
-    ;; (define-key exwm-mode-map [?\C-q] 'exwm-input-send-next-key)
+     ;; Sends the key after C-q directly to the X window.
+     ;; (define-key exwm-mode-map [?\C-q] 'exwm-input-send-next-key)
 
-    (setq exwm-input-global-keys
-          `(
-            ([?\s-r] . exwm-reset)
-            ([s-left] . windmove-left)
-            ([s-right] . windmove-right)
-            ([s-up] . windmove-up)
-            ([s-down] . windmove-down)
-            ([?\s-w] . exwm-workspace-switch)
-            ([?\C-q] . exwm-input-send-next-key)
-            ([?\s-a] . (lambda (command)
-                         (interactive (list (read-shell-command " λ ")))
-                         (start-process-shell-command command nil command)))
-            ([?\s-w] . exwm-workspace-switch)
-            ([?\s-u] . (lambda ()
-                         (interactive)
-                         (shell-command "brightnessctl --quiet --min-value set +10")))
-            ([?\s-d] . (lambda ()
-                         (interactive)
-                         (shell-command "brightnessctl --quiet --min-value set 10-")))
-            ))
-    ;; Actually starts EXWM
-    (exwm-enable))
+     (setq exwm-input-global-keys
+           `(
+             ([?\s-r] . exwm-reset)
+             ([s-left] . windmove-left)
+             ([s-right] . windmove-right)
+             ([s-up] . windmove-up)
+             ([s-down] . windmove-down)
+             ([?\s-w] . exwm-workspace-switch)
+             ([?\C-q] . exwm-input-send-next-key)
+             ([?\s-a] . (lambda (command)
+                          (interactive (list (read-shell-command " λ ")))
+                          (start-process-shell-command command nil command)))
+             ([?\s-w] . exwm-workspace-switch)
+             ([?\s-u] . (lambda ()
+                          (interactive)
+                          (shell-command "brightnessctl --quiet --min-value set +10")))
+             ([?\s-d] . (lambda ()
+                          (interactive)
+                          (shell-command "brightnessctl --quiet --min-value set 10-")))
+             ))
+     ;; Actually starts EXWM
+     (exwm-enable))
 
-  (when (get-buffer "*window-manager*")
-    (kill-buffer "*window-manager*"))
-  (when (get-buffer "*window-manager-error*")
-    (kill-buffer "*window-manager-error*")))
+   (when (get-buffer "*window-manager*")
+     (kill-buffer "*window-manager*"))
+   (when (get-buffer "*window-manager-error*")
+     (kill-buffer "*window-manager-error*"))))
 #+end_src
 
 ** General visual elements
@@ -252,8 +252,9 @@ Formats tabs to Linux-kernel standards and keeps them so using the
 (setq-default indent-tabs-mode nil)
 
 (use-package aggressive-indent
+  :hook (after-init . global-aggressive-indent-mode)
   :diminish aggressive-indent-mode
-  :init (global-aggressive-indent-mode))
+  :init)
 #+end_src
 
 Creates ample spacing around elements such as between buffers, around
@@ -543,10 +544,10 @@ In a sense, spellcheck is also a form of automatic completion. For this we use t
 #+begin_src emacs-lisp :tangle yes
 
 (use-package jinx
+  :hook (after-init . global-jinx-mode)
   :bind ("C-." . jinx-correct-nearest)
   :config
-  (setq jinx-languages "en_GB sv_SE")
-  (setq global-jinx-mode t))
+  (setq jinx-languages "en_GB sv_SE"))
 
 #+end_src
 
@@ -691,9 +692,10 @@ Tangentially related is Flycheck, providing in-buffer syntax checking.
 
 #+begin_src emacs-lisp :tangle yes
 (use-package flycheck
-  :hook (after-init . global-flycheck-mode)
+  :hook
+  (after-init . global-flycheck-mode)
+  (after-init . (flycheck-disable-checker 'emacs-lisp-checkdoc))
   :config
-  (flycheck-disable-checker 'emacs-lisp-checkdoc)
   (global-flycheck-eglot-mode 1))
 #+end_src
 
@@ -722,7 +724,9 @@ Configures Org-mode to make it more attractive and usable.
         org-hide-emphasis-markers t
         org-src-preserve-indentation t
         org-export-with-broken-links t)
-  (add-hook 'text-mode-hook 'turn-on-visual-line-mode))
+  (add-hook 'text-mode-hook 'turn-on-visual-line-mode)
+  (add-to-list 'org-latex-packages-alist
+             '("AUTO" "babel" t ("pdflatex" "xelatex" "lualatex"))))
 
 (use-package org-superstar
   :hook (org-mode . org-superstar-mode))
@@ -775,9 +779,6 @@ Configures Org-mode to make it more attractive and usable.
     (rename-buffer title t)))
 
 (add-hook 'org-mode-hook 'org-title-to-buffer-name)
-
-(add-to-list 'org-latex-packages-alist
-             '("AUTO" "babel" t ("pdflatex" "xelatex" "lualatex")))
 #+end_src
 
 *** Org-roam

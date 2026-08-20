@@ -26,8 +26,10 @@
                            ;; newer changes.
 
 (defvar Kudu-gui-logo "~/.emacs.d/Logos/KuduLogo_text.txt")
-(shell-command "touch ~/.emacs.d/custom.el")
-(kill-buffer "*Shell Command Output*")
+(unless (file-exists-p "~/.emacs.d/custom.el")
+  (shell-command "touch ~/.emacs.d/custom.el"))
+(if (get-buffer "*Shell Command Output*")
+    (kill-buffer "*Shell Command Output*"))
 
 (require 'package)
 
@@ -38,11 +40,17 @@
 
 (package-initialize)
 
-(org-babel-load-file (expand-file-name "~/.emacs.d/config.org")) ;; The main configuration file, running commands, setting keybinds, and configuring packages.
+(if (file-newer-than-file-p (expand-file-name "~/.emacs.d/config.org") ;; The main configuration file, running commands, setting keybinds, and configuring packages.
+                            (expand-file-name "~/.emacs.d/config.el"))
+    (org-babel-load-file (expand-file-name "~/.emacs.d/config.org"))
+  (load-file (expand-file-name "~/.emacs.d/config.el")))
 
-(if (file-exists-p "~/.emacs.d/secrets/secret.org")
+(if (file-newer-than-file-p (expand-file-name "~/.emacs.d/secrets/secret.org")
+                            (expand-file-name "~/.emacs.d/secrets/secret.el"))
     (org-babel-load-file (expand-file-name "~/.emacs.d/secrets/secret.org"))
-  (shell-command "touch ~/.emacs.d/secrets/secret.org"))
+  (if (file-exists-p (expand-file-name "~/.emacs.d/secrets/secret.el"))
+      (load-file (expand-file-name "~/.emacs.d/secrets/secret.el"))
+    (shell-command "touch ~/.emacs.d/secrets/secret.org")))
 
 ;; User-unique information (like E-mail address and full name) that
 ;; you might not want to share openly. Empty by default. Since the
