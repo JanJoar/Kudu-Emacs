@@ -54,6 +54,7 @@
 ;; touch in order to be loaded.
 
 (setq custom-file "~/.emacs.d/custom.el")
-(load custom-file)
+(if (file-exists-p custom-file)
+    (load custom-file))
 
 ;;; init.el ends here
