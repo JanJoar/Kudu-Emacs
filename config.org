@@ -1054,6 +1054,7 @@ If required, consider using the url as the input to the `Read` tool to get the c
   (format "")))
 
 (use-package agent-shell-notifications
+  :vc (:url "https://github.com/zackattackz/agent-shell-notifications/")
   :hook
   (agent-shell-mode . agent-shell-notifications-mode)
   (agent-shell-viewport-edit-mode . agent-shell-notifications-viewport-edit-mode)
