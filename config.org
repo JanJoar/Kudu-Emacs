@@ -423,8 +423,6 @@ Configures the all-important Emacs dashboard that shows up on startup.
 
 #+begin_src emacs-lisp :tangle yes
 (use-package dashboard
-  :hook
-  (dashboard-mode . (lambda () (solaire-mode -1)))
   :init
   (setq dashboard-icon-type 'all-the-icons)
   (setq dashboard-banner-logo-title "Welcome to Kudu Emacs!")
