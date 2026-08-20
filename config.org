@@ -887,7 +887,9 @@ make it a formidable tool accessible directly within Emacs. Take that
 ~n³~ and midnight commander!
 
 #+begin_src emacs-lisp :tangle yes
-(defun dired-open-with-find-file (orig-fun &optional other-window)
+(use-package dired-open-with
+  :preface
+  (defun dired-open-with-find-file (orig-fun &optional other-window)
   "Run dired-open-with if the file is a PDF, image, or video."
   (let ((file (dired-get-filename)))
     (if (and file
@@ -900,10 +902,7 @@ make it a formidable tool accessible directly within Emacs. Take that
                  (string-match "\\.avi\\'" file)))
         (dired-open-with)
       (funcall orig-fun))))  ;; Call the original function for other file types.
-
-(use-package dired-open-with
-  :hook dired-mode
-  :config
+  :init
   (advice-add 'dired-find-file :around 'dired-open-with-find-file))
 
 (setf dired-kill-when-opening-new-dired-buffer t)
