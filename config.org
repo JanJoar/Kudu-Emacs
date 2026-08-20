@@ -93,9 +93,10 @@ sure that updated elisp files take priority over older, compiled
 files.
 
 #+begin_src emacs-lisp :tangle yes
-(use-package auto-compile 
+(use-package auto-compile
+  :after dashboard
   :ensure t
-  :init
+  :config
   (auto-compile-on-load-mode 1)
   (auto-compile-on-save-mode 1))
 
@@ -130,8 +131,8 @@ environment, or another window manager.
 #+begin_src emacs-lisp :tangle yes
 (if (display-graphic-p)
     (use-package exwm
-   :init
-
+      :defer 0.1
+      :config
    ;; EXWM related functions
 
    (defun xrandr-find-monitor-names ()
@@ -157,7 +158,7 @@ environment, or another window manager.
 
    (setq switch-to-buffer-obey-display-actions t)
    (defvar exwm-is-running nil)
-   (shell-command "wmctrl -m ; echo $status" "*window-manager*" "*window-manager-error*")
+   (call-process "sh" nil "*window-manager*" nil "-c" "wmctrl -m; echo $status")
 
    (when (and
           (get-buffer "*window-manager-error*") ;; The shell command has to both encounter an error and a running in an X environment.
@@ -252,8 +253,7 @@ Formats tabs to Linux-kernel standards and keeps them so using the
 
 (use-package aggressive-indent
   :hook prog-mode
-  :diminish aggressive-indent-mode
-  :init)
+  :diminish aggressive-indent-mode)
 #+end_src
 
 Creates ample spacing around elements such as between buffers, around
@@ -339,13 +339,9 @@ displayed.
 #+begin_src emacs-lisp :tangle yes
 (use-package olivetti
   :hook
-  (org-mode . olivetti-mode)
-  (markdown-mode . olivetti-mode)
-  (eww-mode . olivetti-mode)
-  (message-mode . olivetti-mode)
-  (elfeed-show-mode . olivetti-mode)
-  :init
-  (setq-default olivetti-body-width 108)
+  (org-mode markdown-mode eww-mode message-mode elfeed-show-mode)
+  :config
+  (setq-default olivetti-body-width (+ fill-column 15))
   (add-hook 'olivetti-mode-hook
             (lambda () (set-face-attribute
                         'olivetti-fringe nil
@@ -357,7 +353,7 @@ different colours so that they can be identified at a glance.
 
 #+begin_src emacs-lisp :tangle yes
 (use-package rainbow-delimiters
-  :init (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
+  :hook prog-mode)
 #+end_src
 
 ~smartparens~ is intended to help in a similar way by highlighting the
@@ -366,7 +362,6 @@ current s-expression.
 #+begin_src emacs-lisp :tangle yes
 (use-package smartparens
   :bind (("M-DEL" . sp-backward-delete-word))
-  :hook
   :hook (prog-mode text-mode markdown-mode org-mode)
   :config
   (require 'smartparens-config))
@@ -379,7 +374,8 @@ Adds little icons for completion frameworks.
 (use-package kind-icon
   :after corfu
   :custom (kind-icon-default-face 'corfu-default)
-  :init (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)
+  :config
+  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)
   (unless (display-graphic-p)
     (setq kind-icon-use-icons nil)))
 #+end_src
@@ -479,7 +475,7 @@ By default ~corfu~ only works in a GUI environment, but the ~corfu-terminal~ pac
 
 #+begin_src emacs-lisp :tangle yes
 (use-package corfu
-  :hook prog-mode
+  :hook (prog-mode text-mode)
   :custom
   (setq corfu-auto t)
   :config
@@ -489,7 +485,8 @@ By default ~corfu~ only works in a GUI environment, but the ~corfu-terminal~ pac
   (corfu-popupinfo-mode +1))
 
 (use-package corfu-terminal
-  :init
+  :after corfu
+  :config
   (unless (display-graphic-p)
     (corfu-terminal-mode +1)))
 #+end_src
@@ -500,7 +497,8 @@ By default ~corfu~ only works in a GUI environment, but the ~corfu-terminal~ pac
   
 #+begin_src emacs-lisp :tangle yes
 (use-package cape
-  :init
+  :after corfu
+  :config
   (setq cape-dict-file (list "/home/jovo/Documents/Papers/english-dict" "/home/jovo/Documents/Papers/swedish-dict")
         cape-dabbrev-buffer-function #'cape-text-buffers)
   (add-hook 'completion-at-point-functions #'cape-history)
@@ -561,7 +559,7 @@ Uses ~vertico~ to show minibuffer completion, and ~marginalia~ and ~orderless~ t
   (vertico-mouse-mode))
 
 (use-package marginalia
-  :hook (vertico-mode . marginalia-mode)
+  :hook emacs-startup
   :config
   (setq marginalia-separator " | ")
   (setq marginalia-align 'center))
@@ -578,7 +576,8 @@ Shows those completion results that are hopefully most useful, both in the minib
 
 #+begin_src emacs-lisp :tangle yes
 (use-package prescient
-  :init
+  :after vertico
+  :config
   (setq prescient-persist-mode t)
   (setq prescient-history-length 5)
   (setq prescient-sort-full-matches-first t))
@@ -653,17 +652,11 @@ Shows those completion results that are hopefully most useful, both in the minib
          ("M-r" . consult-history)
          :map vertico-map
          ("C-s" . consult-fd))
-
-  :init
-  ;; Optionally tweak the register preview window.
-  ;; This adds thin lines, sorting and hides the mode line of the window.
+  :config
   (advice-add #'register-preview :override #'consult-register-window)
-
-  ;; Use Consult to select xref locations with preview
   (setq xref-show-xrefs-function #'consult-xref
         xref-show-definitions-function #'consult-xref)
 
-  :config
   (setq consult-async-refresh-delay 0
         consult-async-input-throttle 0
         consult-async-input-debounce 0)
@@ -689,12 +682,10 @@ Tangentially related is Flycheck, providing in-buffer syntax checking.
 
 #+begin_src emacs-lisp :tangle yes
 (use-package flycheck
-  :init
-  (global-flycheck-mode)
+  :hook emacs-startup
   :config
-  (global-flycheck-eglot-mode 1)
-  (flycheck-disable-checker
-                        'emacs-lisp-checkdoc))
+  (global-flycheck-mode)
+  (global-flycheck-eglot-mode 1))
 #+end_src
 
 ** Org-mode
@@ -911,7 +902,8 @@ make it a formidable tool accessible directly within Emacs. Take that
       (funcall orig-fun))))  ;; Call the original function for other file types.
 
 (use-package dired-open-with
-  :init
+  :hook dired-mode
+  :config
   (advice-add 'dired-find-file :around 'dired-open-with-find-file))
 
 (setf dired-kill-when-opening-new-dired-buffer t)
@@ -941,7 +933,7 @@ evince or zathura) using the above ~openwith~ package.
 
 #+begin_src emacs-lisp :tangle yes
 (use-package pdf-tools
-  :init
+  :config
   (pdf-loader-install)
   (add-hook  'pdf-view-mode-hook (lambda () (display-line-numbers-mode -1))))
 #+end_src
@@ -1079,8 +1071,7 @@ few short characters.
 
 #+begin_src emacs-lisp :tangle yes
 (use-package avy
-  :init
-  (bind-key "C-<tab>" 'avy-goto-char-2))
+  :bind (("C-<tab>" . avy-goto-char-2)))
 #+end_src
 
 Emacs is better than any terminal emulator, and being able to run
