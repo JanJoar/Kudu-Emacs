@@ -496,7 +496,7 @@ By default ~corfu~ only works in a GUI environment, but the ~corfu-terminal~ pac
   
 #+begin_src emacs-lisp :tangle yes
 (use-package cape
-  :after corfu
+  :defer 0.1
   :config
   (setq cape-dict-file (list "/home/jovo/Documents/Papers/english-dict" "/home/jovo/Documents/Papers/swedish-dict")
         cape-dabbrev-buffer-function #'cape-text-buffers)
@@ -680,8 +680,9 @@ Tangentially related is Flycheck, providing in-buffer syntax checking.
 
 #+begin_src emacs-lisp :tangle yes
 (use-package flycheck
-  :hook emacs-startup
+  :after cape
   :config
+  (setq flycheck-global-modes '(not lisp-interaction-mode))
   (global-flycheck-mode)
   (global-flycheck-eglot-mode 1))
 #+end_src
