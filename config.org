@@ -321,7 +321,8 @@ considerably to make it more readable and also adds a header line.
             (let* ((read-only (and buffer-read-only (buffer-file-name)))
                    (modified (buffer-modified-p)))
               (propertize
-               (if buffer-read-only ""
+               (if (or buffer-read-only
+                       (not (buffer-file-name))) ""
                  (if modified "| ☦ |  "
                    "|    |  "))))))
    mode-name
