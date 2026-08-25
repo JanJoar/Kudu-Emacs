@@ -327,8 +327,9 @@ considerably to make it more readable and also adds a header line.
    mode-name
    " "
    mode-line-buffer-identification
-   (vc-mode vc-mode)
-   (:eval (mode-line-padding))
+   mode-line-format-right-align
+   (:eval (propertize (or vc-mode "") 'face 'org-tag))
+   " "
    (:eval (setq mode-line-end-spaces mode-line-misc-info))))
  #+end_src
 
