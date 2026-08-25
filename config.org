@@ -438,6 +438,7 @@ Configures the all-important Emacs dashboard that shows up on startup.
     '(("Email"    "m" mu4e)
       ("Elfeed"   "e" elfeed)
       ("Dired"    "f" dired)
+      ("Scratch"  "s" scratch-buffer)
       ("Notes"    "n" vulpea-find)
       ("Agent"    "p" agent-shell)))
 
