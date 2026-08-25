@@ -340,7 +340,7 @@ displayed.
   :hook
   (org-mode markdown-mode eww-mode message-mode elfeed-show-mode)
   :config
-  (setq-default olivetti-body-width fill-column)
+  (setq-default olivetti-body-width (+ fill-column 5))
   (add-hook 'olivetti-mode-hook
             (lambda () (set-face-attribute
                         'olivetti-fringe nil
