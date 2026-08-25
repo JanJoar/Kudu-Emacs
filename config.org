@@ -340,11 +340,13 @@ displayed.
   :hook
   (org-mode markdown-mode eww-mode message-mode elfeed-show-mode)
   :config
-  (setq-default olivetti-body-width (+ fill-column 15))
+  (setq-default olivetti-body-width fill-column)
   (add-hook 'olivetti-mode-hook
             (lambda () (set-face-attribute
                         'olivetti-fringe nil
-                        :background (face-background 'default)))))
+                        :inherit 'default
+                        :background 'unspecified
+                        :foreground 'unspecified))))
 #+end_src
 
 ~rainbow-delimiters~ differentiates layers of parentheses using
