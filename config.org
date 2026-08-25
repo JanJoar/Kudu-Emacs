@@ -267,12 +267,21 @@ the mode line, and the edges of the screen.
   (spacious-padding-mode)
   :config
   (setq spacious-padding-widths
-        '(:internal-border-width 15
-          :header-line-width 5
-          :mode-line-width 10
-          :right-divider-width 5
-          :fringe-width 10))
-  (setq spacious-padding-subtle-frame-lines t))
+        '(:internal-border-width
+          15
+          :header-line-width
+          5
+          :mode-line-width
+          10
+          :right-divider-width
+          5
+          :fringe-width
+          10))
+  (if (display-graphic-p)
+      (setq spacious-padding-subtle-frame-lines t)
+    (setq spacious-padding-subtle-frame-lines
+          '(:mode-line-active org-hide
+                              :mode-line-inactive org-hide))))
 #+end_src
 
 Enable mouse use when running Emacs in a terminal emulator.
