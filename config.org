@@ -1055,6 +1055,7 @@ If required, consider using the url as the input to the `Read` tool to get the c
   (setq agent-shell-pi-environment
         (agent-shell-make-environment-variables "PATH" (concat "~/.npm-packages/bin" path-separator (getenv "PATH"))))
 
+  (setq agent-shell-transcript-file-path-function nil)
   (defun shell-maker-welcome-message (config)
   "Return a welcome message to be printed using CONFIG."
   (format "")))
