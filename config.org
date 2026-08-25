@@ -311,23 +311,23 @@ considerably to make it more readable and also adds a header line.
     (propertize " "
                 'display `(space :align-to (- right ,r-length)))))
 
-(setq-default mode-line-format
-              '("%e"
-                (:eval (unless (string-match-p "\\*.*\\*" (buffer-name))
-                         (let* ((read-only (and buffer-read-only (buffer-file-name)))
-                                (modified (buffer-modified-p)))
-                           (propertize
-                            (if buffer-read-only "|    |"
-                              (if modified "| ☦ |"
-                                "|    |"))))))
-                "  "
-                mode-name
-                " "
-                mode-line-buffer-identification
-                (vc-mode vc-mode)
-                (:eval (mode-line-padding))
-                (:eval (setq mode-line-end-spaces mode-line-misc-info))))
-#+end_src
+(setq-default
+ mode-line-format
+ '("%e"
+   (:eval (unless (string-match-p "\\*.*\\*" (buffer-name))
+            (let* ((read-only (and buffer-read-only (buffer-file-name)))
+                   (modified (buffer-modified-p)))
+              (propertize
+               (if buffer-read-only ""
+                 (if modified "| ☦ |  "
+                   "|    |  "))))))
+   mode-name
+   " "
+   mode-line-buffer-identification
+   (vc-mode vc-mode)
+   (:eval (mode-line-padding))
+   (:eval (setq mode-line-end-spaces mode-line-misc-info))))
+ #+end_src
 
 Adds as nicely formatted clock in all cases, even when not running in
 EXWM.
@@ -1055,6 +1055,7 @@ If required, consider using the url as the input to the `Read` tool to get the c
   (format "")))
 
 (use-package agent-shell-notifications
+  :preface (add-to-list 'load-path "~/.emacs.d/elpa/agent-shell-notifications")
   :vc (:url "https://github.com/zackattackz/agent-shell-notifications/")
   :hook
   (agent-shell-mode . agent-shell-notifications-mode)
