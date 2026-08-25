@@ -282,6 +282,9 @@ the mode line, and the edges of the screen.
     (setq spacious-padding-subtle-frame-lines
           '(:mode-line-active org-hide
                               :mode-line-inactive org-hide))))
+
+(setq modus-themes-italic-constructs t)
+(setq modus-themes-bold-constructs t)
 #+end_src
 
 Enable mouse use when running Emacs in a terminal emulator.
