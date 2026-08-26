@@ -287,12 +287,6 @@ the mode line, and the edges of the screen.
 (setq modus-themes-bold-constructs t)
 #+end_src
 
-Enable mouse use when running Emacs in a terminal emulator.
-
-#+begin_src emacs-lisp :tangle yes
-(xterm-mouse-mode)
-#+end_src
-
 Without this setting Emacs sometimes asks for confirmation via a "Yes
 or no" prompt, and sometimes "y or n". This is generally difficult to
 predict, and so this setting forces the message to always send "y or
