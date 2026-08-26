@@ -731,7 +731,28 @@ Configures Org-mode to make it more attractive and usable.
         org-export-with-broken-links t)
   (add-hook 'text-mode-hook 'turn-on-visual-line-mode)
   (add-to-list 'org-latex-packages-alist
-             '("AUTO" "babel" t ("pdflatex" "xelatex" "lualatex"))))
+               '("AUTO" "babel" t ("pdflatex" "xelatex" "lualatex")))
+
+  (defun kudu/org-latex-small-caps (text backend _info)
+    "Wrap runs of two or more uppercase letters in LaTeX small caps."
+    (when (org-export-derived-backend-p backend 'latex)
+      (let ((case-fold-search nil))
+        (with-temp-buffer
+          (insert text)
+          (goto-char (point-min))
+          (while (re-search-forward
+                  "[[:upper:]][[:upper:][:digit:]]*"
+                  nil t)
+            (let ((match (match-string-no-properties 0)))
+              (when (>= (length match) 2)
+                (replace-match
+                 (concat "\\textsc{" (downcase match) "}")
+                 t
+                 t))))
+          (buffer-string)))))
+
+  (add-hook 'org-export-filter-plain-text-functions
+            #'kudu/org-latex-small-caps))
 
 (use-package org-superstar
   :hook (org-mode . org-superstar-mode))
