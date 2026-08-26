@@ -985,7 +985,8 @@ default, so it is defined here.
   :config
   (setq magit-process-find-password-functions
         '(magit-process-password-auth-source)
-        magit-process-connection-type 'pty)
+        magit-process-connection-type 'pty
+        magit-log-section-commit-count 20)
   
   (add-hook 'git-commit-setup-hook
             (lambda ()
