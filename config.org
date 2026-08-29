@@ -322,8 +322,8 @@ considerably to make it more readable and also adds a header line.
               (propertize
                (if (or buffer-read-only
                        (not (buffer-file-name))) ""
-                 (if modified "| ☦ |  "
-                   "|    |  "))))))
+                 (if modified "☦ "
+                   ""))))))
    mode-name
    " "
    mode-line-buffer-identification
