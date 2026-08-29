@@ -1454,6 +1454,17 @@ directory and a local SMTP server to send the mail.
         mml-secure-openpgp-encrypt-to-self t
         mail-signature-file "~/Documents/Papers/signature.txt")
 
+  (defun kudu/hide-mu4e-update-modeline (&rest _)
+    "Hides the mode-line in '*mu4e-updates*'-buffers."
+    (when (buffer-live-p mu4e--update-buffer)
+      (with-current-buffer mu4e--update-buffer
+        (unless (derived-mode-p 'mu4e--update-mail-mode)
+          (mu4e--update-mail-mode))
+        (hide-mode-line-mode 1))))
+
+  (advice-add 'mu4e--update-mail-and-index-real
+              :after #'kudu/hide-mu4e-update-modeline)
+
   (setq mu4e-split-view 'vertical)
 
   (setq mu4e-headers-visible-columns 100)
