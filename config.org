@@ -1547,7 +1547,7 @@ and adds a nice mode-line decoration to remind you.
   :after 'mu4e
   :config
   (mu4e-alert-set-default-style 'libnotify)
-  (setq mu4e-alert-enable-notifications 1)
+  (mu4e-alert-enable-notifications)
   (setq mu4e-alert-enable-mode-line-display 1))
 #+end_src
 
