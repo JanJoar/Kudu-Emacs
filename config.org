@@ -241,6 +241,11 @@ around all the time.
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 (add-hook 'prog-mode-hook '(lambda () (toggle-truncate-lines 1)))  
 (setq pixel-scroll-precision-mode t)
+(setq scroll-margin 2)
+
+(setq comint-scroll-to-bottom-on-input t
+      comint-scroll-to-bottom-on-output nil
+      redisplay-skip-fontification-on-input t)
 #+end_src
 
 Formats tabs to Linux-kernel standards and keeps them so using the
