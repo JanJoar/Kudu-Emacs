@@ -750,6 +750,24 @@ Configures Org-mode to make it more attractive and usable.
                  t))))
           (buffer-string)))))
 
+  (defun kudu/org-latex-chinese (text backend _info)
+    "Wrap runs of Chinese characters in \\zh{} for LaTeX export."
+    (when (org-export-derived-backend-p backend 'latex)
+      (with-temp-buffer
+        (insert text)
+        (goto-char (point-min))
+        ;; Add more characters/ranges here if your text requires them.
+        (let ((chinese-re "[一-龥々〆〇ヶ]+"))
+          (while (re-search-forward chinese-re nil t)
+            (let ((match (match-string-no-properties 0)))
+              (replace-match
+               (format "\\zh{%s}" match)
+               t
+               t))))
+        (buffer-string))))
+
+  (add-hook 'org-export-filter-plain-text-functions
+            #'kudu/org-latex-chinese)
   (add-hook 'org-export-filter-plain-text-functions
             #'kudu/org-latex-small-caps))
 
