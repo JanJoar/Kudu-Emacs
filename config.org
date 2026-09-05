@@ -608,9 +608,12 @@ Shows those completion results that are hopefully most useful, both in the minib
 
 *** Etags-regen
 
+This automatically regenerates the TAGS file containing information about the
+structure of programming projects for many languages.
+
 #+begin_src emacs-lisp
 (use-package etags-regen
-  :after consult
+  :after xref
   :config
   (setq etags-regen-ignores
         '("*.pyc" ".git" ".venv" "venv" "node_modules"))
