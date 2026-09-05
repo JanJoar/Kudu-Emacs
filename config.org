@@ -534,6 +534,12 @@ By default ~corfu~ only works in a GUI environment, but the ~corfu-terminal~ pac
         (cape-interactive #'cape-programming)
       (cape-wrap-super #'cape-keyword #'cape-elisp-symbol)))
 
+  (defun cape-all (&optional interactive)
+    (interactive (list t))
+    (if interactive
+        (cape-interactive #'cape-language)
+      (cape-wrap-super #'cape-programming #'cape-language)))
+
   (defun kudu/exclusive-no (orig-fun)
     "Adds :exclusive 'no to ORIG-FUN so that global
 'completion-at-point-functions' can run."
