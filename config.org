@@ -655,8 +655,8 @@ structure of programming projects for many languages.
          ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading
          ("M-g m" . consult-mark)
          ("M-g k" . consult-global-mark)
-         ("M-s i" . consult-imenu)
-         ("M-s I" . consult-imenu-multi)
+         ("M-s I" . consult-imenu)
+         ("M-s i" . consult-imenu-multi)
          ;; M-s bindings in `search-map'
          ("M-s f" . consult-fd)
          ("M-s c" . consult-locate)
