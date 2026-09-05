@@ -606,6 +606,17 @@ Shows those completion results that are hopefully most useful, both in the minib
   (setq vertico-prescient-enable-filtering nil))
 #+end_src
 
+*** Etags-regen
+
+#+begin_src emacs-lisp
+(use-package etags-regen
+  :after consult
+  :config
+  (setq etags-regen-ignores
+        '("*.pyc" ".git" ".venv" "venv" "node_modules"))
+  (etags-regen-mode 1))
+#+end_src
+
 *** Consult
 
 ~consult~ provides various functions that integrates with the completion API.
