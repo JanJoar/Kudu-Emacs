@@ -517,9 +517,9 @@ By default ~corfu~ only works in a GUI environment, but the ~corfu-terminal~ pac
   (setq cape-dict-file (list "/home/jovo/Documents/Papers/english-dict" "/home/jovo/Documents/Papers/swedish-dict")
         cape-dabbrev-buffer-function #'cape-text-buffers)
   (add-hook 'completion-at-point-functions #'cape-history)
+  (add-hook 'completion-at-point-functions #'cape-file)
   (add-hook 'completion-at-point-functions #'cape-programming)
   (add-hook 'completion-at-point-functions #'cape-language)
-  (add-hook 'completion-at-point-functions #'cape-file)
   (add-hook 'completion-at-point-functions #'cape-abbrev)
   
   (defun cape-language (&optional interactive)
