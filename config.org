@@ -1618,10 +1618,10 @@ in with the rest of society.
           (reply-to-html	. (text html))
           (reply-to-text	. (text)))
         org-msg-convert-citation t)
-  (if (file-exists-p "~/Documents/email.css~")
+  (if (file-exists-p "~/Documents/email.css")
       (setq org-msg-enforce-css
             (org-msg-css-file-to-list "~/Documents/email.css")))
-  (org-msg-mode))
+  (org-msg-mode t))
 #+end_src
 
 ** Encryption
