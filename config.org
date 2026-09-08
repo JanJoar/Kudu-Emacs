@@ -913,6 +913,13 @@ Emacs is an amazing environment for writing in various lisp dialects, with wonde
 (show-paren-mode)
 #+end_src
 
+Yuck is a lisp-based domain-specific language for editing [[https://elkowar.github.io/eww/][eww]] config files.
+Downloading it and including it has no real cost for Emacs runtime.
+
+#+begin_src emacs-lisp :tangle yes
+(use-package yuck-mode)
+#+end_src
+
 *** Scheme
 
 Due to Kudu's deep integration with the GNU Guix system, it is only
