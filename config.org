@@ -1322,6 +1322,12 @@ extend outside the ~eww~ window.
 (add-hook 'eww-after-render-hook #'eww-limit-images-to-fill-column)
 
 (setq shr-max-width fill-column)
+
+(use-package shr-tag-pre-highlight
+  :after eww
+  :config
+  (add-to-list 'shr-external-rendering-functions
+               '(pre . shr-tag-pre-highlight)))
 #+end_src
 
 ~elfeed~ is a RSS-browser for emacs that integrates will with ~shr~ and
