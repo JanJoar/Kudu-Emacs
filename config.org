@@ -806,10 +806,6 @@ Configures Org-mode to make it more attractive and usable.
   (yas-load-directory "~/.emacs.d/snippets/"))
 (use-package yasnippet-snippets)
 
-(if (display-graphic-p)
-    (use-package valign
-      :hook (org-mode . valign-mode)))
-
 (use-package org-modern
   :hook
   (org-mode . org-modern-mode)
@@ -842,6 +838,14 @@ Configures Org-mode to make it more attractive and usable.
     (rename-buffer title t)))
 
 (add-hook 'org-mode-hook 'org-title-to-buffer-name)
+
+(use-package textui
+  :vc (:url "https://github.com/yibie/textui"))
+
+(use-package org-table-widget
+  :vc (:url "https://github.com/yibie/org-table-widget")
+  ;; :hook org-mode
+  )
 #+end_src
 
 *** Org-roam
