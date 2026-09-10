@@ -1269,6 +1269,12 @@ English. If it is an English word, give a traditional Chinese
 (bind-key "C-x C-z" 'zhongwen-translate)
 #+end_src
 
+#+begin_src emacs-lisp :tangle yes
+(use-package multiple-cursors
+  :bind (("M-ö" . mc/mark-next-like-this)
+         ("M-ä" . mc/mark-previous-like-this)))
+#+end_src
+
 ** Window management
 
 #+begin_src emacs-lisp :tangle yes
