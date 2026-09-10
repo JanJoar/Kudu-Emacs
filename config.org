@@ -973,6 +973,7 @@ make it a formidable tool accessible directly within Emacs. Take that
 
 #+begin_src emacs-lisp :tangle yes
 (use-package dired-open-with
+  :after dired
   :preface
   (defun dired-open-with-find-file (orig-fun &optional other-window)
   "Run dired-open-with if the file is a PDF, image, or video."
@@ -987,15 +988,18 @@ make it a formidable tool accessible directly within Emacs. Take that
                  (string-match "\\.avi\\'" file)))
         (dired-open-with)
       (funcall orig-fun))))  ;; Call the original function for other file types.
-  :init
+  :config
   (advice-add 'dired-find-file :around 'dired-open-with-find-file))
 
 (setf dired-kill-when-opening-new-dired-buffer t)
-(setq dired-listing-switches "-BhlD  --group-directories-first")
+(setq dired-listing-switches "-aBhlDt  --group-directories-first")
+(setq dired-omit-files
+      "\\(?:\\`[.]?#\\|\\`[.][.]?\\'\\|\\`[.]\\(?:[.]\\|[^.]\\).*\\)")
 (defalias 'eaf-open-in-file-manager #'dired)
 
 (add-hook 'dired-mode-hook 'toggle-truncate-lines)
 (add-hook 'dired-mode-hook 'display-line-numbers-mode)
+(add-hook 'dired-mode-hook #'dired-omit-mode)
 
 (setq delete-by-moving-to-trash t)
 
