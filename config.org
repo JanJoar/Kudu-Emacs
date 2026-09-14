@@ -986,7 +986,11 @@ make it a formidable tool accessible directly within Emacs. Take that
                  (string-match "\\.mkv\\'" file)
                  (string-match "\\.mp4\\'" file)
                  (string-match "\\.avi\\'" file)
-                 (string-match "\\.oga\\'" file)))
+                 (string-match "\\.oga\\'" file)
+                 (string-match "\\.xlsx\\'" file)
+                 (string-match "\\.pptx\\'" file)
+                 (string-match "\\.opd\\'" file)
+                 (string-match "\\.docx\\'" file)))
         (dired-open-with)
       (funcall orig-fun))))  ;; Call the original function for other file types.
   :config
