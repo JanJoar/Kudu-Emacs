@@ -914,8 +914,7 @@ The number of lines is read from `#+lettrine-lines: N`, defaulting to 6."
 
 (use-package org-table-widget
   :vc (:url "https://github.com/yibie/org-table-widget")
-  ;; :hook org-mode
-  )
+  :hook org-mode)
 #+end_src
 
 *** Org-roam
@@ -1696,7 +1695,7 @@ and adds a nice mode-line decoration to remind you.
 #+begin_src emacs-lisp :tangle yes
 
 (use-package mu4e-alert
-  :after 'mu4e
+  :after mu4e
   :config
   (mu4e-alert-set-default-style 'libnotify)
   (mu4e-alert-enable-notifications)
