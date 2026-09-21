@@ -791,6 +791,76 @@ Configures Org-mode to make it more attractive and usable.
   (add-hook 'org-export-filter-plain-text-functions
             #'kudu/org-latex-small-caps))
 
+;; Adds functionality to automatically create initials when exporting to LaTeX (off by default)
+
+(defun kudu/org-latex-add-lettrine (backend)
+  "Add a lettrine to the first paragraph when INITIAL:T is enabled.
+
+The number of lines is read from `#+lettrine-lines: N`, defaulting to 6."
+  (when (org-export-derived-backend-p backend 'latex)
+    (save-excursion
+      (goto-char (point-min))
+      (let ((case-fold-search t)
+            (lettrine-lines 6)
+            (initial-enabled
+             (re-search-forward
+              "^[ \t]*#\\+options:.*\\(?:^\\|[ \t]\\)initial:[ \t]*t\\(?:[ \t]\\|$\\)"
+              nil t)))
+        (goto-char (point-min))
+        (when (re-search-forward
+               "^[ \t]*#\\+lettrine-lines:[ \t]*\\([0-9]+\\)[ \t]*$"
+               nil t)
+          (setq lettrine-lines
+                (string-to-number (match-string-no-properties 1))))
+
+        (when initial-enabled
+          (save-restriction
+            (widen)
+            (let ((paragraph
+                   (org-element-map (org-element-parse-buffer)
+                       'paragraph #'identity nil t)))
+              (when paragraph
+                (let* ((begin (org-element-property :begin paragraph))
+                       (end (org-element-property :end paragraph)))
+                  (goto-char begin)
+                  (skip-chars-forward " \t\n" end)
+                  (let* ((leading
+                          (buffer-substring-no-properties begin (point)))
+                         (first-char
+                          (char-to-string (char-after)))
+                         (text-start (1+ (point)))
+                         lettrine-text
+                         remaining-text)
+                    (save-restriction
+                      (narrow-to-region text-start end)
+                      (goto-char text-start)
+                      (forward-word 1)
+                      (when (< (point) end)
+                        (skip-syntax-forward "^w")
+                        (when (< (point) end)
+                          (forward-word 1)
+                          (setq lettrine-text
+                                (buffer-substring-no-properties
+                                 text-start (point)))
+                          (setq remaining-text
+                                (buffer-substring-no-properties
+                                 (point) end)))))
+                    (when lettrine-text
+                      (delete-region begin end)
+                      (insert
+                       leading
+                       "@@latex:\\lettrine[lines="
+                       (number-to-string lettrine-lines)
+                       "]{"
+                       first-char
+                       "}{"
+                       lettrine-text
+                       "}@@"
+                       remaining-text))))))))))))
+
+(add-hook 'org-export-before-parsing-hook
+          #'kudu/org-latex-add-lettrine)
+
 (use-package org-superstar
   :hook (org-mode . org-superstar-mode))
 (use-package org-fragtog
