@@ -969,6 +969,23 @@ live previews when selecting notes.
   (vulpea-ui-fast-parse t))
 #+end_src
 
+*** Citar
+
+Citar is a package that extends Emacs' built-in citation managing
+solutions. It also allows you to directly insert text citations in a
+buffer from a ~bibtex~ entry.
+
+#+begin_src emacs-lisp :tangle yes
+(use-package citar
+  :custom
+  (citar-bibliography (car (list org-cite-global-bibliography)))
+  (org-cite-insert-processor 'citar)
+  (org-cite-follow-processor 'citar)
+  (org-cite-activate-processor 'citar)
+  (citar-bibliography org-cite-global-bibliography))
+#+end_src
+
+
 ** Lisp
 
 Emacs is an amazing environment for writing in various lisp dialects, with wonderful support out-of-the-box. However, there are various different packages designed to improve this experience in general or in slight, specific ways. ~Sly~ is a fork of the popular ~SLIME~ package for an integrated common lisp REPL among other things. It is superior to ~SLIME~ because it has ASCII-art cats.
