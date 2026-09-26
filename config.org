@@ -1043,6 +1043,7 @@ make it a formidable tool accessible directly within Emacs. Take that
 #+begin_src emacs-lisp :tangle yes
 (use-package dired-open-with
   :after dired
+  :commands (dired-open-with-find-file)
   :preface
   (defun dired-open-with-find-file (orig-fun &optional other-window)
   "Run dired-open-with if the file is a PDF, image, or video."
@@ -1062,7 +1063,6 @@ make it a formidable tool accessible directly within Emacs. Take that
                  (string-match "\\.docx\\'" file)))
         (dired-open-with)
       (funcall orig-fun))))  ;; Call the original function for other file types.
-  :config
   (advice-add 'dired-find-file :around 'dired-open-with-find-file))
 
 (setf dired-kill-when-opening-new-dired-buffer t)
