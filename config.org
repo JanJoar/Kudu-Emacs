@@ -747,7 +747,8 @@ Configures Org-mode to make it more attractive and usable.
         org-hide-leading-stars t
         org-hide-emphasis-markers t
         org-src-preserve-indentation t
-        org-export-with-broken-links t)
+        org-export-with-broken-links t
+        org-export-in-background t)
   (add-hook 'text-mode-hook 'turn-on-visual-line-mode)
   (add-to-list 'org-latex-packages-alist
                '("AUTO" "babel" t ("pdflatex" "xelatex" "lualatex")))
