@@ -1371,7 +1371,11 @@ English. If it is an English word, give a traditional Chinese
 
 #+begin_src emacs-lisp :tangle yes
 (setq display-buffer-alist
-      '(("\\*mu4e-update\\*"
+      '(("\\*compliation\\*"
+         (display-buffer-at-bottom))
+        ("\\*tex-shell\\*"
+         (display-buffer-at-bottom))
+        ("\\*mu4e-update\\*"
          (display-buffer-at-bottom))
         ("magit-diff:.*"
          (display-buffer-at-bottom))
