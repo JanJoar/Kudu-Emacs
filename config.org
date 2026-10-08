@@ -245,7 +245,8 @@ around all the time.
 
 (setq comint-scroll-to-bottom-on-input t
       comint-scroll-to-bottom-on-output nil
-      redisplay-skip-fontification-on-input t)
+      redisplay-skip-fontification-on-input t
+      fast-but-imprecise-scrolling t)
 #+end_src
 
 Formats tabs to Linux-kernel standards and keeps them so using the
@@ -419,6 +420,14 @@ the mode-line in windows used to interact with shells.
   (setq rainbow-ansi-colors 'auto)
   (setq rainbow-r-colors 'auto)
   :hook (prog-mode . rainbow-mode))
+#+end_src
+
+Setting ~inhibit-compacting-font-caches~ to ~t~ is a small performance
+improvement that increased the responsiveness of Emacs at the cost of
+slightly higher memory usage.
+
+#+begin_src emacs-lisp :tangle yes
+(setq inhibit-compacting-font-caches t)
 #+end_src
 
 ** Dashboard
@@ -707,7 +716,8 @@ To remember and find all these commands, we use the built-in ~which-key~ package
 #+begin_src emacs-lisp :tangle yes
 (use-package which-key
   :config
-  (setq which-key-mode t))
+  (setq which-key-idle-delay 0.75)
+  (which-key-mode))
 #+end_src
 
 *** Flycheck
@@ -718,6 +728,7 @@ Tangentially related is Flycheck, providing in-buffer syntax checking.
 (use-package flycheck
   :after cape
   :config
+  (setq tooltip-delay 0.5)
   (setq flycheck-global-modes '(not lisp-interaction-mode))
   (global-flycheck-mode)
   (global-flycheck-eglot-mode 1))
@@ -956,7 +967,6 @@ live previews when selecting notes.
         vulpea-db-sync-verbose nil
         vulpea-db-parse-method 'single-temp-buffer
         vulpea-db-async-extraction 'full)
-
   (vulpea-db-autosync-mode +1))
 
 (use-package consult-vulpea
@@ -985,7 +995,6 @@ buffer from a ~bibtex~ entry.
   (org-cite-activate-processor 'citar)
   (citar-bibliography org-cite-global-bibliography))
 #+end_src
-
 
 ** Lisp
 
