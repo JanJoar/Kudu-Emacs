@@ -1380,7 +1380,9 @@ English. If it is an English word, give a traditional Chinese
 
 #+begin_src emacs-lisp :tangle yes
 (setq display-buffer-alist
-      '(("\\*compliation\\*"
+      '(("\\*ACP traffic entry\\*"
+         (display-buffer-at-bottom))
+         ("\\*compliation\\*"
          (display-buffer-at-bottom))
         ("\\*tex-shell\\*"
          (display-buffer-at-bottom))
