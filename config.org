@@ -954,6 +954,9 @@ Vulpea is a faster (and async) alternative to org-roam that can use
 the same database and can coexist with org-roam. ~consult-vulpea~ allows
 live previews when selecting notes.
 
+~citar-vulpea~ integrates Vulpea's note database with the ~citar~
+bibliography management tool.
+
 #+begin_src emacs-lisp :tangle yes
 (use-package vulpea
   :bind (("M-o" . vulpea-find)
@@ -978,6 +981,13 @@ live previews when selecting notes.
   :after vulpea
   :custom
   (vulpea-ui-fast-parse t))
+
+(use-package citar-vulpea
+  :after (citar vulpea)
+  :custom
+  (citar-vulpea-note-title-template "${title}")
+  :config
+  (citar-vulpea-mode 1))
 #+end_src
 
 *** Citar
