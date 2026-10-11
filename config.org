@@ -998,6 +998,8 @@ buffer from a ~bibtex~ entry.
 
 #+begin_src emacs-lisp :tangle yes
 (use-package citar
+  :commands
+  (org-cite-insert)
   :custom
   (citar-bibliography (car (list org-cite-global-bibliography)))
   (org-cite-insert-processor 'citar)
