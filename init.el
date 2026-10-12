@@ -1,4 +1,4 @@
-;;    Kudu --- A fully functioning GNU Emacs system
+;;    Kudu --- A fully functioning GNU Emacs system  -*- lexical-binding: t; -*-
 ;;    Copyright (C) 2023  Joar von Arndt
 ;;
 ;;

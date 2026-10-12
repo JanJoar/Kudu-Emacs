@@ -1,4 +1,4 @@
-;    Kudu --- A fully functioning GNU Emacs system
+;    Kudu --- A fully functioning GNU Emacs system  -*- lexical-binding: t; -*-
 ;    Copyright (C) 2023  Joar von Arndt
 ;
 ;    This program is free software: you can redistribute it and/or modify
@@ -14,7 +14,10 @@
 ;    You should have received a copy of the GNU General Public License
 ;    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-;;; Commentary: Early optimizations mostly for improved startup times. A not-insignificant parts of are taken from https://github.com/Stefanomarton/DotFiles/ and his wonderful improvements.
+;;; Commentary: Early optimizations mostly for improved startup times.
+;;; A not-insignificant parts of are taken from
+;;; https://github.com/Stefanomarton/DotFiles/ and his wonderful
+;;; improvements.
 
 (defvar me/gc-cons-threshold 100000000)
 (setq gc-cons-threshold most-positive-fixnum
