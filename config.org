@@ -76,6 +76,8 @@ package, or remove it entirely, but beware that
 declarations for ~package.el~ to install all the other packages needed.
 
 #+begin_src emacs-lisp :tangle yes
+;; -*- lexical-binding: t; -*-
+
 (setq use-package-always-defer t
       use-package-always-ensure t)
 
