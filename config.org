@@ -291,6 +291,9 @@ the mode line, and the edges of the screen.
           '(:mode-line-active org-hide
                               :mode-line-inactive org-hide))))
 
+(setq org-fontify-whole-heading-line t
+      org-fontify-quote-and-verse-blocks t)
+
 (setq modus-themes-italic-constructs t)
 (setq modus-themes-bold-constructs t)
 #+end_src
