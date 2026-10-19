@@ -1051,6 +1051,17 @@ buffer from a ~bibtex~ entry.
             citar-indicator-links-icons)))
 #+end_src
 
+** Markdown
+
+Configures ~markdown-mode~ for editing markdown files.
+
+#+begin_src emacs-lisp :tangle yes
+(use-package markdown-mode
+  :custom (markdown-hide-markup t)
+  :mode ("\\.\\(?:md\\|markdown\\|mkd\\|mdown\\|mkdn\\|mdwn\\)\\'" .
+ markdown-mode))
+#+end_src
+
 ** Lisp
 
 Emacs is an amazing environment for writing in various lisp dialects, with wonderful support out-of-the-box. However, there are various different packages designed to improve this experience in general or in slight, specific ways. ~Sly~ is a fork of the popular ~SLIME~ package for an integrated common lisp REPL among other things. It is superior to ~SLIME~ because it has ASCII-art cats.
