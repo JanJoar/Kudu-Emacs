@@ -907,7 +907,8 @@ The number of lines is read from `#+lettrine-lines: N`, defaulting to 6."
   (org-modern-table nil)
   (org-modern-star nil)
   (org-modern-hide-stars nil)
-  (org-modern--table nil))
+  (org-modern--table nil)
+  (org-modern-tag nil))
 
 (setq org-export-with-email t)
 (setq org-export-with-smart-quotes t)
