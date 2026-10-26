@@ -76,6 +76,8 @@ package, or remove it entirely, but beware that
 declarations for ~package.el~ to install all the other packages needed.
 
 #+begin_src emacs-lisp :tangle yes
+;; -*- lexical-binding: t; -*-
+
 (setq use-package-always-defer t
       use-package-always-ensure t)
 
@@ -289,6 +291,9 @@ the mode line, and the edges of the screen.
           '(:mode-line-active org-hide
                               :mode-line-inactive org-hide))))
 
+(setq org-fontify-whole-heading-line t
+      org-fontify-quote-and-verse-blocks t)
+
 (setq modus-themes-italic-constructs t)
 (setq modus-themes-bold-constructs t)
 #+end_src
@@ -354,7 +359,7 @@ displayed.
   :hook
   (org-mode markdown-mode eww-mode message-mode elfeed-show-mode)
   :config
-  (setq-default olivetti-body-width (+ fill-column 7))
+  (setq-default olivetti-body-width (+ fill-column 12))
   (add-hook 'olivetti-mode-hook
             (lambda ()
               (set-face-attribute
@@ -902,7 +907,8 @@ The number of lines is read from `#+lettrine-lines: N`, defaulting to 6."
   (org-modern-table nil)
   (org-modern-star nil)
   (org-modern-hide-stars nil)
-  (org-modern--table nil))
+  (org-modern--table nil)
+  (org-modern-tag nil))
 
 (setq org-export-with-email t)
 (setq org-export-with-smart-quotes t)
@@ -1047,6 +1053,17 @@ buffer from a ~bibtex~ entry.
       (list citar-indicator-files-icons
             citar-indicator-notes-icons
             citar-indicator-links-icons)))
+#+end_src
+
+** Markdown
+
+Configures ~markdown-mode~ for editing markdown files.
+
+#+begin_src emacs-lisp :tangle yes
+(use-package markdown-mode
+  :custom (markdown-hide-markup t)
+  :mode ("\\.\\(?:md\\|markdown\\|mkd\\|mdown\\|mkdn\\|mdwn\\)\\'" .
+ markdown-mode))
 #+end_src
 
 ** Lisp
