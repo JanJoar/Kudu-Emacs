@@ -580,9 +580,9 @@ In a sense, spellcheck is also a form of automatic completion. For this we use t
 (use-package jinx
   :hook text-mode
   :bind ("C-." . jinx-correct-nearest)
+  :custom (jinx-languages "en_GB sv_SE")
   :config
-  (global-jinx-mode)
-  (setq jinx-languages "en_GB sv_SE"))
+  (global-jinx-mode))
 
 #+end_src
 
