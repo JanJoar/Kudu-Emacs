@@ -755,6 +755,8 @@ Configures Org-mode to make it more attractive and usable.
 
 (use-package org
   :defer 18
+  :custom
+  (org-directory "~/Documents/Notes/roam/")
   :config
   (setq org-format-latex-options
         (plist-put org-format-latex-options
