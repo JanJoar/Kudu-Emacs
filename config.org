@@ -940,7 +940,8 @@ The number of lines is read from `#+lettrine-lines: N`, defaulting to 6."
 
 (use-package org-table-widget
   :vc (:url "https://github.com/yibie/org-table-widget")
-  :hook org-mode)
+  :demand t
+  :hook (org-mode . org-table-widget-mode))
 #+end_src
 
 *** Org-roam
