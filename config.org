@@ -1003,7 +1003,34 @@ bibliography management tool.
   :custom
   (citar-vulpea-note-title-template "${title}")
   :config
-  (citar-vulpea-mode 1))
+  (citar-vulpea-mode 1)
+  
+  (defun kudu/citar-vulpea-dwim-no-tag ()
+  "Smart action for current bibliographic note, without adding the bib tag.
+If the current note has references, open citar for those entries.
+Otherwise, select a citekey and add it to both the REFERENCES and
+ROAM_REFS properties."
+  (interactive)
+  (unless (derived-mode-p 'org-mode)
+    (user-error "Not in an org-mode buffer"))
+  (let* ((refs (citar-vulpea--get-ref-property))
+         (keys (citar-vulpea--parse-refs refs)))
+    (if keys
+        (let ((key (if (= (length keys) 1)
+                       (car keys)
+                     (completing-read "Select reference: " keys nil t))))
+          (citar-open (list key)))
+      (when (yes-or-no-p "No references in current note.  Add one? ")
+        (let* ((citekey (citar-select-ref))
+               (new-ref (concat "@" citekey))
+               (new-refs (if (org-string-nw-p refs)
+                             (concat refs " " new-ref)
+                           new-ref)))
+          (citar-vulpea--set-ref-property new-refs)
+          (save-excursion
+            (org-back-to-heading-or-point-min t)
+            (org-set-property "ROAM_REFS" new-refs))
+          (message "Added reference: %s" citekey)))))))
 #+end_src
 
 *** Citar
