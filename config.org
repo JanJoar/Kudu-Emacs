@@ -1854,7 +1854,7 @@ in with the rest of society.
         org-msg-greeting-fmt
         "\n#+begin_greeting\nDear%s,\n#+end_greeting\n\n"
         org-msg-default-alternatives
-        '((new		. (text))
+        '((new		. (text html))
           (reply-to-html	. (text html))
           (reply-to-text	. (text)))
         org-msg-convert-citation t)
