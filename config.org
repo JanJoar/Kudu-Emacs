@@ -998,7 +998,8 @@ bibliography management tool.
   (vulpea-ui-fast-parse t))
 
 (use-package citar-vulpea
-  :after (citar vulpea)
+  :commands
+  (vulpea-find)
   :custom
   (citar-vulpea-note-title-template "${title}")
   :config
