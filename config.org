@@ -1847,6 +1847,7 @@ in with the rest of society.
 
 (use-package org-msg
   :after mu4e
+  :bind (("M-q" . unfill-paragraph))
   :config
   (setq mail-user-agent 'mu4e-user-agent)
   (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t"
